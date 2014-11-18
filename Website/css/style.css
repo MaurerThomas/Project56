@@ -1,0 +1,109 @@
+html,body {
+	height: 100%;
+}
+body {
+	background: radial-gradient(circle, #556de4, #d5f2ff) fixed;
+}
+header {
+	box-shadow: 0 0 2px #333;
+}
+header h1 {
+	margin: 5px 0 0;
+}
+footer {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	color: #ccc;
+	background-color: #333;
+}
+footer > div {
+	padding: 10px 15px 0;
+}
+#main {
+	background-color: #eee;
+	box-shadow: 0 0 2px #333;
+	min-height: 100%;
+	position: relative;
+}
+#main > div {
+	padding-top: 70px;
+	padding-bottom: 80px
+}
+#start a.btn {
+	margin-top: 5%;
+}
+.pcbuilder-tabs {
+	padding: 0;
+	list-style: none;
+}
+.pcbuilder-tabs li a {
+	display: block;
+	height: 55px;
+	width: 60px;
+	background-position: center center;
+	background-repeat: no-repeat;
+	border-top-left-radius: 20%;
+	border-bottom-left-radius: 20%;
+	border-right: 1px solid #ccc;
+}
+.pcbuilder-tabs li a:hover, .pcbuilder-tabs li.active a {
+	background-color: #f8f8f8;
+	border: 1px solid #ccc;
+}
+.pcbuilder-tabs li a[href="#hardeschijf"] {
+	background-image: url('./../img/hdd.png');
+}
+.pcbuilder-tabs li a[href="#processor"] {
+	background-image: url('./../img/cpu.png');
+}
+.pcbuilder-tabs li a[href="#behuizing"] {
+	background-image: url('./../img/case.png');
+}
+.pcbuilder-tabs li a[href="#processorkoeler"] {
+	background-image: url('./../img/fan.png');
+}
+.pcbuilder-tabs li a[href="#moederbord"] {
+	background-image: url('./../img/motherboard.png');
+}
+.pcbuilder-tabs li a[href="#geheugen"] {
+	background-image: url('./../img/ram.png');
+}
+.pcbuilder-tabs li a[href="#grafischekaart"] {
+	background-image: url('./../img/gpu.png');
+}
+.pcbuilder-tabs li a[href="#voeding"] {
+	background-image: url('./../img/psu.png');
+}
+.pcbuilder-tabs li a[href="#besturingssysteem"] {
+	background-image: url('./../img/windows.png');
+}
+.ui-tooltip {
+	color: #ccc;
+	background-color: #333;
+}
+#pcbuilder-selection {
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 1em;
+	padding-bottom: 0.5em;
+}
+#pcbuilder-selection .row > div > div {
+	background-color: #f8f8f8;
+	height: 80px;
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	margin: 0.5em 0;
+	position: relative;
+}
+#pcbuilder-selection .selection-title {
+	margin: 0;
+	max-width: 90%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	position: absolute;
+	bottom: 0;
+	right: 0.25em;
+	color: #ccc;
+}
