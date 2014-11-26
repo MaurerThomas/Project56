@@ -3,6 +3,7 @@ package com.resist.websocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 
 public final class ConnectionServer {
 	private String address;
@@ -11,6 +12,8 @@ public final class ConnectionServer {
 	private boolean running = true;
 	private MessageHandler controlFrameHandler = null;
 	private MessageHandler messageHandler = null;
+	private int timeout = 1000*60*60;
+
 
 	/**
 	 * Creates a new WebSocket server.
@@ -44,6 +47,17 @@ public final class ConnectionServer {
 	 */
 	public ConnectionServer setMessageHandler(MessageHandler messageHandler) {
 		this.messageHandler = messageHandler;
+		return this;
+	}
+
+	/**
+	 * Sets the read timeout to be used for connections.
+	 * 
+	 * @param timeout The timeout in milliseconds
+	 * @return The server, for chaining
+	 */
+	public ConnectionServer setTimeout(int timeout) {
+		this.timeout = timeout;
 		return this;
 	}
 
@@ -118,19 +132,37 @@ public final class ConnectionServer {
 	 */
 	public void manageConnections() {
 		try {
-			ServerSocket socket = new ServerSocket(port);
-			while(running) {
-				Socket client = socket.accept();
-				try {
-					Connection conn = new Connection(this,client);
-					new Thread(conn).start();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-			socket.close();
+			createSocket();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void createSocket() throws IOException {
+		ServerSocket socket = new ServerSocket(port);
+		socket.setSoTimeout(timeout);
+		while(running) {
+			createConnections(socket);
+		}
+		socket.close();
+	}
+
+	private void createConnections(ServerSocket socket) throws IOException {
+		Connection conn = null;
+		try {
+			Socket client = socket.accept();
+			try {
+				conn = new Connection(this,client);
+				new Thread(conn).start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} catch (SocketTimeoutException e) {
+			if(conn != null && !conn.isClosed()) {
+				conn.close();
+			} else {
+				e.printStackTrace();
+			}
 		}
 	}
 }
