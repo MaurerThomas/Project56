@@ -89,7 +89,15 @@ public final class Connection implements Runnable {
 	 * Closes the connection.
 	 */
 	public void close() {
+		if(closed) {
+			return;
+		}
 		closed = true;
+		try {
+			sendClose();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		try {
 			output.close();
 			input.close();
@@ -239,6 +247,15 @@ public final class Connection implements Runnable {
 	 */
 	public void sendPong() throws IOException {
 		sendMessage(true,OPCODE_PONG,null,new byte[0]);
+	}
+
+	/**
+	 * Tells the client to close the connection.
+	 * 
+	 * @throws IOException
+	 */
+	private void sendClose() throws IOException {
+		sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0]);
 	}
 
 	/**
