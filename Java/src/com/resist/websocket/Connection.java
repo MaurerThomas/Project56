@@ -60,6 +60,15 @@ public final class Connection implements Runnable {
 	}
 
 	/**
+	 * Returns the server that spawned this connection.
+	 * 
+	 * @return The server that spawned this connection
+	 */
+	public ConnectionServer getServer() {
+		return server;
+	}
+
+	/**
 	 * Checks if the connection has been closed.
 	 * 
 	 * @return True if the connection has been closed
@@ -210,8 +219,8 @@ public final class Connection implements Runnable {
 		nextByte = input.read();
 		int mask = nextByte >> 7;						//First bit
 		long payloadLen = getPayloadLength(nextByte);
-		int[] maskingKey = getMaskingKey(mask);
-		handleMessage(opcode,fin,payloadLen,maskingKey);
+		int[] maskingKey = getMaskingKey(mask == 1);
+		handleMessage(opcode,fin == 1,payloadLen,maskingKey);
 	}
 
 	/**
@@ -267,9 +276,9 @@ public final class Connection implements Runnable {
 	 * @return The masking key
 	 * @throws IOException
 	 */
-	private int[] getMaskingKey(int mask) throws IOException {
+	private int[] getMaskingKey(boolean mask) throws IOException {
 		int[] maskingKey = new int[4];
-		if(mask == 1) {
+		if(mask) {
 			for(int n=0;n < 4;n++) {
 				maskingKey[n] = input.read();					//Next four bytes
 			}
@@ -286,7 +295,7 @@ public final class Connection implements Runnable {
 	 * @param maskingKey The masking key of the message
 	 * @throws IOException
 	 */
-	private void handleMessage(int opcode, int fin, long payloadLen, int[] maskingKey) throws IOException {
+	private void handleMessage(int opcode, boolean fin, long payloadLen, int[] maskingKey) throws IOException {
 		if(opcode < OPCODE_CONNECTION_CLOSE) {
 			handleContinuedFrame(fin,payloadLen,maskingKey);
 		} else {
@@ -294,9 +303,9 @@ public final class Connection implements Runnable {
 		}
 	}
 
-	private void handleContinuedFrame(int fin, long payloadLen, int[] maskingKey) throws IOException {
+	private void handleContinuedFrame(boolean fin, long payloadLen, int[] maskingKey) throws IOException {
 		currentMessage.add(input,payloadLen,maskingKey);
-		if(fin == 1) {
+		if(fin) {
 			currentMessage.complete();
 			server.handleMessage(currentMessage);
 			currentMessage = null;
@@ -388,7 +397,7 @@ public final class Connection implements Runnable {
 	private byte[] encapsulateMessage(boolean fin, int opcode, int[] mask, byte[] message) throws IOException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		buffer.write(getMessageFirstByte(fin, opcode));
-		buffer.write(getMessageLengthByte(mask != null, message.length));
+		buffer.write(getMessageLengthBytes(mask != null, message.length));
 		if(mask != null) {
 			for(int n=0;n < 4;n++) {
 				buffer.write(mask[n]);
@@ -420,31 +429,65 @@ public final class Connection implements Runnable {
 	 * @param length Length of the message
 	 * @return The payload length of the data frame
 	 */
-	private byte[] getMessageLengthByte(boolean masked, int length) {
-		byte[] out;
+	private byte[] getMessageLengthBytes(boolean masked, int length) {
 		int mask = 0;
 		if(masked) {
 			mask = 1;
 		}
 		mask = mask << 7;
 		if(length < 126) {
-			out = new byte[1];
-			out[0] = (byte) (mask | length);
+			return getMessageSmallLengthBytes(mask,length);
 		} else if(length < 65536) {
-			out = new byte[3];
-			out[0] = (byte) (mask | 126);
-			length -= 126;
-			out[1] = (byte) (length >> 8);
-			out[2] = (byte) (length & ((1 << 8) - 1));
+			return getMessageMediumLengthBytes(mask,length);
 		} else {
-			out = new byte[9];
-			out[0] = (byte) (mask | 127);
-			length -= 127;
-			for(int n=7, i=1;i < 8;n--,i++) {
-				out[i] = (byte) ((length >> (n * 8)) & ((1 << 8) - 1));
-			}
-			out[8] = (byte) (length & ((1 << 8) - 1));
+			return getMessageLargeLengthBytes(mask,length);
 		}
+	}
+
+	/**
+	 * Returns the payload length portion of the data frame for small payloads.
+	 * 
+	 * @param mask The first bit of the output
+	 * @param Length of the message
+	 * @return The payload length of the data frame
+	 */
+	private byte[] getMessageSmallLengthBytes(int mask, int length) {
+		return new byte[] {
+			(byte) (mask | length)
+		};
+	}
+
+	/**
+	 * Returns the payload length portion of the data frame for medium payloads.
+	 * 
+	 * @param mask The first bit of the output
+	 * @param Length of the message
+	 * @return The payload length of the data frame
+	 */
+	private byte[] getMessageMediumLengthBytes(int mask, int length) {
+		byte[] out = new byte[3];
+		out[0] = (byte) (mask | 126);
+		length -= 126;
+		out[1] = (byte) (length >> 8);
+		out[2] = (byte) (length & ((1 << 8) - 1));
+		return out;
+	}
+
+	/**
+	 * Returns the payload length portion of the data frame for large payloads.
+	 * 
+	 * @param mask The first bit of the output
+	 * @param Length of the message
+	 * @return The payload length of the data frame
+	 */
+	private byte[] getMessageLargeLengthBytes(int mask, int length) {
+		byte[] out = new byte[9];
+		out[0] = (byte) (mask | 127);
+		length -= 127;
+		for(int n=7, i=1;i < 8;n--,i++) {
+			out[i] = (byte) ((length >> (n * 8)) & ((1 << 8) - 1));
+		}
+		out[8] = (byte) (length & ((1 << 8) - 1));
 		return out;
 	}
 }
