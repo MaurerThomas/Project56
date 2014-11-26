@@ -291,7 +291,7 @@ public final class Connection implements Runnable {
 		buffer.write(getMessageFirstByte(fin, opcode));
 		buffer.write(getMessageLengthByte(mask != null, message.length));
 		if(mask != null) {
-			for(int n=0;n < mask.length;n++) {
+			for(int n=0;n < 4;n++) {
 				buffer.write(mask[n]);
 			}
 		}
@@ -342,7 +342,7 @@ public final class Connection implements Runnable {
 			out[0] = (byte) (mask | 127);
 			length -= 127;
 			for(int n=7, i=1;i < 8;n--,i++) {
-				out[i] = (byte) (length >> (n * 8));
+				out[i] = (byte) ((length >> (n * 8)) & ((1 << 8) - 1));
 			}
 			out[8] = (byte) (length & ((1 << 8) - 1));
 		}

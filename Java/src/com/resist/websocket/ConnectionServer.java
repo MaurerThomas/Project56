@@ -75,24 +75,34 @@ public final class ConnectionServer {
 	}
 
 	/**
-	 * Handles a control frame.
+	 * Handles a control frame, running it in a new thread.
 	 * 
 	 * @param message The message sent with the frame
 	 */
-	protected void handleControlFrame(Message message) {
+	protected void handleControlFrame(final Message message) {
 		if(controlFrameHandler != null) {
-			controlFrameHandler.handleMessage(message);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					controlFrameHandler.handleMessage(message);
+				}
+			}).run();
 		}
 	}
 
 	/**
-	 * Handles a completed message.
+	 * Handles a completed message, running it in a new thread.
 	 * 
 	 * @param message The completed message.
 	 */
-	protected void handleMessage(Message message) {
+	protected void handleMessage(final Message message) {
 		if(messageHandler != null) {
-			messageHandler.handleMessage(message);
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					messageHandler.handleMessage(message);
+				}
+			}).run();
 		}
 	}
 
