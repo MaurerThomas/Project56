@@ -53,7 +53,7 @@ public final class ConnectionServer {
 	/**
 	 * Sets the read timeout to be used for connections.
 	 * 
-	 * @param timeout The timeout in milliseconds
+	 * @param timeout The timeout in milliseconds (0 is no timeout)
 	 * @return The server, for chaining
 	 */
 	public ConnectionServer setTimeout(int timeout) {
@@ -138,6 +138,11 @@ public final class ConnectionServer {
 		}
 	}
 
+	/**
+	 * Creates a socket and checks for connections.
+	 * 
+	 * @throws IOException
+	 */
 	private void createSocket() throws IOException {
 		ServerSocket socket = new ServerSocket(port);
 		socket.setSoTimeout(timeout);
@@ -147,6 +152,12 @@ public final class ConnectionServer {
 		socket.close();
 	}
 
+	/**
+	 * Listens for connections on a socket.
+	 * 
+	 * @param socket The socket to accept connections on
+	 * @throws IOException
+	 */
 	private void createConnections(ServerSocket socket) throws IOException {
 		Connection conn = null;
 		try {
@@ -158,7 +169,7 @@ public final class ConnectionServer {
 				e.printStackTrace();
 			}
 		} catch (SocketTimeoutException e) {
-			if(conn != null && !conn.isClosed()) {
+			if(conn != null) {
 				conn.close();
 			} else {
 				e.printStackTrace();

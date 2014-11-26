@@ -76,7 +76,7 @@ public final class Connection implements Runnable {
 		try {
 			int data;
 			while((data = input.read()) != -1 && !stop) {
-				readMessage(data);
+				readAndHandleMessage(data);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,11 +93,7 @@ public final class Connection implements Runnable {
 			return;
 		}
 		closed = true;
-		try {
-			sendClose();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		sendClose();
 		try {
 			output.close();
 			input.close();
@@ -124,10 +120,40 @@ public final class Connection implements Runnable {
 	 * @throws IOException
 	 */
 	private void parseHeader() throws IOException {
-		int checks = 0;
+		int headerChecksPassed = 0;
 		String line;
 		BufferedReader input = new BufferedReader(new InputStreamReader(this.input));
-		line = input.readLine();
+		throwIfNotHttpRequest(input);
+		while((line = input.readLine()) != null && !line.isEmpty()) {
+			String[] args = line.split(": ");
+			if(args.length == 2) {
+				if(
+						(args[0].equals("Upgrade") && args[1].equals("websocket")) ||
+						(args[0].equals("Sec-WebSocket-Version") && args[1].equals("13")) ||
+						(args[0].equals("Connection") && args[1].contains("Upgrade")) ||
+						(args[0].equals("Origin") && args[1].contains("://"+server.getAddress()))
+				) {
+					headerChecksPassed++;
+				} else if(args[0].equals("Sec-WebSocket-Key")) {
+					key = args[1];
+					headerChecksPassed++;
+				}
+			}
+			if(headerChecksPassed == 5) {
+				return;
+			}
+		}
+		throw new IOException("Not a valid WebSocket request. "+headerChecksPassed);
+	}
+
+	/**
+	 * Throws an IOException if the stream doesn't contain an HTTP request.
+	 * 
+	 * @param input The input stream to read lines from
+	 * @throws IOException
+	 */
+	private void throwIfNotHttpRequest(BufferedReader input) throws IOException {
+		String line = input.readLine();
 		if(!line.equals("GET "+server.getPath()+" HTTP/1.1")) {
 			throw new IOException("Not a GET request.");
 		}
@@ -135,26 +161,6 @@ public final class Connection implements Runnable {
 		if(!line.equals("Host: "+server.getAddress()+":"+server.getPort())) {
 			throw new IOException("Wrong host.");
 		}
-		while((line = input.readLine()) != null && !line.isEmpty()) {
-			String[] args = line.split(": ");
-			if(args.length == 2) {
-				if(
-						(args[0].equals("Upgrade") && args[1].equals("websocket")) ||
-						(args[0].equals("Sec-WebSocket-Version") && args[1].equals("13")) ||
-						(args[0].equals("Connection") && args[1].indexOf("Upgrade") != -1) ||
-						(args[0].equals("Origin") && args[1].indexOf("://"+server.getAddress()) != -1)
-				) {
-					checks++;
-				} else if(args[0].equals("Sec-WebSocket-Key")) {
-					key = args[1];
-					checks++;
-				}
-			}
-			if(checks == 5) {
-				return;
-			}
-		}
-		throw new IOException("Not a valid WebSocket request. "+checks);
 	}
 
 	/**
@@ -164,12 +170,11 @@ public final class Connection implements Runnable {
 	 */
 	private void sendResponseHeader() throws NoSuchAlgorithmException {
 		PrintWriter writer = new PrintWriter(output,true);
-		String out = 
+		writer.println(
 				"HTTP/1.1 101 Switching Protocols\r\n"+
 				"Upgrade: websocket\r\n"+
 				"Connection: Upgrade\r\n"+
-				"Sec-WebSocket-Accept: "+getResponseKey()+"\r\n";
-		writer.println(out);
+				"Sec-WebSocket-Accept: "+getResponseKey()+"\r\n");
 	}
 
 	/**
@@ -191,12 +196,9 @@ public final class Connection implements Runnable {
 	 * @param nextByte First byte of the message
 	 * @throws IOException
 	 */
-	private void readMessage(int nextByte) throws IOException {
+	private void readAndHandleMessage(int nextByte) throws IOException {
 		int fin = nextByte >> 7;						//First bit
-		int rsv1 = (nextByte >> 6) & 1;					//Second bit
-		int rsv2 = (nextByte >> 5) & 1;					//Third bit
-		int rsv3 = (nextByte >> 4) & 1;					//Fourth bit
-		if((rsv1 | rsv2 | rsv3) != 0) {
+		if(checkRSV(nextByte)) {
 			stop = true;
 			return;
 		}
@@ -204,13 +206,49 @@ public final class Connection implements Runnable {
 		if((currentMessage == null || opcode != OPCODE_CONTINUATION_FRAME) && opcode < OPCODE_CONNECTION_CLOSE) {
 			currentMessage = new Message(this,opcode);
 		}
+		handleOpcodes(opcode);
+		nextByte = input.read();
+		int mask = nextByte >> 7;						//First bit
+		long payloadLen = getPayloadLength(nextByte);
+		int[] maskingKey = getMaskingKey(mask);
+		handleMessage(opcode,fin,payloadLen,maskingKey);
+	}
+
+	/**
+	 * Checks if the reserved bytes RSV1-3 are 0.
+	 * 
+	 * @param nextByte The byte to read bits from
+	 * @return False if the three RSV bytes are 0
+	 */
+	private boolean checkRSV(int nextByte) {
+		int rsv1 = (nextByte >> 6) & 1;					//Second bit
+		int rsv2 = (nextByte >> 5) & 1;					//Third bit
+		int rsv3 = (nextByte >> 4) & 1;					//Fourth bit
+		return (rsv1 | rsv2 | rsv3) != 0;
+	}
+
+	/**
+	 * Handles opcodes.
+	 * 
+	 * @param opcode The opcode of the message
+	 * @throws IOException
+	 */
+	private void handleOpcodes(int opcode) throws IOException {
 		if(opcode == OPCODE_CONNECTION_CLOSE) {
 			stop = true;
 		} else if(opcode == OPCODE_PING) {
 			sendPong();
 		}
-		nextByte = input.read();
-		int mask = nextByte >> 7;						//First bit
+	}
+
+	/**
+	 * Returns the length of the message.
+	 * 
+	 * @param nextByte The byte to start reading from
+	 * @return The length of the message
+	 * @throws IOException
+	 */
+	private long getPayloadLength(int nextByte) throws IOException {
 		long payloadLen = nextByte & ((1 << 7) - 1);	//Bit 2-8
 		if(payloadLen == 126) {
 			payloadLen += (input.read() << 8) + input.read();	//Next two bytes
@@ -219,25 +257,65 @@ public final class Connection implements Runnable {
 			input.read(length);
 			payloadLen += new BigInteger(length).longValue();
 		}
+		return payloadLen;
+	}
+
+	/**
+	 * Returns the message's masking key.
+	 * 
+	 * @param mask The bit indicating if the message is masked
+	 * @return The masking key
+	 * @throws IOException
+	 */
+	private int[] getMaskingKey(int mask) throws IOException {
 		int[] maskingKey = new int[4];
 		if(mask == 1) {
 			for(int n=0;n < 4;n++) {
 				maskingKey[n] = input.read();					//Next four bytes
 			}
 		}
+		return maskingKey;
+	}
+
+	/**
+	 * Handles a received message.
+	 * 
+	 * @param opcode The opcode of the message
+	 * @param fin The finished bit of the message
+	 * @param payloadLen The length of the message
+	 * @param maskingKey The masking key of the message
+	 * @throws IOException
+	 */
+	private void handleMessage(int opcode, int fin, long payloadLen, int[] maskingKey) throws IOException {
 		if(opcode < OPCODE_CONNECTION_CLOSE) {
-			currentMessage.add(input,payloadLen,maskingKey);
-			if(fin == 1) {
-				currentMessage.complete();
-				server.handleMessage(currentMessage);
-				currentMessage = null;
-			}
+			handleContinuedFrame(fin,payloadLen,maskingKey);
 		} else {
-			Message controlMessage = new Message(this,opcode);
-			controlMessage.add(input,payloadLen,maskingKey);
-			controlMessage.complete();
-			server.handleControlFrame(controlMessage);
+			handleControlFrame(opcode,payloadLen,maskingKey);
 		}
+	}
+
+	private void handleContinuedFrame(int fin, long payloadLen, int[] maskingKey) throws IOException {
+		currentMessage.add(input,payloadLen,maskingKey);
+		if(fin == 1) {
+			currentMessage.complete();
+			server.handleMessage(currentMessage);
+			currentMessage = null;
+		}
+	}
+
+	/**
+	 * Handles a received control frame.
+	 * 
+	 * @param opcode The opcode of the message
+	 * @param payloadLen The length of the message
+	 * @param maskingKey The masking key of the message
+	 * @throws IOException
+	 */
+	private void handleControlFrame(int opcode, long payloadLen, int[] maskingKey) throws IOException {
+		Message controlMessage = new Message(this,opcode);
+		controlMessage.add(input,payloadLen,maskingKey);
+		controlMessage.complete();
+		server.handleControlFrame(controlMessage);
 	}
 
 	/**
@@ -254,8 +332,12 @@ public final class Connection implements Runnable {
 	 * 
 	 * @throws IOException
 	 */
-	private void sendClose() throws IOException {
-		sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0]);
+	private void sendClose() {
+		try {
+			sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0]);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
