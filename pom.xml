@@ -18,9 +18,14 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+		
 
     </dependencies>
-
+<plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-surefire-report-plugin</artifactId>
+           <version>${surefire.reportplugin.version}</version>
+        </plugin>
 
 
 
