@@ -29,7 +29,7 @@ footer > div {
 }
 #main > div {
 	padding-top: 70px;
-	padding-bottom: 80px
+	padding-bottom: 70px;
 }
 #start a.btn {
 	margin-top: 5%;
@@ -80,7 +80,7 @@ footer > div {
 	background-image: url('./../img/windows.png');
 }
 .ui-tooltip {
-	color: #ccc;
+	color: #CCCCCC;
 	background-color: #333;
 }
 #pcbuilder-selection {
