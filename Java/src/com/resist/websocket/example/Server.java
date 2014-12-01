@@ -8,6 +8,7 @@ public class Server {
 		new ConnectionServer("145.24.222.119",8080,"/search")
 			.setMessageHandler(new MessageEchoer())
 			.setControlFrameHandler(new ControlFrameEchoer())
+			.setTimeout(60000)
 			.manageConnections();
 	}
 

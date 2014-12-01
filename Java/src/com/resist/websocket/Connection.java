@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -87,6 +88,9 @@ public final class Connection implements Runnable {
 			while((data = input.read()) != -1 && !stop) {
 				readAndHandleMessage(data);
 			}
+		} catch (SocketTimeoutException e) {
+			System.out.println("Closing connection.");
+			close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

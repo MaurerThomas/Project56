@@ -3,7 +3,6 @@ package com.resist.websocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 
 public final class ConnectionServer {
 	private String address;
@@ -145,7 +144,6 @@ public final class ConnectionServer {
 	 */
 	private void createSocket() throws IOException {
 		ServerSocket socket = new ServerSocket(port);
-		socket.setSoTimeout(timeout);
 		while(running) {
 			createConnections(socket);
 		}
@@ -160,20 +158,13 @@ public final class ConnectionServer {
 	 */
 	private void createConnections(ServerSocket socket) throws IOException {
 		Connection conn = null;
+		Socket client = socket.accept();
+		client.setSoTimeout(timeout);
 		try {
-			Socket client = socket.accept();
-			try {
-				conn = new Connection(this,client);
-				new Thread(conn).start();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		} catch (SocketTimeoutException e) {
-			if(conn != null) {
-				conn.close();
-			} else {
-				e.printStackTrace();
-			}
+			conn = new Connection(this,client);
+			new Thread(conn).start();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 }
