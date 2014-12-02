@@ -219,7 +219,6 @@ public final class Connection implements Runnable {
 		if((currentMessage == null || opcode != OPCODE_CONTINUATION_FRAME) && opcode < OPCODE_CONNECTION_CLOSE) {
 			currentMessage = new Message(this,opcode);
 		}
-		handleOpcodes(opcode);
 		nextByte = input.read();
 		int mask = nextByte >> 7;						//First bit
 		long payloadLen = getPayloadLength(nextByte);
@@ -238,20 +237,6 @@ public final class Connection implements Runnable {
 		int rsv2 = (nextByte >> 5) & 1;					//Third bit
 		int rsv3 = (nextByte >> 4) & 1;					//Fourth bit
 		return (rsv1 | rsv2 | rsv3) != 0;
-	}
-
-	/**
-	 * Handles opcodes.
-	 * 
-	 * @param opcode The opcode of the message
-	 * @throws IOException
-	 */
-	private void handleOpcodes(int opcode) throws IOException {
-		if(opcode == OPCODE_CONNECTION_CLOSE) {
-			stop = true;
-		} else if(opcode == OPCODE_PING) {
-			sendPong();
-		}
 	}
 
 	/**
@@ -307,6 +292,14 @@ public final class Connection implements Runnable {
 		}
 	}
 
+	/**
+	 * Handles the continuation of an incoming message.
+	 * 
+	 * @param fin The finished bit of the message
+	 * @param payloadLen The length of the message
+	 * @param maskingKey The masking key of the message
+	 * @throws IOException
+	 */
 	private void handleContinuedFrame(boolean fin, long payloadLen, int[] maskingKey) throws IOException {
 		currentMessage.add(input,payloadLen,maskingKey);
 		if(fin) {
@@ -328,16 +321,32 @@ public final class Connection implements Runnable {
 		Message controlMessage = new Message(this,opcode);
 		controlMessage.add(input,payloadLen,maskingKey);
 		controlMessage.complete();
+		handleOpcodes(controlMessage);
 		server.handleControlFrame(controlMessage);
+	}
+
+	/**
+	 * Handles default opcodes.
+	 * 
+	 * @param message The received message
+	 * @throws IOException
+	 */
+	private void handleOpcodes(Message message) throws IOException {
+		if(message.getType() == OPCODE_CONNECTION_CLOSE) {
+			stop = true;
+		} else if(message.getType() == OPCODE_PING) {
+			sendPong(message.toByteArray());
+		}
 	}
 
 	/**
 	 * Sends a pong response to the client.
 	 * 
+	 * @param message The message to return
 	 * @throws IOException
 	 */
-	public void sendPong() throws IOException {
-		sendMessage(true,OPCODE_PONG,null,new byte[0]);
+	public void sendPong(byte[] message) throws IOException {
+		sendMessage(true,OPCODE_PONG,null,message);
 	}
 
 	/**
