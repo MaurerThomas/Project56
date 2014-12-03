@@ -143,8 +143,12 @@ public final class Connection implements Runnable {
 		String line;
 		while((line = input.readLine()) != null && !line.isEmpty()) {
 			String[] args = line.split("\\s*:\\s*");
-			if(args.length == 2) {
-				List<String> values = Arrays.asList(args[1].split("\\s*,\\s*"));
+			if(args.length >= 2) {
+				String value = args[1];
+				for(int n=2;n < args.length;n++) {
+					value += args[n];
+				}
+				List<String> values = Arrays.asList(value.split("\\s*,\\s*"));
 				out.put(args[0].toLowerCase(),values);
 			}
 		}
@@ -466,7 +470,7 @@ public final class Connection implements Runnable {
 	 * Returns the payload length portion of the data frame for small payloads.
 	 * 
 	 * @param mask The first bit of the output
-	 * @param Length of the message
+	 * @param length of the message
 	 * @return The payload length of the data frame
 	 */
 	private byte[] getMessageSmallLengthBytes(int mask, int length) {
