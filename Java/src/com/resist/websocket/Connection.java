@@ -142,13 +142,9 @@ public final class Connection implements Runnable {
 		Map<String,List<String>> out = new HashMap<String,List<String>>();
 		String line;
 		while((line = input.readLine()) != null && !line.isEmpty()) {
-			String[] args = line.split("\\s*:\\s*");
+			String[] args = line.split("\\s*:\\s*",2);
 			if(args.length >= 2) {
-				String value = args[1];
-				for(int n=2;n < args.length;n++) {
-					value += args[n];
-				}
-				List<String> values = Arrays.asList(value.split("\\s*,\\s*"));
+				List<String> values = Arrays.asList(args[1].split("\\s*,\\s*"));
 				out.put(args[0].toLowerCase(),values);
 			}
 		}
