@@ -171,7 +171,7 @@ public final class Connection implements Runnable {
 			throw new IOException("Not a GET request.");
 		}
 		line = input.readLine();
-		if(!line.equals("Host: "+server.getAddress()+":"+server.getPort())) {
+		if(!line.contains("Host: "+server.getAddress())) {
 			throw new IOException("Wrong host.");
 		}
 	}
@@ -249,11 +249,11 @@ public final class Connection implements Runnable {
 	private long getPayloadLength(int nextByte) throws IOException {
 		long payloadLen = nextByte & ((1 << 7) - 1);	//Bit 2-8
 		if(payloadLen == 126) {
-			payloadLen += (input.read() << 8) + input.read();	//Next two bytes
+			payloadLen = (input.read() << 8) + input.read();	//Next two bytes
 		} else if(payloadLen == 127) {
 			byte[] length = new byte[8];						//Next 8 bytes as unsigned 64bit int
 			input.read(length);
-			payloadLen += new BigInteger(length).longValue();
+			payloadLen = new BigInteger(length).longValue();
 		}
 		return payloadLen;
 	}
@@ -480,7 +480,6 @@ public final class Connection implements Runnable {
 	private byte[] getMessageMediumLengthBytes(int mask, int length) {
 		byte[] out = new byte[3];
 		out[0] = (byte) (mask | 126);
-		length -= 126;
 		out[1] = (byte) (length >> 8);
 		out[2] = (byte) (length & ((1 << 8) - 1));
 		return out;
@@ -496,7 +495,6 @@ public final class Connection implements Runnable {
 	private byte[] getMessageLargeLengthBytes(int mask, int length) {
 		byte[] out = new byte[9];
 		out[0] = (byte) (mask | 127);
-		length -= 127;
 		for(int n=7, i=1;i < 8;n--,i++) {
 			out[i] = (byte) ((length >> (n * 8)) & ((1 << 8) - 1));
 		}
