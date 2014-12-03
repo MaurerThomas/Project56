@@ -163,6 +163,7 @@ public final class Connection implements Runnable {
 			throw new IOException("Not a GET request.");
 		}
 		Map<String,List<String>> headers = parseHTTP(input);
+		System.out.println(headers);
 		if(
 				headers.containsKey("host") &&
 				headers.containsKey("upgrade") &&
@@ -170,7 +171,7 @@ public final class Connection implements Runnable {
 				headers.containsKey("connection") &&
 				headers.containsKey("origin") &&
 				headers.get("host").contains(server.getAddress()+":"+server.getPort()) &&
-				headers.get("upgrade").contains("websocket") &&
+				(headers.get("upgrade").contains("websocket") || headers.get("upgrade").contains("Websocket") || headers.get("upgrade").contains("WebSocket")) &&
 				headers.get("sec-websocket-version").contains("13") &&
 				headers.get("connection").contains("Upgrade") &&
 				headers.get("origin").get(0).contains("://"+server.getAddress())
