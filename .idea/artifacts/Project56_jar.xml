@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Project56:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Project56_jar</output-path>
+    <root id="archive" name="Project56.jar">
+      <element id="module-output" name="Project56" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/elasticsearch java/lucene-analyzers-common-4.9.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Java/src/com/resist/websocket/commons-codec-1.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/elasticsearch java/lucene-core-4.9.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/json-20140107.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/elasticsearch java/elasticsearch-1.3.4.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
