@@ -12,6 +12,10 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -128,52 +132,53 @@ public final class Connection implements Runnable {
 	}
 
 	/**
+	 * Parses an HTTP header.
+	 * 
+	 * @param input The input stream to read from
+	 * @return A map of request headers
+	 * @throws IOException
+	 */
+	public static Map<String,List<String>> parseHTTP(BufferedReader input) throws IOException {
+		Map<String,List<String>> out = new HashMap<String,List<String>>();
+		String line;
+		while((line = input.readLine()) != null && !line.isEmpty()) {
+			String[] args = line.split("\\s*:\\s*");
+			if(args.length == 2) {
+				List<String> values = Arrays.asList(args[1].split("\\s*,\\s*"));
+				out.put(args[0].toLowerCase(),values);
+			}
+		}
+		return out;
+	}
+
+	/**
 	 * Validates a handshake. Throws an IOException on failure.
 	 * 
 	 * @throws IOException
 	 */
 	private void parseHeader() throws IOException {
-		int headerChecksPassed = 0;
-		String line;
 		BufferedReader input = new BufferedReader(new InputStreamReader(this.input));
-		throwIfNotHttpRequest(input);
-		while((line = input.readLine()) != null && !line.isEmpty()) {
-			String[] args = line.split(": ");
-			if(args.length == 2) {
-				if(
-						(args[0].equals("Upgrade") && args[1].equals("websocket")) ||
-						(args[0].equals("Sec-WebSocket-Version") && args[1].equals("13")) ||
-						(args[0].equals("Connection") && args[1].contains("Upgrade")) ||
-						(args[0].equals("Origin") && args[1].contains("://"+server.getAddress()))
-				) {
-					headerChecksPassed++;
-				} else if(args[0].equals("Sec-WebSocket-Key")) {
-					key = args[1];
-					headerChecksPassed++;
-				}
-			}
-			if(headerChecksPassed == 5) {
-				return;
-			}
-		}
-		throw new IOException("Not a valid WebSocket request. "+headerChecksPassed);
-	}
-
-	/**
-	 * Throws an IOException if the stream doesn't contain an HTTP request.
-	 * 
-	 * @param input The input stream to read lines from
-	 * @throws IOException
-	 */
-	private void throwIfNotHttpRequest(BufferedReader input) throws IOException {
 		String line = input.readLine();
 		if(!line.equals("GET "+server.getPath()+" HTTP/1.1")) {
 			throw new IOException("Not a GET request.");
 		}
-		line = input.readLine();
-		if(!line.contains("Host: "+server.getAddress())) {
-			throw new IOException("Wrong host.");
+		Map<String,List<String>> headers = parseHTTP(input);
+		if(
+				headers.containsKey("host") &&
+				headers.containsKey("upgrade") &&
+				headers.containsKey("sec-websocket-version") &&
+				headers.containsKey("connection") &&
+				headers.containsKey("origin") &&
+				headers.get("host").contains(server.getAddress()+":"+server.getPort()) &&
+				headers.get("upgrade").contains("websocket") &&
+				headers.get("sec-websocket-version").contains("13") &&
+				headers.get("connection").contains("Upgrade") &&
+				headers.get("origin").get(0).contains("://"+server.getAddress())
+		) {
+			key = headers.get("sec-websocket-key").get(0);
+			return;
 		}
+		throw new IOException("Not a valid WebSocket request.");
 	}
 
 	/**
