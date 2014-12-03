@@ -163,7 +163,6 @@ public final class Connection implements Runnable {
 			throw new IOException("Not a GET request.");
 		}
 		Map<String,List<String>> headers = parseHTTP(input);
-		System.out.println(headers);
 		if(
 				headers.containsKey("host") &&
 				headers.containsKey("upgrade") &&
