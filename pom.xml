@@ -47,8 +47,8 @@
   </reporting>
 
       <build>
-      <sourceDirectory>Java/src/main/java</sourceDirectory>
-      <testSourceDirectory>Java/test/java</testSourceDirectory>
+      <sourceDirectory>Java/src/com/resist/websocket</sourceDirectory>
+      <testSourceDirectory>Java/src/test/com/resist/websocket</testSourceDirectory>
               <resources>
                     <resource>
                         <directory>Java/src/com/resist/searchhandler</directory>
