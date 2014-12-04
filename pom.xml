@@ -47,6 +47,8 @@
   </reporting>
 
       <build>
+      <sourceDirectory>Java/src/main/java</sourceDirectory>
+      <testSourceDirectory>Java/test/java</testSourceDirectory>
               <resources>
                     <resource>
                         <directory>Java/src/com/resist/searchhandler</directory>
