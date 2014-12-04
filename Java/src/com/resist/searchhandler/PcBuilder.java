@@ -61,7 +61,7 @@ public class PcBuilder implements MessageHandler {
         SearchResponse response = client.prepareSearch("zoeker")
 
                 .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                .setQuery(QueryBuilders.matchQuery("name",term))
+                .setQuery(QueryBuilders.matchQuery("model",term))
                 .setFrom(0).setSize(60).setExplain(true)
                 .execute()
                 .actionGet();
