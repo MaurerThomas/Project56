@@ -54,12 +54,7 @@
                     <resource>
                         <directory>Java/src/com/resist/websocket</directory>
                     </resource>
-                    <resource>
-                        <directory>Java/src/test/com/resist/searchhandler</directory>
-                    </resource>
-                  <resource>
-                      <directory>Java/src/test/com/resist/websocket</directory>
-                  </resource>
+                   
                 </resources>
             </build>
 
