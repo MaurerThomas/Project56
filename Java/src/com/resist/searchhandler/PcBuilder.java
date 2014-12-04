@@ -49,6 +49,7 @@ public class PcBuilder implements MessageHandler {
     private void handleJSON(Message message) {
         System.out.println(message.toString());
         JSONObject json;
+
         try {
             json = new JSONObject(message.toString());
         } catch(JSONException e) {
