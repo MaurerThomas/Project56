@@ -56,6 +56,18 @@
                     </resource>
                    
                 </resources>
+                 <testResources>
+                    <testResource>
+                        <directory>Java/src/test/com/resist/searchhandler</directory>
+                    </testResource>
+                    <testResource>
+                        <directory>Java/src/test/com/resist/websocket</directory>
+                    </testResource>
+                    
+                </testResources>
+                
+                
+                
             </build>
 
 
