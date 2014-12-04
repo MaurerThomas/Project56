@@ -46,14 +46,22 @@
     </plugins>
   </reporting>
 
-    <profiles>
-        <profile>
-            <id>otherOutputDir</id>
-            <build>
-                <directory>Java/src</directory>
+      <build>
+              <resources>
+                    <resource>
+                        <directory>Java/src/com/resist/searchhandler</directory>
+                    </resource>
+                    <resource>
+                        <directory>Java/src/com/resist/websocket</directory>
+                    </resource>
+                    <resource>
+                        <directory>Java/src/test/com/resist/searchhandler</directory>
+                    </resource>
+                  <resource>
+                      <directory>Java/src/test/com/resist/websocket</directory>
+                  </resource>
+                </resources>
             </build>
-        </profile>
-    </profiles>
 
 
 
