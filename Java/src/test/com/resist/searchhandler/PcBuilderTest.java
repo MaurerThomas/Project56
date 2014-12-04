@@ -14,7 +14,8 @@ import org.junit.After;
 public class PcBuilderTest { 
 
 @Before
-public void before() throws Exception { 
+public void before() throws Exception {
+
 } 
 
 @After
