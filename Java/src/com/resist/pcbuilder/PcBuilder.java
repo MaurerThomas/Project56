@@ -16,13 +16,13 @@ public class PcBuilder implements MessageHandler {
 	private MySQLConnection mysql;
 
 	public static void main(String[] args) {
-		new PcBuilder("145.24.222.119", 8080, "/search", "elasticsearch", "pcbuilder", "pcbuilder", "project");
+		new PcBuilder("145.24.222.119", 8080, "/search", "elasticsearch", "localhost", 3306, "pcbuilder", "pcbuilder", "project");
 	}
 
-	public PcBuilder(String address, int port, String path, String elasticCluster,String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
+	public PcBuilder(String address, int port, String path, String elasticCluster, String mysqlAddress, int mysqlPort, String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
 		searchHandler = new SearchHandler(address, port, elasticCluster);
 		try {
-			mysql = new MySQLConnection(address,port,mysqlDatabase,mysqlUsername,mysqlPassword);
+			mysql = new MySQLConnection(mysqlAddress,mysqlPort,mysqlDatabase,mysqlUsername,mysqlPassword);
 		} catch (SQLException e) {
 			searchHandler.close();
 			e.printStackTrace();
