@@ -5,7 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Home | Resist</title>
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 	<script src="./js/jquery.min.js"></script>
 	<script src="./js/bootstrap.min.js"></script>
 	<script src="./js/jquery-ui.min.js"></script>
@@ -22,543 +22,563 @@
 	<![endif]-->
 </head>
 <body>
-<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-        		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-            <a href="./" class="navbar-brand"><span style="font-size: 1.7em; color: #777;">Resist</span></a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <li><a href="./">Home</a></li>
-                <li><a href="./about.html">Over</a></li>
-                <li><a href="./legal.html">Voorwaarden</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div id="main" class="container">
-	<div>
-		<div class="jumbotron text-center" id="start">
-			<h1>PC Builder</h1>
-			<noscript>
-				<p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span> Javascript is vereist om gebruik te maken van de PC builder.</p>
-			</noscript>
-			<a href="#" class="btn btn-lg btn-primary">Bouw een PC!</a>
-		</div>
-		<div id="pcbuilder" class="hidden">
-			<h1>PC Builder</h1>
-			<div id="pcbuilder-selection">
-				<h2>Uw onderdelen:</h2>
-				<div class="row">
-					<div class="col-sm-6 col-md-3">
-						<div class="moederbord">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="processor">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="processorkoeler">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="hardeschijf">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-6 col-md-3">
-						<div class="geheugen">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="grafischekaart">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="voeding">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-					<div class="col-sm-6 col-md-3">
-						<div class="behuizing">
-							<h3 class="selection-title">
-								Geen selectie
-							</h3>
-						</div>
-					</div>
-				</div>
+	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="./" class="navbar-brand"><span style="font-size: 1.7em; color: #777;">Resist</span></a>
 			</div>
-			<div class="row">
-				<div class="col-xs-2" style="max-width:64px;">
-					<ul class="pcbuilder-tabs">
-						<li class="active"><a href="#moederbord" data-toggle="tab" title="Moederbord"></a></li>
-						<li><a href="#processor" data-toggle="tab" title="Processor"></a></li>
-						<li><a href="#processorkoeler" data-toggle="tab" title="Processor koeler"></a></li>
-						<li><a href="#hardeschijf" data-toggle="tab" title="Harde schijf"></a></li>
-						<li><a href="#geheugen" data-toggle="tab" title="Geheugen"></a></li>
-						<li><a href="#grafischekaart" data-toggle="tab" title="Grafische kaart"></a></li>
-						<li><a href="#voeding" data-toggle="tab" title="Voeding"></a></li>
-						<li><a href="#behuizing" data-toggle="tab" title="Behuizing"></a></li>
-						<li><a href="#besturingssysteem" data-toggle="tab" title="Besturingssysteem"></a></li>
-					</ul>
-				</div>
-				<div class="col-xs-10">
-					<div class="tab-content">
-						<div class="tab-pane active" id="moederbord">
-							<form class="form-inline" style="margin-left:5px;">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchmoederbord">Zoek een moederbord</label>
-										<input class="form-control" id="searchmoederbord" type="search" placeholder="Zoek een moederbord" />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <label for="moederbordsocketmerklabel">Selecteer merk van de processor</label>
-                                    <select class="form-control" id="moederbordsocketmerk">
-                                        <option></option>
-                                        <option>AMD</option>
-                                        <option>Intel</option>
-                                    </select>
-                                </div>
-                                <div id="group1" class="form-group" style="display:none;">
-                                    <label for="moederbordsocketlabelamd">Selecteer de socket</label>
-                                    <select class="form-control" id="moederbordsocketamd">
-                                        <option>Socket 940</option>
-                                        <option>Socket AM1</option>
-                                        <option>Socket AM3</option>
-                                        <option>Socket AM3+</option>
-                                        <option>Socket C32</option>
-                                        <option>Socket F </option>
-                                        <option>Socket FM1</option>
-                                        <option>Socket FM2</option>
-                                        <option>Socket FM2+</option>
-                                        <option>Socket G34</option>
-                                    </select>
-                                </div>
-								<div id="group2" class="form-group" style="display:none;">
-                                    <label for="moederbordsocketlabelintel">Selecteer de socket</label>
-                                    <select class="form-control" id="moederbordsocketintel">
-                                        <option>Socket 478</option>
-                                        <option>Socket 771 </option>
-                                        <option>Socket 775</option>
-                                        <option>Socket 946</option>
-                                        <option>Socket 988</option>
-                                        <option>Socket 1150</option>
-                                        <option>Socket 1155</option>
-                                        <option>Socket 1366</option>
-                                        <option>Socket 2011</option>
-                                        <option>Socket 2011-3</option>
-                                    </select>
-                                </div>
-							</form>
-						</div>
-						<div class="tab-pane" id="processor">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchprocessor">Zoek een processor</label>
-										<input class="form-control" id="searchprocessor" type="search" placeholder="Zoek een processor" />
-									</div>
-								</div>
-								<div class="form-group">
-                                    <label for="processormerklabel">Selecteer merk van de processor</label>
-                                    <select class="form-control" id="processormerk">
-                                        <option></option>
-                                        <option>AMD</option>
-                                        <option>Intel</option>
-                                    </select>
-                                </div>
-								<div id="group3" class="form-group" style="display:none;">
-                                    <label for="processorsocketlabelamd">Selecteer de socket</label>
-                                    <select class="form-control" id="processorsocketamd">
-                                        <option>Socket 940</option>
-                                        <option>Socket AM1</option>
-                                        <option>Socket AM3</option>
-                                        <option>Socket AM3+</option>
-                                        <option>Socket C32</option>
-                                        <option>Socket F </option>
-                                        <option>Socket FM1</option>
-                                        <option>Socket FM2</option>
-                                        <option>Socket FM2+</option>
-                                        <option>Socket G34</option>
-                                    </select>
-                                </div>
-								<div id="group4" class="form-group" style="display:none;">
-                                    <label for="processorsocketlabelintel">Selecteer de socket</label>
-                                    <select class="form-control" id="processorsocketintel">
-                                        <option>Socket 478</option>
-                                        <option>Socket 771 </option>
-                                        <option>Socket 775</option>
-                                        <option>Socket 946</option>
-                                        <option>Socket 988</option>
-                                        <option>Socket 1150</option>
-                                        <option>Socket 1155</option>
-                                        <option>Socket 1366</option>
-                                        <option>Socket 2011</option>
-                                        <option>Socket 2011-3</option>
-                                    </select>
-                                </div>
-								<div id="group5" class="form-group" style="display:none;">
-                                    <label for="processorsocketlabelintelfamilie">Selecteer de processor familie</label>
-                                    <select class="form-control" id="processorsocketintelfamilie">
-                                        <option>Celeron</option>
-                                        <option>Celeron M</option>
-                                        <option>Core 2 Duo</option>
-                                        <option>Core i5</option>
-                                        <option>Core i3</option>
-                                        <option>Core i7</option>
-                                        <option>Pentium</option>
-                                        <option>Pentium M</option>
-                                        <option>Xeon</option>
-                                    </select>
-                                </div>								
-							</form>
-                        </div>
-						<div class="tab-pane" id="processorkoeler">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchprocessorkoeler">Zoek een processorkoeler</label>
-										<input class="form-control" id="searchprocessorkoeler" type="search" placeholder="Zoek een processorkoeler" />
-									</div>
-								</div>
-								<div class="form-group">
-                                    <label for="processorkoelermerklabel">Selecteer merk van de processor</label>
-                                    <select class="form-control" id="processorkoelermerk">
-                                        <option></option>
-                                        <option>AMD</option>
-                                        <option>Intel</option>
-                                    </select>
-                                </div>
-								<div id="group6" class="form-group">
-                                    <label for="processorkoelerlabelamd">Selecteer de socket</label>
-                                    <select class="form-control" id="processorkoelersocketamd">
-                                        <option>Socket 940</option>
-                                        <option>Socket AM1</option>
-                                        <option>Socket AM3</option>
-                                        <option>Socket AM3+</option>
-                                        <option>Socket C32</option>
-                                        <option>Socket F</option>
-                                        <option>Socket FM1</option>
-                                        <option>Socket FM2</option>
-                                        <option>Socket FM2+</option>
-                                        <option>Socket G34</option>
-                                    </select>
-                                </div>
-								<div id="group7" class="form-group">
-                                    <label for="processorkoelerintel">Selecteer de socket</label>
-                                    <select class="form-control" id="processorkoelerintel">
-                                        <option>Socket 478</option>
-                                        <option>Socket 771 </option>
-                                        <option>Socket 775</option>
-                                        <option>Socket 946</option>
-                                        <option>Socket 988</option>
-                                        <option>Socket 1150</option>
-                                        <option>Socket 1155</option>
-                                        <option>Socket 1366</option>
-                                        <option>Socket 2011</option>
-                                        <option>Socket 2011-3</option>
-                                    </select>
-                                </div>
-							</form>
-                        </div>
-						<div class="tab-pane" id="geheugen">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchgeheugen">Zoek een geheugen</label>
-										<input class="form-control" id="searchgeheugen" type="search" placeholder="Zoek een geheugen" />
-									</div>
-								</div>
-                                <div id="group8" class="form-group">
-                                    <label for="geheugentype">Selecteer het geheugentype</label>
-                                    <select class="form-control" id="geheugentype">
-                                        <option></option>
-                                        <option>DDR</option>
-                                        <option>DDR (SODIMM) </option>
-                                        <option>DDR2</option>
-                                        <option>DDR2 (SODIMM) </option>
-                                        <option>DDR3</option>
-                                        <option>DDR3 (SODIMM) </option>
-                                        <option>DDR4</option>
-                                        <option>FB-DIMM</option>
-                                        <option>mDIMM</option>
-                                        <option>Rambus DRAM</option>
-                                        <option>SDR</option>
-                                        <option>SDR (SODIMM)</option>
-                                    </select>
-                                </div>
-							</form>
-                        </div>
-						<div class="tab-pane" id="grafischekaart">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchgrafischekaart">Zoek een grafischekaart</label>
-										<input class="form-control" id="searchgrafischekaart" type="search" placeholder="Zoek een grafischekaart" />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <label for="grafischekaartlabel">Selecteer merk van de grafischekaart</label>
-                                    <select class="form-control" id="grafischekaartlabel">
-                                        <option></option>
-                                        <option>AMD</option>
-                                        <option>Nvidia</option>
-                                        <option>Matrox</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="grafischekaartaansluiting">Selecteer aansluiting van de grafischekaart</label>
-                                    <select class="form-control" id="grafischekaartaansluiting">
-                                        <option>AGP 8x</option>
-                                        <option>PCI-e 2.0 x16</option>
-                                        <option>PCI-e 3.0 x16</option>
-                                        <option>PCI-e x1</option>
-                                        <option>PCI-e x8</option>
-                                        <option>PCI-e x16</option>
-                                        <option>AGP 4x</option>
-                                        <option>PCI-e 2.0 1x</option>
-                                        <option>PCI 2.2</option>
-                                        <option>PCI 3.0</option>
-                                    </select>
-                                </div>
-							</form>                        
-                        </div>
-						<div class="tab-pane" id="hardeschijf">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchhardeschijf">Zoek een hardeschijf</label>
-										<input class="form-control" id="searchhardeschijf" type="search" placeholder="Zoek een hardeschijf" />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <label for="hardeschijflabel">Selecteer type hardeschijf</label>
-                                    <select class="form-control" id="hardeschijflabel">
-                                        <option></option>
-                                        <option>Solid state drive</option>
-                                        <option>Interne harde schijf</option>
-                                        <option>Externe hardeschijf</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hardeschijfaansluitingssd">Selecteer type aansluiting</label>
-                                    <select class="form-control" id="hardeschijfaansluitingssd">
-                                        <option>mini-PCI Express</option>
-                                        <option>PCI-e 2.0 x1</option>
-                                        <option>PCI-e 2.0 x4</option>
-                                        <option>PCI-e 2.0 x8</option>
-                                        <option>PCI-e 3.0 x4</option>
-                                        <option>PCI-e 3.0 x8</option>
-                                        <option>PCI-e x4</option>
-                                        <option>M.2</option>
-                                        <option>mSATA</option>
-                                        <option>SATA-150</option>
-                                        <option>SATA-300</option>
-                                        <option>SATA-600</option>
-                                        <option>SATA Express</option>
-                                        <option>Expresscard</option>
-                                        <option>PCI Express</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hardeschijfaansluitingintern">Selecteer type aansluiting</label>
-                                    <select class="form-control" id="hardeschijfaansluitingintern">
-                                        <option>mSATA</option>
-                                        <option>SATA-150</option>
-                                        <option>SATA-300</option>
-                                        <option>SATA-600</option>
-                                        <option>PATA-100</option>
-                                        <option>PATA-133</option>
-                                        <option>PATA-33</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="hardeschijfaansluitingextern">Selecteer type aansluiting</label>
-                                    <select class="form-control" id="hardeschijfaansluitingextern">
-                                        <option>eSATA</option>
-                                        <option>Firewire 400</option>
-                                        <option>Firewire 800</option>
-                                        <option>Thunderbolt</option>
-                                        <option>USB 2.0</option>
-                                        <option>USB 3.0</option>
-                                        <option>USB 1.1</option>
-                                        <option>eSATAp</option>
-                                        <option>Mini SAS</option>
-                                        <option>SAS</option>
-                                        <option>Thunderbolt 2</option>
-                                    </select>
-                                </div>
-							</form>                        
-                        </div>
-						<div class="tab-pane" id="behuizing">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchbehuizing">Zoek een behuizing</label>
-										<input class="form-control" id="searchbehuizing" type="search" placeholder="Zoek een behuizing" />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <label for="behuizingformaatlabel">Selecteer type aansluiting</label>
-                                    <select class="form-control" id="behuizingformaatlabel">
-                                        <option>ATX (Standard) </option>
-                                        <option>EATX (Extended ATX) </option>
-                                        <option>Micro-ATX (µATX) </option>
-                                        <option>Mini-DTX</option>
-                                        <option>Mini-ITX</option>
-                                        <option>XL-ALX</option>
-                                        <option>BTX</option>
-                                        <option>CEB</option>
-                                        <option>DTX</option>
-                                        <option>EEB</option>
-                                        <option>Enchanced EATD (EEATX) </option>
-                                        <option>Flex-ATX</option>
-                                        <option>HPTX</option>
-                                        <option>Micro-BTX</option>
-                                        <option>SFF</option>
-                                        <option>SSI</option>
-                                        <option>Thin Mini-ITX</option>
-                                        <option>UCFF</option>
-                                    </select>
-                                </div>
-							</form>                        
-                        </div>
-						<div class="tab-pane" id="voeding">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchvoeding">Zoek een voeding</label>
-										<input class="form-control" id="searchvoeding" type="search" placeholder="Zoek een voeding" />
-									</div>
-								</div>
-                                <div class="form-group">
-                                    <label for="voedingwattagelabelmin">Selecteer minimale wattage</label>
-                                    <select class="form-control" id="voedingwattagelabelmin">
-                                        <option>50W</option>
-                                        <option>100W</option>
-                                        <option>150W</option>
-                                        <option>200W</option>
-                                        <option>250W</option>
-                                        <option>300W</option>
-                                        <option>350W</option>
-                                        <option>400W</option>
-                                        <option>450W</option>
-                                        <option>500W</option>
-                                        <option>550W</option>
-                                        <option>600W</option>
-                                        <option>650W</option>
-                                        <option>700W</option>
-                                        <option>750W</option>
-                                        <option>800W</option>
-                                        <option>850W</option>
-                                        <option>900W</option>
-                                        <option>950W</option>
-                                        <option>1000W</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label for="voedingwattagelabelmax">Selecteer maximale wattage</label>
-                                    <select class="form-control" id="voedingwattagelabelmax">
-                                        <option>50W</option>
-                                        <option>100W</option>
-                                        <option>150W</option>
-                                        <option>200W</option>
-                                        <option>250W</option>
-                                        <option>300W</option>
-                                        <option>350W</option>
-                                        <option>400W</option>
-                                        <option>450W</option>
-                                        <option>500W</option>
-                                        <option>550W</option>
-                                        <option>600W</option>
-                                        <option>650W</option>
-                                        <option>700W</option>
-                                        <option>750W</option>
-                                        <option>800W</option>
-                                        <option>850W</option>
-                                        <option>900W</option>
-                                        <option>950W</option>
-                                        <option>1000W</option>
-                                    </select>
-                                </div>
-							</form>                        
-                        </div>
-						<div class="tab-pane" id="besturingssysteem">
-                            <form class="form-inline">
-								<div class="form-group">
-									<div class="input-group">
-										<div class="input-group-addon">
-											<span class="glyphicon glyphicon-search"></span>
-										</div>
-										<label class="sr-only" for="searchbesturingssysteem">Zoek een besturingssysteem</label>
-										<input class="form-control" id="searchbesturingssysteem" type="search" placeholder="Zoek een besturingssysteem" />
-									</div>
-								</div>
-							</form>                        
-                        </div>
-					</div>
-				</div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="./">Home</a>
+					</li>
+					<li><a href="./about.html">Over</a>
+					</li>
+					<li><a href="./legal.html">Voorwaarden</a>
+					</li>
+				</ul>
 			</div>
 		</div>
 	</div>
-	<footer>
+	<div id="main" class="container">
 		<div>
-			<p>&copy; 2014 Resist. Door gebruik te maken van deze website gaat u akkoord met onze <a href="./legal.html">gebruikersvoorwaarden</a> inclusief ons <a href="./legal.html#cookies">cookiebeleid</a>.</p>
+			<div class="jumbotron text-center" id="start">
+				<h1>PC Builder</h1>
+				<noscript>
+					<p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span> Javascript is vereist om gebruik te maken van de PC builder.</p>
+				</noscript>
+				<a href="#" class="btn btn-lg btn-primary">Bouw een PC!</a>
+			</div>
+			<div id="pcbuilder" class="hidden">
+				<h1>PC Builder</h1>
+				<div id="pcbuilder-selection">
+					<h2>Uw onderdelen:</h2>
+					<div class="row">
+						<div class="col-sm-6 col-md-3">
+							<div class="moederbord">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="processor">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="processorkoeler">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="hardeschijf">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-6 col-md-3">
+							<div class="geheugen">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="grafischekaart">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="voeding">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+						<div class="col-sm-6 col-md-3">
+							<div class="behuizing">
+								<h3 class="selection-title">
+								Geen selectie
+							</h3>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-2" style="max-width:64px;">
+						<ul class="pcbuilder-tabs">
+							<li class="active">
+								<a href="#moederbord" data-toggle="tab" title="Moederbord"></a>
+							</li>
+							<li>
+								<a href="#processor" data-toggle="tab" title="Processor"></a>
+							</li>
+							<li>
+								<a href="#processorkoeler" data-toggle="tab" title="Processor koeler"></a>
+							</li>
+							<li>
+								<a href="#hardeschijf" data-toggle="tab" title="Harde schijf"></a>
+							</li>
+							<li>
+								<a href="#geheugen" data-toggle="tab" title="Geheugen"></a>
+							</li>
+							<li>
+								<a href="#grafischekaart" data-toggle="tab" title="Grafische kaart"></a>
+							</li>
+							<li>
+								<a href="#voeding" data-toggle="tab" title="Voeding"></a>
+							</li>
+							<li>
+								<a href="#behuizing" data-toggle="tab" title="Behuizing"></a>
+							</li>
+							<li>
+								<a href="#besturingssysteem" data-toggle="tab" title="Besturingssysteem"></a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-xs-10">
+						<div class="tab-content">
+							<div class="tab-pane active" id="moederbord">
+								<form class="form-inline" style="margin-left:5px;">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchmoederbord">Zoek een moederbord</label>
+											<input class="form-control" id="searchmoederbord" type="search" placeholder="Zoek een moederbord" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="moederbordsocketmerklabel">Selecteer merk van de processor</label>
+										<select class="form-control" id="moederbordsocketmerk">
+											<option></option>
+											<option>AMD</option>
+											<option>Intel</option>
+										</select>
+									</div>
+									<div id="group1" class="form-group" style="display:none;">
+										<label for="moederbordsocketlabelamd">Selecteer de socket</label>
+										<select class="form-control" id="moederbordsocketamd">
+											<option>Socket 940</option>
+											<option>Socket AM1</option>
+											<option>Socket AM3</option>
+											<option>Socket AM3+</option>
+											<option>Socket C32</option>
+											<option>Socket F</option>
+											<option>Socket FM1</option>
+											<option>Socket FM2</option>
+											<option>Socket FM2+</option>
+											<option>Socket G34</option>
+										</select>
+									</div>
+									<div id="group2" class="form-group" style="display:none;">
+										<label for="moederbordsocketlabelintel">Selecteer de socket</label>
+										<select class="form-control" id="moederbordsocketintel">
+											<option>Socket 478</option>
+											<option>Socket 771 </option>
+											<option>Socket 775</option>
+											<option>Socket 946</option>
+											<option>Socket 988</option>
+											<option>Socket 1150</option>
+											<option>Socket 1155</option>
+											<option>Socket 1366</option>
+											<option>Socket 2011</option>
+											<option>Socket 2011-3</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="processor">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchprocessor">Zoek een processor</label>
+											<input class="form-control" id="searchprocessor" type="search" placeholder="Zoek een processor" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="processormerklabel">Selecteer merk van de processor</label>
+										<select class="form-control" id="processormerk">
+											<option></option>
+											<option>AMD</option>
+											<option>Intel</option>
+										</select>
+									</div>
+									<div id="group3" class="form-group" style="display:none;">
+										<label for="processorsocketlabelamd">Selecteer de socket</label>
+										<select class="form-control" id="processorsocketamd">
+											<option>Socket 940</option>
+											<option>Socket AM1</option>
+											<option>Socket AM3</option>
+											<option>Socket AM3+</option>
+											<option>Socket C32</option>
+											<option>Socket F</option>
+											<option>Socket FM1</option>
+											<option>Socket FM2</option>
+											<option>Socket FM2+</option>
+											<option>Socket G34</option>
+										</select>
+									</div>
+									<div id="group4" class="form-group" style="display:none;">
+										<label for="processorsocketlabelintel">Selecteer de socket</label>
+										<select class="form-control" id="processorsocketintel">
+											<option>Socket 478</option>
+											<option>Socket 771</option>
+											<option>Socket 775</option>
+											<option>Socket 946</option>
+											<option>Socket 988</option>
+											<option>Socket 1150</option>
+											<option>Socket 1155</option>
+											<option>Socket 1366</option>
+											<option>Socket 2011</option>
+											<option>Socket 2011-3</option>
+										</select>
+									</div>
+									<div id="group5" class="form-group" style="display:none;">
+										<label for="processorsocketlabelintelfamilie">Selecteer de processor familie</label>
+										<select class="form-control" id="processorsocketintelfamilie">
+											<option>Celeron</option>
+											<option>Celeron M</option>
+											<option>Core 2 Duo</option>
+											<option>Core i5</option>
+											<option>Core i3</option>
+											<option>Core i7</option>
+											<option>Pentium</option>
+											<option>Pentium M</option>
+											<option>Xeon</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="processorkoeler">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchprocessorkoeler">Zoek een processorkoeler</label>
+											<input class="form-control" id="searchprocessorkoeler" type="search" placeholder="Zoek een processorkoeler" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="processorkoelermerklabel">Selecteer merk van de processor</label>
+										<select class="form-control" id="processorkoelermerk">
+											<option></option>
+											<option>AMD</option>
+											<option>Intel</option>
+										</select>
+									</div>
+									<div id="group6" class="form-group">
+										<label for="processorkoelerlabelamd">Selecteer de socket</label>
+										<select class="form-control" id="processorkoelersocketamd">
+											<option>Socket 940</option>
+											<option>Socket AM1</option>
+											<option>Socket AM3</option>
+											<option>Socket AM3+</option>
+											<option>Socket C32</option>
+											<option>Socket F</option>
+											<option>Socket FM1</option>
+											<option>Socket FM2</option>
+											<option>Socket FM2+</option>
+											<option>Socket G34</option>
+										</select>
+									</div>
+									<div id="group7" class="form-group">
+										<label for="processorkoelerintel">Selecteer de socket</label>
+										<select class="form-control" id="processorkoelerintel">
+											<option>Socket 478</option>
+											<option>Socket 771</option>
+											<option>Socket 775</option>
+											<option>Socket 946</option>
+											<option>Socket 988</option>
+											<option>Socket 1150</option>
+											<option>Socket 1155</option>
+											<option>Socket 1366</option>
+											<option>Socket 2011</option>
+											<option>Socket 2011-3</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="geheugen">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchgeheugen">Zoek een geheugen</label>
+											<input class="form-control" id="searchgeheugen" type="search" placeholder="Zoek een geheugen" />
+										</div>
+									</div>
+									<div id="group8" class="form-group">
+										<label for="geheugentype">Selecteer het geheugentype</label>
+										<select class="form-control" id="geheugentype">
+											<option></option>
+											<option>DDR</option>
+											<option>DDR (SODIMM)</option>
+											<option>DDR2</option>
+											<option>DDR2 (SODIMM)</option>
+											<option>DDR3</option>
+											<option>DDR3 (SODIMM)</option>
+											<option>DDR4</option>
+											<option>FB-DIMM</option>
+											<option>mDIMM</option>
+											<option>Rambus DRAM</option>
+											<option>SDR</option>
+											<option>SDR (SODIMM)</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="grafischekaart">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchgrafischekaart">Zoek een grafischekaart</label>
+											<input class="form-control" id="searchgrafischekaart" type="search" placeholder="Zoek een grafischekaart" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="grafischekaartlabel">Selecteer merk van de grafischekaart</label>
+										<select class="form-control" id="grafischekaartlabel">
+											<option></option>
+											<option>AMD</option>
+											<option>Nvidia</option>
+											<option>Matrox</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="grafischekaartaansluiting">Selecteer aansluiting van de grafischekaart</label>
+										<select class="form-control" id="grafischekaartaansluiting">
+											<option>AGP 8x</option>
+											<option>PCI-e 2.0 x16</option>
+											<option>PCI-e 3.0 x16</option>
+											<option>PCI-e x1</option>
+											<option>PCI-e x8</option>
+											<option>PCI-e x16</option>
+											<option>AGP 4x</option>
+											<option>PCI-e 2.0 1x</option>
+											<option>PCI 2.2</option>
+											<option>PCI 3.0</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="hardeschijf">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchhardeschijf">Zoek een hardeschijf</label>
+											<input class="form-control" id="searchhardeschijf" type="search" placeholder="Zoek een hardeschijf" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="hardeschijflabel">Selecteer type hardeschijf</label>
+										<select class="form-control" id="hardeschijflabel">
+											<option></option>
+											<option>Solid state drive</option>
+											<option>Interne harde schijf</option>
+											<option>Externe hardeschijf</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="hardeschijfaansluitingssd">Selecteer type aansluiting</label>
+										<select class="form-control" id="hardeschijfaansluitingssd">
+											<option>mini-PCI Express</option>
+											<option>PCI-e 2.0 x1</option>
+											<option>PCI-e 2.0 x4</option>
+											<option>PCI-e 2.0 x8</option>
+											<option>PCI-e 3.0 x4</option>
+											<option>PCI-e 3.0 x8</option>
+											<option>PCI-e x4</option>
+											<option>M.2</option>
+											<option>mSATA</option>
+											<option>SATA-150</option>
+											<option>SATA-300</option>
+											<option>SATA-600</option>
+											<option>SATA Express</option>
+											<option>Expresscard</option>
+											<option>PCI Express</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="hardeschijfaansluitingintern">Selecteer type aansluiting</label>
+										<select class="form-control" id="hardeschijfaansluitingintern">
+											<option>mSATA</option>
+											<option>SATA-150</option>
+											<option>SATA-300</option>
+											<option>SATA-600</option>
+											<option>PATA-100</option>
+											<option>PATA-133</option>
+											<option>PATA-33</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="hardeschijfaansluitingextern">Selecteer type aansluiting</label>
+										<select class="form-control" id="hardeschijfaansluitingextern">
+											<option>eSATA</option>
+											<option>Firewire 400</option>
+											<option>Firewire 800</option>
+											<option>Thunderbolt</option>
+											<option>USB 2.0</option>
+											<option>USB 3.0</option>
+											<option>USB 1.1</option>
+											<option>eSATAp</option>
+											<option>Mini SAS</option>
+											<option>SAS</option>
+											<option>Thunderbolt 2</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="behuizing">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchbehuizing">Zoek een behuizing</label>
+											<input class="form-control" id="searchbehuizing" type="search" placeholder="Zoek een behuizing" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="behuizingformaatlabel">Selecteer type aansluiting</label>
+										<select class="form-control" id="behuizingformaatlabel">
+											<option>ATX (Standard)</option>
+											<option>EATX (Extended ATX)</option>
+											<option>Micro-ATX (µATX)</option>
+											<option>Mini-DTX</option>
+											<option>Mini-ITX</option>
+											<option>XL-ALX</option>
+											<option>BTX</option>
+											<option>CEB</option>
+											<option>DTX</option>
+											<option>EEB</option>
+											<option>Enchanced EATD (EEATX)</option>
+											<option>Flex-ATX</option>
+											<option>HPTX</option>
+											<option>Micro-BTX</option>
+											<option>SFF</option>
+											<option>SSI</option>
+											<option>Thin Mini-ITX</option>
+											<option>UCFF</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="voeding">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchvoeding">Zoek een voeding</label>
+											<input class="form-control" id="searchvoeding" type="search" placeholder="Zoek een voeding" />
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="voedingwattagelabelmin">Selecteer minimale wattage</label>
+										<select class="form-control" id="voedingwattagelabelmin">
+											<option>50W</option>
+											<option>100W</option>
+											<option>150W</option>
+											<option>200W</option>
+											<option>250W</option>
+											<option>300W</option>
+											<option>350W</option>
+											<option>400W</option>
+											<option>450W</option>
+											<option>500W</option>
+											<option>550W</option>
+											<option>600W</option>
+											<option>650W</option>
+											<option>700W</option>
+											<option>750W</option>
+											<option>800W</option>
+											<option>850W</option>
+											<option>900W</option>
+											<option>950W</option>
+											<option>1000W</option>
+										</select>
+									</div>
+									<div class="form-group">
+										<label for="voedingwattagelabelmax">Selecteer maximale wattage</label>
+										<select class="form-control" id="voedingwattagelabelmax">
+											<option>50W</option>
+											<option>100W</option>
+											<option>150W</option>
+											<option>200W</option>
+											<option>250W</option>
+											<option>300W</option>
+											<option>350W</option>
+											<option>400W</option>
+											<option>450W</option>
+											<option>500W</option>
+											<option>550W</option>
+											<option>600W</option>
+											<option>650W</option>
+											<option>700W</option>
+											<option>750W</option>
+											<option>800W</option>
+											<option>850W</option>
+											<option>900W</option>
+											<option>950W</option>
+											<option>1000W</option>
+										</select>
+									</div>
+								</form>
+							</div>
+							<div class="tab-pane" id="besturingssysteem">
+								<form class="form-inline">
+									<div class="form-group">
+										<div class="input-group">
+											<div class="input-group-addon">
+												<span class="glyphicon glyphicon-search"></span>
+											</div>
+											<label class="sr-only" for="searchbesturingssysteem">Zoek een besturingssysteem</label>
+											<input class="form-control" id="searchbesturingssysteem" type="search" placeholder="Zoek een besturingssysteem" />
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-	</footer>
-</div>
+		<footer>
+			<div>
+				<p>&copy; 2014 Resist. Door gebruik te maken van deze website gaat u akkoord met onze <a href="./legal.html">gebruikersvoorwaarden</a> inclusief ons <a href="./legal.html#cookies">cookiebeleid</a>.</p>
+			</div>
+		</footer>
+	</div>
 </body>
 </html>
