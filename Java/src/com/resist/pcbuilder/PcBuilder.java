@@ -16,7 +16,7 @@ public class PcBuilder implements MessageHandler {
 	private MySQLConnection mysql;
 
 	public static void main(String[] args) {
-		new PcBuilder("145.24.222.119", 8080, "/search", "elasticsearch", "pcbuilder", "root", "project");
+		new PcBuilder("145.24.222.119", 8080, "/search", "elasticsearch", "pcbuilder", "pcbuilder", "project");
 	}
 
 	public PcBuilder(String address, int port, String path, String elasticCluster,String mysqlDatabase, String mysqlUsername, String mysqlPassword) {
@@ -26,7 +26,7 @@ public class PcBuilder implements MessageHandler {
 		} catch (SQLException e) {
 			searchHandler.close();
 			e.printStackTrace();
-			return;
+			System.exit(1);
 		}
 		new ConnectionServer(address, port, path).setMessageHandler(this)
 				.setTimeout(24 * 60 * 60 * 1000).manageConnections();
