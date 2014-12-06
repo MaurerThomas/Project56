@@ -127,8 +127,11 @@ public final class Connection implements Runnable {
 	 * @throws NoSuchAlgorithmException
 	 */
 	private void handShake() throws IOException, NoSuchAlgorithmException {
-		parseHeader();
-		sendResponseHeader();
+		if(isWebSocketRequest()) {
+			sendResponseHeader();
+		} else {
+			close();
+		}
 	}
 
 	/**
@@ -152,15 +155,16 @@ public final class Connection implements Runnable {
 	}
 
 	/**
-	 * Validates a handshake. Throws an IOException on failure.
+	 * Validates a handshake.
 	 * 
+	 * @return True if the request is a valid WebSocket request
 	 * @throws IOException
 	 */
-	private void parseHeader() throws IOException {
+	private boolean isWebSocketRequest() throws IOException {
 		BufferedReader input = new BufferedReader(new InputStreamReader(this.input));
 		String line = input.readLine();
 		if(!line.equals("GET "+server.getPath()+" HTTP/1.1")) {
-			throw new IOException("Not a GET request.");
+			return false;
 		}
 		Map<String,List<String>> headers = parseHTTP(input);
 		if(
@@ -176,9 +180,9 @@ public final class Connection implements Runnable {
 				headers.get("origin").get(0).contains("://"+server.getAddress())
 		) {
 			key = headers.get("sec-websocket-key").get(0);
-			return;
+			return true;
 		}
-		throw new IOException("Not a valid WebSocket request.");
+		return false;
 	}
 
 	/**
