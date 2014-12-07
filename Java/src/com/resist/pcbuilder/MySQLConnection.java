@@ -63,7 +63,7 @@ public class MySQLConnection {
 	private String toHexString(byte[] hash) {
 		StringBuilder out = new StringBuilder();
 		for(byte b : hash) {
-			String h = Integer.toHexString(b);
+			String h = Integer.toHexString(b & 0xFF);
 			if(h.length() == 1) {
 				out.append("0");
 			}
