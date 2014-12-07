@@ -1,5 +1,7 @@
 package com.resist.pcbuilder;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -50,5 +52,36 @@ public class MySQLConnection {
 	private ResultSet executeQuery(String sql) throws SQLException {
 		PreparedStatement s = conn.prepareStatement(sql);
 		return s.executeQuery();
+	}
+
+	private String getPasswordHash(String password) throws NoSuchAlgorithmException {
+		MessageDigest md = MessageDigest.getInstance("SHA1");
+		byte[] hash = md.digest(password.getBytes());
+		return toHexString(hash);
+	}
+
+	private String toHexString(byte[] hash) {
+		StringBuilder out = new StringBuilder();
+		for(byte b : hash) {
+			String h = Integer.toHexString(b);
+			if(h.length() == 1) {
+				out.append("0");
+			}
+			out.append(h);
+		}
+		return out.toString();
+	}
+
+	public boolean isValidLogin(String username,String password) {
+		try {
+			password = getPasswordHash(password);
+			PreparedStatement s = conn.prepareStatement("SELECT 1 FROM admins WHERE username = ? AND password = ?");
+			s.setString(1,username);
+			s.setString(2,password);
+			ResultSet r = s.executeQuery();
+			return r.next();
+		} catch(SQLException | NoSuchAlgorithmException e) {
+			return false;
+		}
 	}
 }
