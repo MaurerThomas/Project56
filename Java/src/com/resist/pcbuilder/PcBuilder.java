@@ -59,6 +59,9 @@ public class PcBuilder implements MessageHandler {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		if(settings.has("adminPasswordSalt")) {
+			mysql.setSalt(settings.getString("adminPasswordSalt"));
+		}
 	}
 
 	private void listenForAdminConnections(JSONObject settings) {

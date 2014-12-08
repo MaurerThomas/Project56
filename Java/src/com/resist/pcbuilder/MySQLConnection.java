@@ -13,8 +13,14 @@ import org.json.JSONObject;
 
 public class MySQLConnection {
 	private Connection conn;
+	private String salt = null;
+
 	public MySQLConnection(String address, int port, String dbName, String username, String password) throws SQLException {
 		conn = DriverManager.getConnection("jdbc:mysql://"+address+":"+port+"/"+dbName,username,password);
+	}
+
+	public void setSalt(String salt) {
+		this.salt = salt;
 	}
 
 	public void close() {
@@ -55,6 +61,9 @@ public class MySQLConnection {
 	}
 
 	private String getPasswordHash(String password) throws NoSuchAlgorithmException {
+		if(salt != null) {
+			password = salt+password;
+		}
 		MessageDigest md = MessageDigest.getInstance("SHA1");
 		byte[] hash = md.digest(password.getBytes());
 		return toHexString(hash);
