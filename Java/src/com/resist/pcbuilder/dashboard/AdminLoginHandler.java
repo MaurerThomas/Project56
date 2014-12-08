@@ -26,11 +26,14 @@ public class AdminLoginHandler implements MessageHandler {
 	@Override
 	public void handleMessage(Message message) {
 		Connection conn = message.getConnection();
-		if(!connections.containsKey(conn) && isValidLogin(message)) {
-			removeClosedSessions();
-			connections.put(conn,new AdminSession(pcbuilder));
+		if(!connections.containsKey(conn)) {
+			if(isValidLogin(message)) {
+				removeClosedSessions();
+				connections.put(conn,new AdminSession(pcbuilder));
+			}
+		} else {
+			connections.get(conn).handleMessage(message);
 		}
-		connections.get(conn).handleMessage(message);
 	}
 
 	private void removeClosedSessions() {

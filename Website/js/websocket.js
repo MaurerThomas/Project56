@@ -1,6 +1,6 @@
 var $webSocket = (function() {
 	var $initialised = false,
-	$webSocket = null;
+	$ws = null;
 
 	function init($address,$port,$path) {
 		var $protocol = 'ws';
@@ -8,11 +8,11 @@ var $webSocket = (function() {
 			if(window.location.protocol == 'https:') {
 				$protocol += 's';
 			}
-			$webSocket = new WebSocket($protocol+'://'+$address+':'+$port+$path);
-			$webSocket.onmessage = function($msg) {
+			$ws = new WebSocket($protocol+'://'+$address+':'+$port+$path);
+			$ws.onmessage = function($msg) {
 				$webSocket.receive($msg);
 			};
-			$webSocket.onclose = function($msg) {
+			$ws.onclose = function($msg) {
 				$webSocket.receiveClose($msg);
 			};
 			$initialised = true;
@@ -20,7 +20,7 @@ var $webSocket = (function() {
 	}
 
 	function send($json) {
-		$webSocket.send(JSON.stringify($json));
+		$ws.send(JSON.stringify($json));
 	}
 
 	return {
