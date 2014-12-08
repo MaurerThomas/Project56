@@ -10,10 +10,10 @@ var $webSocket = (function() {
 			}
 			$webSocket = new WebSocket($protocol+'://'+$address+':'+$port+$path);
 			$webSocket.onmessage = function($msg) {
-				this.receive($msg);
+				$webSocket.receive($msg);
 			};
 			$webSocket.onclose = function($msg) {
-				this.receiveClose($msg);
+				$webSocket.receiveClose($msg);
 			};
 			$initialised = true;
 		}
