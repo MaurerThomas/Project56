@@ -29,10 +29,20 @@
 		<noscript>
 			<p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span> Javascript is vereist om gebruik te maken van het admin dashboard.</p>
 		</noscript>
-		<form>
-			<input type="text" name="username" placeholder="Gebruikersnaam" />
-			<input type="password" name="password" placeholder="Wachtwoord" />
-			<input type="sumit" value="Login" />
+		<form  class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+			<div class="input-group" style="margin-bottom: 1em;">
+				<div class="input-group-addon">
+					<span class="glyphicon glyphicon-user"></span>
+				</div>
+				<input class="form-control" type="text" name="username" placeholder="Gebruikersnaam" />
+			</div>
+			<div class="input-group" style="margin-bottom: 2em;">
+				<div class="input-group-addon">
+					<span class="glyphicon glyphicon-lock"></span>
+				</div>
+				<input class="form-control" type="password" name="password" placeholder="Wachtwoord" />
+			</div>
+			<input class="btn btn-success" type="submit" value="Login" />
 		</form>
 	</div>
 </div>
