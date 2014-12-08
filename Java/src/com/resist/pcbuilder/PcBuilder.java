@@ -1,5 +1,6 @@
 package com.resist.pcbuilder;
 
+import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -17,30 +18,52 @@ public class PcBuilder implements MessageHandler {
 	private MySQLConnection mysql;
 
 	public static void main(String[] args) {
-		//TODO settings uit een bestand inlezen
-		JSONObject settings = new JSONObject();
-		settings.put("address","145.24.222.119");
-		settings.put("port",8080);
-		settings.put("path","/search");
-		settings.put("timeout",6*60*60*1000);
-		settings.put("adminTimeout",30*60*1000);
-		settings.put("adminPort",8081);
-		settings.put("adminPath","/admin");
-		settings.put("elasticCluster","elasticsearch");
-		settings.put("elasticPort",9300);
-		settings.put("mysqlAddress","localhost");
-		settings.put("mysqlPort",3306);
-		settings.put("mysqlDatabase","pcbuilder");
-		settings.put("mysqlUsername","pcbuilder");
-		settings.put("mysqlPassword","project");
-		new PcBuilder(settings);
+		if(args.length > 0) {
+			try {
+				new PcBuilder(getSettingsFromFile(args[0]));
+				return;
+			} catch (IOException e) {
+				e.printStackTrace();
+				fatalError("Could not read settings file.");
+			} catch (JSONException e) {
+				fatalError("Invalid settings file.");
+			}
+		} else {
+			fatalError("No settings path specified.");
+		}
+	}
+
+	private static JSONObject getSettingsFromFile(String path) throws IOException {
+		FileReader reader = new FileReader(path);
+		StringBuffer settings = new StringBuffer();
+		int c = -1;
+		while((c = reader.read()) != -1) {
+			settings.appendCodePoint(c);
+		}
+		reader.close();
+		return new JSONObject(settings.toString());
+	}
+
+	public static void fatalError(String error) {
+		System.err.println(error);
+		System.exit(1);
 	}
 
 	public PcBuilder(JSONObject settings) {
+		if(!settingsArePresent(settings)) {
+			fatalError("Invalid settings file.");
+		}
 		searchHandler = new SearchHandler(settings.getString("address"), settings.getInt("elasticPort"), settings.getString("elasticCluster"));
 		connectToMySQL(settings);
 		listenForAdminConnections(settings);
 		listenForConnections(settings);
+	}
+
+	private boolean settingsArePresent(JSONObject settings) {
+		return settings.has("address") && settings.has("port") && settings.has("path")
+				&& settings.has("adminPort") && settings.has("adminPath")
+				&& settings.has("elasticPort") && settings.has("elasticCluster")
+				&& settings.has("mysqlAddress") && settings.has("mysqlPort") && settings.has("mysqlDatabase");
 	}
 
 	public SearchHandler getSearchHandler() {
@@ -54,13 +77,13 @@ public class PcBuilder implements MessageHandler {
 	private void connectToMySQL(JSONObject settings) {
 		try {
 			mysql = new MySQLConnection(settings.getString("mysqlAddress"),settings.getInt("mysqlPort"),settings.getString("mysqlDatabase"),settings.getString("mysqlUsername"),settings.getString("mysqlPassword"));
+			if(settings.has("adminPasswordSalt")) {
+				mysql.setSalt(settings.getString("adminPasswordSalt"));
+			}
 		} catch (SQLException e) {
 			searchHandler.close();
 			e.printStackTrace();
 			System.exit(1);
-		}
-		if(settings.has("adminPasswordSalt")) {
-			mysql.setSalt(settings.getString("adminPasswordSalt"));
 		}
 	}
 
