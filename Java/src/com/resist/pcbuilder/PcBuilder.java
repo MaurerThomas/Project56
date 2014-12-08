@@ -63,8 +63,10 @@ public class PcBuilder implements MessageHandler {
 
 	private void listenForAdminConnections(JSONObject settings) {
 		final ConnectionServer admin = new ConnectionServer(settings.getString("address"), settings.getInt("adminPort"), settings.getString("adminPath"))
-			.setMessageHandler(new AdminLoginHandler(this))
-			.setTimeout(settings.getInt("adminTimeout"));
+			.setMessageHandler(new AdminLoginHandler(this));
+		if(settings.has("adminTimeout")) {
+			admin.setTimeout(settings.getInt("adminTimeout"));
+		}
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -74,10 +76,12 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	private void listenForConnections(JSONObject settings) {
-		new ConnectionServer(settings.getString("address"), settings.getInt("port"), settings.getString("path"))
-			.setMessageHandler(this)
-			.setTimeout(settings.getInt("timeout"))
-			.manageConnections();
+		final ConnectionServer user = new ConnectionServer(settings.getString("address"), settings.getInt("port"), settings.getString("path"))
+			.setMessageHandler(this);
+		if(settings.has("timeout")) {
+			user.setTimeout(settings.getInt("timeout"));
+		}
+		user.manageConnections();
 	}
 
 	@Override
