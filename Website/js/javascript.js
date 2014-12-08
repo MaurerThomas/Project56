@@ -1,7 +1,7 @@
 (function($) {
 	$(function() {
 		var $button = $('#start a.btn'),
-		$compatibility = compatibilityCheck($button);
+		$compatibility = checkCompatibility($button);
 		$button.click(function($e) {
 			$e.preventDefault();
 			$('#pcbuilder').removeClass();

@@ -1,5 +1,5 @@
 $(function() {
-	var $compatibility = compatibilityCheck($('form input[type="submit"]'));
+	var $compatibility = checkCompatibility($('form input[type="submit"]'));
 	if($compatibility.WebSocket) {
 		$webSocket.init('145.24.222.119','8081','/admin');
 		$webSocket.receive = function($msg) {
