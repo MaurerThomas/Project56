@@ -31,4 +31,10 @@ $(function() {
 			$('#group5').hide().fadeOut();
 		}
 	});
+    
+    $('input[type="range"]').each(function() {
+        $(this).on('input',function() {
+            $('output[for="'+this.id+'"]').text($(this).val());
+        });
+    });
 });
