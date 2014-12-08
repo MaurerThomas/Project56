@@ -33,7 +33,7 @@ $(function() {
 	});
     
     $('input[type="range"]').each(function() {
-        $(this).on('input',function() {
+        $(this).change(function() {
             $('output[for="'+this.id+'"]').text($(this).val());
         });
     });
