@@ -1,5 +1,5 @@
-$(function() {
-	var $websocket = check('WebSocket'), $JSON = check('JSON'), $localStorage = check('localStorage'), $button = $('#start a.btn');
+function checkCompatibility($button) {
+	var $websocket = check('WebSocket'), $JSON = check('JSON'), $localStorage = check('localStorage');
 
 	if(!$localStorage) {
 		addWarning('Uw browser ondersteund geen LocalStorage of uw cookies staan uit. Als u de pagina verlaat gaan uw geselecteerde onderdelen verloren.');
@@ -20,11 +20,12 @@ $(function() {
 		$button.before('<p class="text-warning"><span class="glyphicon glyphicon-warning-sign"></span> '+$message+'</p>');
 	}
 
-
 	function check($property) {
 		try {
 			return (window[$property] !== undefined && window[$property] !== null);
 		} catch($e) {}
 		return false;
 	}
-});
+
+	return {localStorage: $localStorage, JSON: $JSON, WebSocket: $websocket};
+}
