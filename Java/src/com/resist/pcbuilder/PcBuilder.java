@@ -98,7 +98,7 @@ public class PcBuilder implements MessageHandler {
 			public void run() {
 				admin.manageConnections();
 			}
-		}).run();
+		}).start();
 	}
 
 	private void listenForConnections(JSONObject settings) {

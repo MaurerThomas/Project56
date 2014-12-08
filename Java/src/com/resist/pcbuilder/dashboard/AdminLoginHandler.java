@@ -27,8 +27,8 @@ public class AdminLoginHandler implements MessageHandler {
 	public void handleMessage(Message message) {
 		Connection conn = message.getConnection();
 		if(!connections.containsKey(conn) && isValidLogin(message)) {
-			connections.put(conn,new AdminSession(pcbuilder));
 			removeClosedSessions();
+			connections.put(conn,new AdminSession(pcbuilder));
 		}
 		connections.get(conn).handleMessage(message);
 	}
