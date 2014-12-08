@@ -8,8 +8,8 @@ $(function() {
 	}
 	$('form').submit(function($e) {
 		$e.preventDefault();
-		var $username = $('input[name="username"]'),
-		$password = $('input[name="password"]');
+		var $username = $('input[name="username"]').val(),
+		$password = $('input[name="password"]').val();
 		$webSocket.send({
 			login: {
 				username: $username,
