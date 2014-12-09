@@ -1,0 +1,21 @@
+from scrapy.spider import Spider
+from scrapy.selector import Selector
+from alternate.items import AlternateItem
+
+class spin_Spider(Spider):
+	name = "spin"
+	allowed_domains = ["alternate.nl"] 
+	start_urls = ["https://www.alternate.nl/html/product/listing.html?size=500&lk=9884&tk=7&navId=14418",
+		      "https://www.alternate.nl/html/product/listing.html?size=500&bgid=8148&lk=9309&tk=7&navId=2436"]
+
+	def parse (self,response):
+		products = response.xpath('//*[starts-with(@class,"listRow")]')
+		items = []
+		for product in products:
+			item = AlternateItem()
+			item['name'] = product.xpath('a/span/span/h2/*[starts-with(@class,"name")]/span/text()').extract()
+			item['price'] = product.xpath('div/p/*[starts-with(@class,"price right")]/text() || div/p/span/sup/text()').extract()
+			item['euro'] = product.xpath('div/p/*[starts-with(@class,"price right")]/text()').extract()
+			item['cent'] = product.xpath('div/p/span/sup/text()').extract()
+			items.append(item)			
+		return items
