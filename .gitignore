@@ -1,3 +1,6 @@
 *.pyc
 *.py.save
 *.py.save.*
+.idea/
+*.iml
+*.class
