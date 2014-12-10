@@ -7,6 +7,8 @@ $(function() {
 			var $json = JSON.parse($msg.data);
 			if(!$json.login) {
 				$loginWarning.removeClass('hidden').fadeIn({complete: function() {$loginWarning.fadeOut(2000);}});
+			} else {
+				$webSocket.receive = htmlHandler;
 			}
 		};
 	}
