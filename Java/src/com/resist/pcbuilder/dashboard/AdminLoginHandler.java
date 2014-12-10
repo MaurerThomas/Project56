@@ -29,7 +29,7 @@ public class AdminLoginHandler implements MessageHandler {
 		if(!connections.containsKey(conn)) {
 			if(isValidLogin(message)) {
 				removeClosedSessions();
-				connections.put(conn,new AdminSession(pcbuilder));
+				connections.put(conn,new AdminSession(pcbuilder,message));
 			}
 		} else {
 			connections.get(conn).handleMessage(message);
@@ -69,11 +69,12 @@ public class AdminLoginHandler implements MessageHandler {
 			JSONObject login = input.getJSONObject("login");
 			if(login.has("password") && login.has("username")) {
 				JSONObject returnMessage = new JSONObject();
-				returnMessage.put("login",pcbuilder.getMysql().isValidLogin(login.getString("username"),login.getString("password")));
+				boolean loggedIn = pcbuilder.getMysql().isValidLogin(login.getString("username"),login.getString("password"));
+				returnMessage.put("login",loggedIn);
 				if(!message.getConnection().isClosed()) {
 					try {
 						message.getConnection().sendMessage(returnMessage.toString());
-						return true;
+						return loggedIn;
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

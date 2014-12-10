@@ -12,9 +12,20 @@ import com.resist.websocket.MessageHandler;
 
 public class AdminSession implements MessageHandler {
 	private PcBuilder pcbuilder;
+	private String username;
 
-	public AdminSession(PcBuilder pcbuilder) {
+	public AdminSession(PcBuilder pcbuilder, Message message) {
 		this.pcbuilder = pcbuilder;
+		this.username = new JSONObject(message.toString()).getJSONObject("login").getString("username");
+		initSession(message.getConnection());
+	}
+
+	private void initSession(Connection conn) {
+		JSONObject out = new JSONObject();
+		JSONObject html = new JSONObject();
+		html.put("#main","<div><h1>Welkom, "+username+"!</h1></div>");
+		out.put("html",html);
+		sendReturn(conn,out.toString());
 	}
 
 	@Override
@@ -24,7 +35,7 @@ public class AdminSession implements MessageHandler {
 			if(json != null) {
 				JSONObject out = handleJSON(json);
 				if(out != null) {
-					sendReturn(message,out.toString());
+					sendReturn(message.getConnection(),out.toString());
 				}
 			}
 		}
@@ -42,10 +53,10 @@ public class AdminSession implements MessageHandler {
 		return null;
 	}
 
-	private void sendReturn(Message conn, String message) {
-		if(!conn.getConnection().isClosed()) {
+	private void sendReturn(Connection conn, String message) {
+		if(!conn.isClosed()) {
 			try {
-				conn.getConnection().sendMessage(message);
+				conn.sendMessage(message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
