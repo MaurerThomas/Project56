@@ -1,17 +1,16 @@
 package com.resist.pcbuilder;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.SQLException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.resist.pcbuilder.dashboard.AdminLoginHandler;
 import com.resist.websocket.Connection;
 import com.resist.websocket.ConnectionServer;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class PcBuilder implements MessageHandler {
 	private SearchHandler searchHandler;
@@ -53,7 +52,7 @@ public class PcBuilder implements MessageHandler {
 		if(!settingsArePresent(settings)) {
 			fatalError("Invalid settings file.");
 		}
-		searchHandler = new SearchHandler(settings.getString("address"), settings.getInt("elasticPort"), settings.getString("elasticCluster"));
+		searchHandler = new SearchHandler(settings.getString("address"), settings.getInt("elasticPort"), settings.getString("elasticCluster"), this);
 		connectToMySQL(settings);
 		listenForAdminConnections(settings);
 		listenForConnections(settings);
@@ -133,7 +132,7 @@ public class PcBuilder implements MessageHandler {
 	private JSONObject handleJSON(Message message,JSONObject json) {
 		JSONObject out = new JSONObject();
 
-		if(json.has("term")) {
+		if(json.has("action") && json.getString("action").equals("filter")) {
 			out.put("resultaten", searchHandler.handleQuery(json));
 		} else if(json.has("action") && json.get("action").equals("init")) {
 			out.put("init",mysql.getInit());
