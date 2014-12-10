@@ -21,11 +21,18 @@ public class AdminSession implements MessageHandler {
 	}
 
 	private void initSession(Connection conn) {
-		JSONObject out = new JSONObject();
-		JSONObject html = new JSONObject();
-		html.put("#main","<div><h1>Welkom, "+username+"!</h1></div>");
-		out.put("html",html);
-		sendReturn(conn,out.toString());
+		new OutputBuilder().html("#main","<div>"
+				+ "<h1>Welkom, "+username+"!</h1>"
+				+ "<h2>Kies een dashboard</h2>"
+				+ "<div class=\"row\">"
+					+ "<div class=\"col-md-6\">#1</div>"
+					+ "<div class=\"col-md-6\">#2</div>"
+				+ "</div>"
+				+ "<div class=\"row\">"
+					+ "<div class=\"col-md-6\">#3</div>"
+					+ "<div class=\"col-md-6\">#4</div>"
+				+ "</div>"
+			+ "</div>").send(conn);
 	}
 
 	@Override
