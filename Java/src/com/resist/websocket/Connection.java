@@ -1,12 +1,8 @@
 package com.resist.websocket;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import org.apache.commons.codec.binary.Base64;
+
+import java.io.*;
 import java.math.BigInteger;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -16,8 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.codec.binary.Base64;
 
 public final class Connection implements Runnable {
 	public static final int OPCODE_CONTINUATION_FRAME = 0;
@@ -483,7 +477,7 @@ public final class Connection implements Runnable {
 	 * Returns the payload length portion of the data frame for medium payloads.
 	 * 
 	 * @param mask The first bit of the output
-	 * @param Length of the message
+	 * @param length of the message
 	 * @return The payload length of the data frame
 	 */
 	private byte[] getMessageMediumLengthBytes(int mask, int length) {
@@ -498,7 +492,7 @@ public final class Connection implements Runnable {
 	 * Returns the payload length portion of the data frame for large payloads.
 	 * 
 	 * @param mask The first bit of the output
-	 * @param Length of the message
+	 * @param length of the message
 	 * @return The payload length of the data frame
 	 */
 	private byte[] getMessageLargeLengthBytes(int mask, int length) {
