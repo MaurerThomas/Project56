@@ -91,6 +91,13 @@
 					<tag>${project.artifactId}-${project.version}</tag>
 					</configuration>
 				</plugin>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+					<configuration>
+					<deployAtEnd>true</deployAtEnd>
+					</configuration>
+					</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
