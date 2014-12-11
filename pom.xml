@@ -9,6 +9,12 @@
 	 <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
 	 <url>https://github.com/MaurerThomas/Project56/</url>
   	</scm>
+  	<distributionManagement>
+	<repository>
+	<id>myrepository</id>
+	<url>file:${project.build.directory}/repository/</url>
+	</repository>
+	</distributionManagement>
   	
 	<dependencies>
 		<dependency>
@@ -76,6 +82,13 @@
 						<source>1.6</source>
 						<target>1.6</target>
 						<compilerArgument></compilerArgument>
+					</configuration>
+				</plugin>
+				<plugin>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.8.1</version>
+					<configuration>
+					<tag>${project.artifactId}-${project.version}</tag>
 					</configuration>
 				</plugin>
 			</plugins>
