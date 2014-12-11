@@ -4,6 +4,10 @@
 	<groupId>project56</groupId>
 	<artifactId>project56</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<scm>
+	 <connection>scm:svn:https://github.com/MaurerThomas/Project56/svn_repo/trunk</connection>
+	 <url>https://github.com/MaurerThomas/Project56/view.cvs</url>
+  	</scm>
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>
