@@ -5,9 +5,9 @@
 	<artifactId>project56</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<scm>
-	 <connection>scm:svn:https://github.com/MaurerThomas/Project56/svn_repo/trunk</connection>
-	 <developerConnection>scm:svn:https://github.com/MaurerThomas/Project56/svn_repo/trunk</developerConnection>
-	 <url>https://github.com/MaurerThomas/Project56/view.cvs</url>
+	 <connection>scm:git:https://github.com/MaurerThomas/Project56/</connection>
+	 <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
+	 <url>https://github.com/MaurerThomas/Project56/</url>
   	</scm>
 	<dependencies>
 		<dependency>
