@@ -96,6 +96,7 @@
 					<version>2.8.2</version>
 					<configuration>
 					<deployAtEnd>true</deployAtEnd>
+					<skip>true</skip>
 					</configuration>
 					</plugin>
 			</plugins>
