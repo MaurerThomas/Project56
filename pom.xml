@@ -12,7 +12,7 @@
   	<distributionManagement>
 	<repository>
 	<id>myrepository</id>
-	<url>file:${project.build.directory}/repository/</url>
+	<url>https://github.com/MaurerThomas/Project56</url>
 	</repository>
 	</distributionManagement>
   	
