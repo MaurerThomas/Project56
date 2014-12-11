@@ -9,12 +9,7 @@
 	 <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
 	 <url>https://github.com/MaurerThomas/Project56/</url>
   	</scm>
-  	<distributionManagement>
-    	<repository>
-        <id>artifact-repository</id>
-        <url>https://github.com/MaurerThomas/Project56/releases</url>
-    	</repository>
-	</distributionManagement>
+  	
 	<dependencies>
 		<dependency>
 			<groupId>org.json</groupId>
