@@ -12,7 +12,7 @@
   	<distributionManagement>
 	<repository>
 	<id>myrepository</id>
-	<url>/var/lib/jenkins/.m2/repository/project56/project56/43/project56-43.jar</url>
+	<url>https://github.com/MaurerThomas/Project56</url>
 	</repository>
 	</distributionManagement>
   	
