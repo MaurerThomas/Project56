@@ -133,7 +133,7 @@ public class PcBuilder implements MessageHandler {
 		JSONObject out = new JSONObject();
 
 		if(json.has("action") && json.getString("action").equals("filter")) {
-			out.put("resultaten", searchHandler.handleQuery(json));
+			out.put("resultaten", searchHandler.handleMethod(json));
 		} else if(json.has("action") && json.get("action").equals("init")) {
 			out.put("init",mysql.getInit());
 		}

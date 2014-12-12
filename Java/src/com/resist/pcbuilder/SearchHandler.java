@@ -12,6 +12,8 @@ import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class SearchHandler {
@@ -30,53 +32,56 @@ public class SearchHandler {
 		return client;
 	}
 
-	public JSONArray handleQuery(JSONObject json) {
+    public JSONArray handleMethod(JSONObject json) {
+
+        if (json.has("type") && json.has("merk")) {
+            System.out.println("Multimatch query");
+            handleQuery(json.getString("type"), json);
+        } else {
+            System.out.println("matchQuery");
+            if (json.has("type")) {
+                return handleComponentType(json.getString("type"), json);
+            }
+        }
+        return null;
+    }
+
+
+	public JSONArray handleQuery(String text,JSONObject json) {
         int lengteJson = json.length();
-        String zoek1 = "";
-        String zoek2 = "";
+        List<String> fields = new ArrayList<>();
+
         System.out.println(lengteJson);
         System.out.println(json);
 
         //Moederbord
-        if (json.has("type") && json.has("model")){
-            zoek1 = "type" + "" + "model";
-
+        if (json.has("type") && json.has("merk")){
+          fields.add("type");
+          fields.add("merk");
         }
-        System.out.println(zoek1);
-
-
+        System.out.println(fields);
 
         if (lengteJson > 2) {
-            System.out.println("Multimatch query");
+
                   SearchResponse response = client
                     .prepareSearch("zoeker")
-
                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                     .setQuery(
-                            QueryBuilders.multiMatchQuery("type" + "" + "model",zoek1)).setFrom(0).setSize(60)
+                            QueryBuilders.multiMatchQuery(text,fields.toArray(new String[fields.size()]))).setFrom(0).setSize(60)
                     .setExplain(true).execute().actionGet();
 
             SearchHit[] results = response.getHits().getHits();
             JSONArray resultaten = new JSONArray();
             System.out.println("Current results: " + results.length);
             for (SearchHit hit : results) {
-
                 Map<String, Object> result = hit.getSource();
                 resultaten.put(new JSONObject(result));
             }
             return resultaten;
-        } else {
-            System.out.println("matchQuery");
-            if(json.has("type")) {
-                return handleComponentType(json.getString("type"),json);
-
-            } else {
+        }  else {
                 return null;
             }
-
         }
-
-    }
 
     public JSONArray handleComponentType(String type, JSONObject json){
 
