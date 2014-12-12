@@ -32,48 +32,28 @@ public class SearchHandler {
 
 	public JSONArray handleQuery(JSONObject json) {
         int lengteJson = json.length();
-
-        if(json.has("type")) {
-            return handleComponentType(json.getString("type"),json);
-        }
-
-      //  PreparedStatement s = pcBuilder.getMysql().("SELECT * FROM prijs_verloop");
-
-
-        String field = "";
-        String[] fields = null;
-
-        if (json.has("model")){
-            field = "model";
-        }
-        System.out.println(field);
+        String zoek1 = "";
+        String zoek2 = "";
+        System.out.println(lengteJson);
+        System.out.println(json);
 
         //Moederbord
-        if (json.has("merk") && json.has("socket")){
-            fields = new String[]{"merk","socket"};
-        }
-        //Processor
-        if (json.has("merk") && json.has("socket") ){
-            fields = new String[]{"merk","socket"};
-        }
-        //Harde schijf
-        if (json.has("type") && json.has("aansluiting")){
-            fields = new String[]{"type","aansluiting"};
-        }
-        //Grafische kaart
-        if (json.has("merk") && json.has("aansluiting")){
-            fields = new String[]{"merk","aansluiting"};
-        }
+        if (json.has("type") && json.has("model")){
+            zoek1 = "type" + "" + "model";
 
-        if (lengteJson == 1) {
+        }
+        System.out.println(zoek1);
 
-            SearchResponse response = client
+
+
+        if (lengteJson > 2) {
+            System.out.println("Multimatch query");
+                  SearchResponse response = client
                     .prepareSearch("zoeker")
 
                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                     .setQuery(
-                            QueryBuilders.matchQuery(field,
-                                    json.getString("term"))).setFrom(0).setSize(60)
+                            QueryBuilders.multiMatchQuery("type" + "" + "model",zoek1)).setFrom(0).setSize(60)
                     .setExplain(true).execute().actionGet();
 
             SearchHit[] results = response.getHits().getHits();
@@ -86,25 +66,14 @@ public class SearchHandler {
             }
             return resultaten;
         } else {
+            System.out.println("matchQuery");
+            if(json.has("type")) {
+                return handleComponentType(json.getString("type"),json);
 
-            SearchResponse response = client
-                    .prepareSearch("zoeker")
-
-                    .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-                    .setQuery(
-                            QueryBuilders.multiMatchQuery(fields,
-                                    json.getString("term"))).setFrom(0).setSize(60)
-                    .setExplain(true).execute().actionGet();
-
-            SearchHit[] results = response.getHits().getHits();
-            JSONArray resultaten = new JSONArray();
-            System.out.println("Current results: " + results.length);
-            for (SearchHit hit : results) {
-
-                Map<String, Object> result = hit.getSource();
-                resultaten.put(new JSONObject(result));
+            } else {
+                return null;
             }
-            return resultaten;
+
         }
 
     }
