@@ -17,8 +17,17 @@ public class OutputBuilder {
 		return put("html",key.toString(),value.toString());
 	}
 
+	public OutputBuilder htmlTemplate(Object key,String template) {
+		JSONObject value = new JSONObject().put("template",template);
+		return html(key,value);
+	}
+
 	public OutputBuilder text(Object key,Object value) {
 		return put("text",key.toString(),value.toString());
+	}
+
+	public OutputBuilder replace(Object key,Object value) {
+		return put("replace",key.toString(),value.toString());
 	}
 
 	private OutputBuilder put(String object,String key,String value) {
