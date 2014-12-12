@@ -51,10 +51,10 @@ function htmlHandler($msg) {
 	}
 
 	function parseTemplate($template) {
-		var $html = $($template), $span;
-		$template.find('span[data-replace]').each(function() {
-			$span = $(this);
-			$span.text($replacements[$span.attr('data-replace')]);
+		var $html = $($template), $element;
+		$template.find('[data-replace]').each(function() {
+			$element = $(this);
+			$element.html($replacements[$element.attr('data-replace')]);
 		});
 	}
 
