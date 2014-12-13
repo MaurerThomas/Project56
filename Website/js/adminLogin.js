@@ -6,13 +6,13 @@ $(function() {
 		$webSocket.init('145.24.222.119','8081','/admin');
 		$webSocket.receive = function($msg) {
 			var $json = JSON.parse($msg.data);
+			$formButton.attr('disabled',false);
 			if(!$json.login) {
 				$loginWarning.removeClass('hidden').fadeIn({
 					complete: function() {
 						$loginWarning.fadeOut(2000);
 					}
 				});
-				$formButton.attr('disabled',false);
 			} else {
 				$webSocket.receive = htmlHandler;
 			}

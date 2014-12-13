@@ -1,0 +1,8 @@
+.admin-home .row > div > div {
+	padding: 1em;
+	margin: 0.5em 0;
+	display: block;
+}
+.admin-home .row > div > div > h3 {
+	margin-top: 0;
+}
