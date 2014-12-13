@@ -41,10 +41,10 @@ function htmlHandler($msg) {
 		if($templates[$template] === undefined) {
 			$.ajax({
 				type: 'GET',
-				url: './templates/'.$template.'.html',
+				url: './templates/'+$template+'.html',
 				async: false
 			}).success(function($responseText) {
-				return parseTemplate($responseText);
+				$templates[$template] = $responseText;
 			});
 		}
 		return parseTemplate($templates[$template]);
@@ -52,10 +52,11 @@ function htmlHandler($msg) {
 
 	function parseTemplate($template) {
 		var $html = $($template), $element;
-		$template.find('[data-replace]').each(function() {
+		$html.find('[data-replace]').each(function() {
 			$element = $(this);
 			$element.html($replacements[$element.attr('data-replace')]);
 		});
+		return $html;
 	}
 
 	function handleReplace($json) {
