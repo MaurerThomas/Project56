@@ -1,10 +1,18 @@
 function htmlHandler($msg) {
-	var $json = parseJSON($msg.data);
+	var $json = parseJSON($msg.data),
+	$replacements = {},
+	$templates = {};
 	if($json === null) {
 		return;
 	}
+	if($json.replace !== undefined) {
+		handleReplace($json.replace);
+	}
 	if($json.html !== undefined) {
-		handleHTML($json.html);
+		handleJQuery($json.html,'html');
+	}
+	if($json.text !== undefined) {
+		handleJQuery($json.text,'text');
 	}
 
 	function parseJSON($str) {
@@ -15,9 +23,44 @@ function htmlHandler($msg) {
 		return $json;
 	}
 
-	function handleHTML($json) {
+	function handleJQuery($json,$function) {
 		for(var $key in $json) {
-			$($key).html($json[$key]);
+			$($key)[$function](parseKey($json[$key]));
+		}
+	}
+
+	function parseKey($key) {
+		var $json = parseJSON($key);
+		if($json === null || $json.template !== undefined) {
+			return getTemplate($json.template);
+		}
+		return $key;
+	}
+
+	function getTemplate($template) {
+		if($templates[$template] === undefined) {
+			$.ajax({
+				type: 'GET',
+				url: './templates/'.$template.'.html',
+				async: false
+			}).success(function($responseText) {
+				return parseTemplate($responseText);
+			});
+		}
+		return parseTemplate($templates[$template]);
+	}
+
+	function parseTemplate($template) {
+		var $html = $($template), $element;
+		$template.find('[data-replace]').each(function() {
+			$element = $(this);
+			$element.html($replacements[$element.attr('data-replace')]);
+		});
+	}
+
+	function handleReplace($json) {
+		for(var $key in $json) {
+			$replacements[$key] = $json[$key];
 		}
 	}
 }

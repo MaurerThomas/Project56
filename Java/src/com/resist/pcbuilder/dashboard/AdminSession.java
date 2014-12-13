@@ -21,18 +21,7 @@ public class AdminSession implements MessageHandler {
 	}
 
 	private void initSession(Connection conn) {
-		new OutputBuilder().html("#main","<div>"
-				+ "<h1>Welkom, "+username+"!</h1>"
-				+ "<h2>Kies een dashboard</h2>"
-				+ "<div class=\"row\">"
-					+ "<div class=\"col-md-6\">#1</div>"
-					+ "<div class=\"col-md-6\">#2</div>"
-				+ "</div>"
-				+ "<div class=\"row\">"
-					+ "<div class=\"col-md-6\">#3</div>"
-					+ "<div class=\"col-md-6\">#4</div>"
-				+ "</div>"
-			+ "</div>").send(conn);
+		new OutputBuilder().replace("username",username).htmlTemplate("#main","index").send(conn);
 	}
 
 	@Override
