@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -160,6 +161,7 @@ public class MySQLConnection {
 			res.close();
 			s.close();
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return null;
 		}
 		return out;
@@ -175,11 +177,72 @@ public class MySQLConnection {
 		try {
 			PreparedStatement s = conn.prepareStatement("DELETE FROM admins WHERE aid = ?");
 			s.setInt(1,aid);
-			s.execute();
+			s.executeUpdate();
 			s.close();
 			return true;
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
+	}
+
+	/**
+	 * Adds an admin.
+	 * 
+	 * @param username The username for the new admin
+	 * @param password The password for the new admin
+	 * @return The id of the new admin, -1 on failure
+	 */
+	public int addAdmin(String username, String password) {
+		int out = -1;
+		try {
+			PreparedStatement s = conn.prepareStatement("INSERT INTO admins (username,password) VALUES(?,?)",Statement.RETURN_GENERATED_KEYS);
+			s.setString(1,username);
+			s.setString(2,password);
+			s.executeUpdate();
+			ResultSet res = s.getGeneratedKeys();
+			if(res.next()) {
+				out = res.getInt(1);
+			}
+			res.close();
+			s.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return out;
+	}
+
+	/**
+	 * Modifies an admin account.
+	 * 
+	 * @param aid The id of the admin to modify
+	 * @param username The username to assign to this admin
+	 * @param password The password to assign to this admin
+	 * @return True if the admin was modified
+	 */
+	public boolean modifyAdmin(int aid, String username, String password) {
+		PreparedStatement s;
+		try {
+			if(password == null) {
+				s = conn.prepareStatement("UPDATE admins SET username = ? WHERE aid = ?");
+				s.setString(1,username);
+				s.setInt(2,aid);
+			} else if(username == null) {
+				s = conn.prepareStatement("UPDATE admins SET password = ? WHERE aid = ?");
+				s.setString(1,password);
+				s.setInt(2,aid);
+			} else {
+				s = conn.prepareStatement("UPDATE admins SET username = ?, password = ? WHERE aid = ?");
+				s.setString(1,username);
+				s.setString(2,password);
+				s.setInt(3,aid);
+			}
+			s.executeUpdate();
+			s.close();
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
