@@ -1,10 +1,11 @@
 package com.resist.pcbuilder;
 
-import com.resist.pcbuilder.dashboard.AdminLoginHandler;
+import com.resist.pcbuilder.admin.AdminLoginHandler;
 import com.resist.websocket.Connection;
 import com.resist.websocket.ConnectionServer;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

@@ -1,4 +1,4 @@
-package com.resist.pcbuilder.dashboard;
+package com.resist.pcbuilder.admin;
 
 import java.io.IOException;
 import java.util.HashMap;
