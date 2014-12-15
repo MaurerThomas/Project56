@@ -2,20 +2,20 @@ package com.resist.pcbuilder.admin.dashboards;
 
 import org.json.JSONObject;
 
-import com.resist.pcbuilder.PcBuilder;
+import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 
 public class AdminFunctions implements Dashboard {
 	public static final String IDENTIFIER = "adminfunctions";
-	private PcBuilder pcbuilder;
+	private AdminSession session;
 
 	/**
 	 * Creates a new Admin Functions dashboard.
 	 * 
 	 * @param pcbuilder The PcBuilder this dashboard belongs to
 	 */
-	public AdminFunctions(PcBuilder pcbuilder) {
-		this.pcbuilder = pcbuilder;
+	public AdminFunctions(AdminSession session) {
+		this.session = session;
 	}
 
 	@Override
@@ -46,18 +46,18 @@ public class AdminFunctions implements Dashboard {
 	}
 
 	private JSONObject getAdmins() {
-		return new JSONObject().put("admins",pcbuilder.getMysql().getAdminList());
+		return new JSONObject().put("admins",session.getPcBuilder().getMysql().getAdminList());
 	}
 
 	private JSONObject deleteAdmin(int aid) {
-		return new JSONObject().put("adminDeleted",pcbuilder.getMysql().deleteAdmin(aid));
+		return new JSONObject().put("adminDeleted",session.getPcBuilder().getMysql().deleteAdmin(aid));
 	}
 
 	private JSONObject addAdmin(String username, String password) {
-		return new JSONObject().put("adminAdded",pcbuilder.getMysql().addAdmin(username,password));
+		return new JSONObject().put("adminAdded",session.getPcBuilder().getMysql().addAdmin(username,password));
 	}
 
 	private JSONObject modifyAdmin(int aid, String username, String password) {
-		return new JSONObject().put("adminModified",pcbuilder.getMysql().modifyAdmin(aid,username,password));
+		return new JSONObject().put("adminModified",session.getPcBuilder().getMysql().modifyAdmin(aid,username,password));
 	}
 }

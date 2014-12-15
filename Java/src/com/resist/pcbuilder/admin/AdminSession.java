@@ -29,7 +29,7 @@ public class AdminSession implements MessageHandler {
 	private void initDashboards() {
 		dashboards = new HashMap<String,Dashboard>();
 		dashboards.put("main",null);
-		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(pcbuilder));
+		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(this));
 	}
 
 	private void initSession(Connection conn) {
@@ -75,5 +75,13 @@ public class AdminSession implements MessageHandler {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public PcBuilder getPcBuilder() {
+		return pcbuilder;
 	}
 }
