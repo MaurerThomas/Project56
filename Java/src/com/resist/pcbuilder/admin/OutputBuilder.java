@@ -38,6 +38,10 @@ public class OutputBuilder {
 		return this;
 	}
 
+	public JSONObject getOutput() {
+		return output;
+	}
+
 	public boolean send(Connection conn) {
 		if(!conn.isClosed()) {
 			try {

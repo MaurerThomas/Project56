@@ -21,7 +21,7 @@ public class AdminFunctions implements Dashboard {
 	@Override
 	public JSONObject handleJSON(JSONObject input) {
 		if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
-			return getAdmins();
+			return new OutputBuilder().htmlTemplate("#main","dashboard_admin").getOutput();
 		} else if(input.has("action")) {
 			return handleActions(input);
 		}
@@ -33,6 +33,8 @@ public class AdminFunctions implements Dashboard {
 			return deleteAdmin(input.getInt("aid"));
 		} else if(input.getString("action").equals("addAdmin") && input.has("username") && input.has("password")) {
 			return addAdmin(input.getString("username"),input.getString("password"));
+		} else if(input.getString("action").equals("getAdmins")) {
+			return getAdmins();
 		} else if(input.getString("action").equals("modifyAdmin") && input.has("aid")) {
 			if(input.has("username") && input.has("password")) {
 				return modifyAdmin(input.getInt("aid"),input.getString("username"),input.getString("password"));
