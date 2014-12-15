@@ -4,6 +4,7 @@ import org.json.JSONObject;
 
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
+import com.resist.pcbuilder.admin.OutputBuilder;
 
 public class AdminFunctions implements Dashboard {
 	public static final String IDENTIFIER = "adminfunctions";

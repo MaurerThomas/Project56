@@ -14,6 +14,7 @@ $(function() {
 					}
 				});
 			} else {
+				$('a.navbar-brand').attr('href','#');
 				$webSocket.receive = htmlHandler;
 			}
 		};
