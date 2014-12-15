@@ -20,7 +20,7 @@ $webSocket.receive = function($msg) {
 	}
 
 	function addAdmin($admin,$aid) {
-		var $div,$button,$out = $('<div class="row">');
+		var $div,$button,$out = $('<div class="row" data-aid="'+$aid+'">');
 		$out.append('<div class="name col-sm-10">'+$admin+'</div>');
 		$div = $('<div class="col-sm-1"></div>');
 		$button = $('<a href="#adminfunctions" class="btn btn-default" title="Bewerk"><span class="glyphicon glyphicon-pencil"></span></a>');
@@ -48,6 +48,8 @@ $webSocket.receive = function($msg) {
 		$this.addClass('btn-primary');
 		$icon.removeClass('glyphicon-pencil');
 		$icon.addClass('glyphicon-floppy-disk');
+		$this.off();
+		$this.click(editAdmin($name));
 	}
 
 	function deleteAdminClick($e) {
@@ -55,6 +57,28 @@ $webSocket.receive = function($msg) {
 		if(window.confirm('Weet u zeker dat u deze beheerder wilt verwijderen?')) {
 			window.alert('Jammer dan');
 		}
+	}
+
+	function editAdmin($name) {
+		return function($e) {
+			var $this = $(this),
+			$div = $this.parent().parent().find('.name'),
+			$icon = $this.find('span');
+			$e.preventDefault(),
+			$newName = $div.find('[name="username"]').val(),
+			$newPass = $div.find('[name="password"]').val();
+			if($newName != $name || $newPass !== '') {
+				window.alert('Uw wijzigingen zijn niet opgeslagen.');
+			}
+			$div.empty();
+			$div.text($newName);
+			$this.off();
+			$this.click(editAdminClick);
+			$this.addClass('btn-default');
+			$this.removeClass('btn-primary');
+			$icon.addClass('glyphicon-pencil');
+			$icon.removeClass('glyphicon-floppy-disk');
+		};
 	}
 
 	function parseJSON($str) {
