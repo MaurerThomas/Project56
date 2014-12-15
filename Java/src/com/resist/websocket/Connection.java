@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.math.BigInteger;
 import java.net.Socket;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -94,7 +95,8 @@ public final class Connection implements Runnable {
 			}
 		} catch (SocketTimeoutException e) {
 			System.out.println("Closing connection.");
-			close();
+		} catch (SocketException e) {
+			System.err.println("Connection closed unexpectedly.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
