@@ -2,6 +2,7 @@ $(function() {
 	var $formButton = $('form input[type="submit"]'),
 	$compatibility = checkCompatibility($formButton),
 	$loginWarning = $('form p.hidden');
+	window.location.hash = '';
 	if($compatibility.WebSocket) {
 		$webSocket.init('145.24.222.119','8081','/admin');
 		$webSocket.receive = function($msg) {
