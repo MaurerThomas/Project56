@@ -1,16 +1,12 @@
 package com.resist.pcbuilder;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
+import java.util.List;
 
 public class MySQLConnection {
 	private Connection conn;
@@ -245,4 +241,57 @@ public class MySQLConnection {
 		}
 		return false;
 	}
+
+    private String getInQuery(int size) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("IN (");
+        for(int i=0;i < size;i++) {
+            if(i != 0) {
+                sb.append(", ");
+            }
+            sb.append('?');
+        }
+        sb.append(")");
+        return sb.toString();
+    }
+
+    public JSONArray getPartsPrice(List<String> urls, Date date, Integer minPrice, Integer maxPrice){
+        JSONArray out = new JSONArray();
+        try {
+            String sql = "SELECT url,euro,cent FROM prijs_verloop WHERE datum > ?";
+            int args = 1;
+            if(minPrice != null) {
+                sql += " AND euro*100+cent > ?";
+                args++;
+            }
+            if(maxPrice != null) {
+                sql += " AND euro*100+cent < ?";
+                args++;
+            }
+            PreparedStatement s = conn.prepareStatement(sql+" AND url "+getInQuery(urls.size()));
+            s.setDate(1, date);
+            if(minPrice != null) {
+                s.setInt(2,minPrice);
+            }
+            if(maxPrice != null) {
+                s.setInt(args,maxPrice);
+            }
+            for(int i=0;i < urls.size();i++) {
+                s.setString(i+1+args,urls.get(i));
+            }
+            ResultSet res = s.executeQuery();
+            while(res.next()) {
+                out.put(new JSONObject().put("url",res.getString(1))
+                        .put("euro",res.getString(2))
+                        .put("cent",res.getString(3)));
+            }
+            res.close();
+            s.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return out;
+    }
+
 }
