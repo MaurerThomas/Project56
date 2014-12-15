@@ -2,25 +2,26 @@
 from scrapy.spider import Spider
 from scrapy.selector import Selector
 from specscrawl.items import SpecscrawlItem
+import MySQLdb
 import re
 
 class AlternateSpider(Spider):
-#	def __init__(self):
-#		self.conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
-#		self.cursor = self.conn.cursor()
-#		try:
-#			start_urls = self.cursor.execute("""SELECT url FROM prijs_verloop WHERE crawled = 0""")
-#			print start_urls
-#			self.conn.commit()
-#
-#		except MySQLdb.Error, e:
-#			print "Error %d: %s" % (e.args[0], e.args[1])
-#	
+
+	conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
+	cursor = conn.cursor()
+	try:
+		cursor.execute("""SELECT DISTINCT url FROM prijs_verloop WHERE crawled = 0""")
+		data = cursor.fetchall()
+		start_urls = []
+		for row in data:
+			start_urls.append(row[0])
+		
+	except MySQLdb.Error, e:
+		print "Error %d: %s" % (e.args[0], e.args[1])
+	
 	name = "alternate"
 	allowed_domains = ["alternate.nl"]
-	start_urls = (
-		'https://www.alternate.nl/Aerocool/Dead-Silence-Black-White-Edition-behuizing/html/product/1096426?tk=7&lk=9309',
-	)
+	
 	
 
 	def parse(self, response):
@@ -43,19 +44,29 @@ class AlternateSpider(Spider):
 				value = tempvalue[i].extract()
 				keys = re.findall('techDataSubCol techDataSubColDescription">(.*?)</td><td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">' ,value)
 				values = re.findall('<td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">(.*?)</td></tr></table>',value)	
-				
+				for key in keys:
+					key = re.sub(".",",",key)
 				result = "null"
 				if len(keys) > 0:
-					print keys 
-					print values
-					result = {}
-					for n in range(len(keys)):
-						try:
-							result.update({keys[n]:values[n]})
-						except IndexError:
-							print "x"
+					result = zip(keys, values)
 				if result == "null":
 					result = re.findall('<td class="techDataSubCol techDataSubColValue">(.*)</td></tr></table>', value)
-				print tempkeys[i] 
+					
+				elif isinstance(result, dict):
+					for k, v in result.items():
+						result[k] = re.sub('<[^>]+>', "", v)
+				elif isinstance(result, list):
+					for ri in result:
+						result[result.index(ri)] = re.sub('<[^>]+>', "", str(ri))
+				
 				item['specs'].update({tempkeys[i]:result})
-		yield item
+		
+		cursor = self.conn.cursor()
+		try:
+			cursor.execute("""UPDATE prijs_verloop SET crawled = %s WHERE url = %s""", ('1', response.url))
+			self.conn.commit()
+			
+		except MySQLdb.Error, e:
+			print "Error %d: %s hoi" % (e.args[0], e.args[1])
+		cursor.close()
+		return item
