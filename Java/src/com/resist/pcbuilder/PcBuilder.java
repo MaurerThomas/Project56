@@ -16,6 +16,7 @@ import java.sql.SQLException;
 public class PcBuilder implements MessageHandler {
 	private SearchHandler searchHandler;
 	private MySQLConnection mysql;
+	private JSONObject settings;
 
 	public static void main(String[] args) {
 		if(args.length > 0) {
@@ -53,10 +54,11 @@ public class PcBuilder implements MessageHandler {
 		if(!settingsArePresent(settings)) {
 			fatalError("Invalid settings file.");
 		}
+		this.settings = settings;
 		searchHandler = new SearchHandler(settings.getString("address"), settings.getInt("elasticPort"), settings.getString("elasticCluster"), this);
-		connectToMySQL(settings);
-		listenForAdminConnections(settings);
-		listenForConnections(settings);
+		connectToMySQL();
+		listenForAdminConnections();
+		listenForConnections();
 	}
 
 	private boolean settingsArePresent(JSONObject settings) {
@@ -74,7 +76,11 @@ public class PcBuilder implements MessageHandler {
 		return mysql;
 	}
 
-	private void connectToMySQL(JSONObject settings) {
+	public JSONObject getSettings() {
+		return settings;
+	}
+
+	private void connectToMySQL() {
 		try {
 			mysql = new MySQLConnection(settings.getString("mysqlAddress"),settings.getInt("mysqlPort"),settings.getString("mysqlDatabase"),settings.getString("mysqlUsername"),settings.getString("mysqlPassword"));
 			if(settings.has("adminPasswordSalt")) {
@@ -87,7 +93,7 @@ public class PcBuilder implements MessageHandler {
 		}
 	}
 
-	private void listenForAdminConnections(JSONObject settings) {
+	private void listenForAdminConnections() {
 		final ConnectionServer admin = new ConnectionServer(settings.getString("address"), settings.getInt("adminPort"), settings.getString("adminPath"))
 			.setMessageHandler(new AdminLoginHandler(this));
 		if(settings.has("adminTimeout")) {
@@ -101,7 +107,7 @@ public class PcBuilder implements MessageHandler {
 		}).start();
 	}
 
-	private void listenForConnections(JSONObject settings) {
+	private void listenForConnections() {
 		final ConnectionServer user = new ConnectionServer(settings.getString("address"), settings.getInt("port"), settings.getString("path"))
 			.setMessageHandler(this);
 		if(settings.has("timeout")) {
