@@ -32,31 +32,30 @@ class AlternateSpider(Spider):
 		name = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"name")]/text()').extract()
 		brand = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"brand")]/text()').extract()
 		item['specs'] ={}
-		item['specs'] = {"name":name,"brand":brand}
+		item['specs'] = {"type":datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract(),
+							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract(),
+							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract()}
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
 		print tempkeys
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')
 		if(tempkeys):
 			for i in range(len(tempkeys)):
 				value = tempvalue[i].extract()
-				keys = re.findall('techDataSubCol techDataSubColDescription">(.*?)</td><td' ,value)
-				values = re.findall('<td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tbody><tr><td class="techDataSubCol techDataSubColValue">(.*?)</td></tr></tbody></table><div class="break"> <!-- break --> </div></td>',value)	
+				keys = re.findall('techDataSubCol techDataSubColDescription">(.*?)</td><td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">' ,value)
+				values = re.findall('<td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">(.*?)</td></tr></table>',value)	
 				
 				result = "null"
 				if len(keys) > 0:
-					print "----------------------"
 					print keys 
 					print values
 					result = {}
 					for n in range(len(keys)):
 						try:
-							result.update({keys[n]:"hoi"})
+							result.update({keys[n]:values[n]})
 						except IndexError:
 							print "x"
 				if result == "null":
 					result = re.findall('<td class="techDataSubCol techDataSubColValue">(.*)</td></tr></table>', value)
-				
 				print tempkeys[i] 
 				item['specs'].update({tempkeys[i]:result})
-				
 		yield item
