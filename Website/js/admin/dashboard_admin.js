@@ -1,7 +1,9 @@
 $webSocket.receive = function($msg) {
 	var $json = parseJSON($msg.data);
 	if($json !== null) {
-		handleJSON($json);
+		if(!handleJSON($json)) {
+			htmlHandler($msg);
+		}
 	}
 
 	function handleJSON($json) {
@@ -12,7 +14,9 @@ $webSocket.receive = function($msg) {
 			for($aid in $json.admins) {
 				$admins.append(addAdmin($json.admins[$aid],$aid));
 			}
+			return true;
 		}
+		return false;
 	}
 
 	function addAdmin($admin,$aid) {

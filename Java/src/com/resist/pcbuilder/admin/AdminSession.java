@@ -60,6 +60,9 @@ public class AdminSession implements MessageHandler {
 	private JSONObject handleJSON(JSONObject input) {
 		if(input.has("switchDashboard") && dashboards.containsKey(input.getString("switchDashboard"))) {
 			currentDashboard = dashboards.get(input.getString("switchDashboard"));
+			if(currentDashboard == null) {
+				return new OutputBuilder().htmlTemplate("#main","index").getOutput();
+			}
 		}
 		if(currentDashboard == null) {
 			return null;

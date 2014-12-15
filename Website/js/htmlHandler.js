@@ -1,19 +1,6 @@
-function htmlHandler($msg) {
-	var $json = parseJSON($msg.data),
-	$replacements = {},
+var htmlHandler = (function() {
+	var $replacements = {},
 	$templates = {};
-	if($json === null) {
-		return;
-	}
-	if($json.replace !== undefined) {
-		handleReplace($json.replace);
-	}
-	if($json.html !== undefined) {
-		handleJQuery($json.html,'html');
-	}
-	if($json.text !== undefined) {
-		handleJQuery($json.text,'text');
-	}
 
 	function parseJSON($str) {
 		var $json = null;
@@ -64,4 +51,20 @@ function htmlHandler($msg) {
 			$replacements[$key] = $json[$key];
 		}
 	}
-}
+
+	return function($msg) {
+		var $json = parseJSON($msg.data);
+		if($json === null) {
+			return;
+		}
+		if($json.replace !== undefined) {
+			handleReplace($json.replace);
+		}
+		if($json.html !== undefined) {
+			handleJQuery($json.html,'html');
+		}
+		if($json.text !== undefined) {
+			handleJQuery($json.text,'text');
+		}
+	};
+})();
