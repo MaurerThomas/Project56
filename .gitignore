@@ -15,3 +15,4 @@ target/classes/MessageHandler.java
 target/test-classes/ConnectionServerTest.java
 target/test-classes/example/ServerTest.java
 target/test-classes/PcBuilderTest.java
+out/artifacts/pcbuilder/pcbuilder.jar
