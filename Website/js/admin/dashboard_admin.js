@@ -13,7 +13,7 @@
 	$('#newAdmin').click(function($e) {
 		var $json = addAdmin('',-1);
 		$e.preventDefault();
-		$('#admins').before($json);
+		$('#admins').prepend($json);
 		$json.find('a[title="Bewerk"]').click();
 	});
 
@@ -94,7 +94,6 @@
 				} else {
 					saveAdmin({aid: $aid, username: $newName});
 				}
-				window.alert('Uw wijzigingen zijn niet opgeslagen.');
 			}
 			$div.empty();
 			$div.text($newName);
@@ -108,6 +107,7 @@
 	}
 
 	function saveAdmin($json) {
+		$json.action = 'modifyAdmin';
 		$webSocket.send($json);
 		$('a.glyphicon').attr('disabled',true);
 		$saving = true;

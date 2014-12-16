@@ -22,7 +22,6 @@ class AlternateSpider(Spider):
 	name = "alternate"
 	allowed_domains = ["alternate.nl"]
 	
-	
 
 	def parse(self, response):
 		item = SpecscrawlItem()
@@ -33,11 +32,11 @@ class AlternateSpider(Spider):
 		name = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"name")]/text()').extract()
 		brand = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"brand")]/text()').extract()
 		item['specs'] ={}
-		item['specs'] = {"type":datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract(),
-							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract(),
-							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract()}
+		item['specs'] = {"component":datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0],
+							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract()[0],
+							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract()[0],
+							"url": response.url}
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
-		print tempkeys
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')
 		if(tempkeys):
 			for i in range(len(tempkeys)):
@@ -59,8 +58,11 @@ class AlternateSpider(Spider):
 					for ri in result:
 						result[result.index(ri)] = re.sub('<[^>]+>', "", str(ri))
 				
-				item['specs'].update({tempkeys[i]:result})
-		
+				if len(result) < 1:
+					item['specs'].update({tempkeys[i]:result})
+				else:
+					item['specs'].update({tempkeys[i]:result[0]})
+					
 		cursor = self.conn.cursor()
 		try:
 			cursor.execute("""UPDATE prijs_verloop SET crawled = %s WHERE url = %s""", ('1', response.url))
