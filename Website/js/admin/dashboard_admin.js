@@ -41,7 +41,7 @@
 	}
 
 	function addAdmin($admin,$aid) {
-		var $div,$button,$out = $('<div class="row" data-aid="'+$aid+'">');
+		var $div,$button,$out = $('<div class="row" data-aid="'+$aid+'" data-name="'+$admin+'">');
 		$out.append('<div class="name col-sm-10">'+$admin+'</div>');
 		$div = $('<div class="col-sm-1"></div>');
 		$button = $('<a href="#adminfunctions" class="btn btn-default" title="Bewerk"><span class="glyphicon glyphicon-pencil"></span></a>');
@@ -70,7 +70,7 @@
 		$icon.removeClass('glyphicon-pencil');
 		$icon.addClass('glyphicon-floppy-disk');
 		$this.off();
-		$this.click(editAdmin($name));
+		$this.click(editAdmin);
 	}
 
 	function deleteAdminClick($e) {
@@ -80,33 +80,32 @@
 		}
 	}
 
-	function editAdmin($name) {
-		return function($e) {
-			var $this = $(this),
-			$div = $this.parent().parent().find('.name'),
-			$icon = $this.find('span')
-			$aid = $div.parent().attr('data-aid');
-			$e.preventDefault();
-			$newName = $div.find('[name="username"]').val(),
-			$newPass = $div.find('[name="password"]').val();
-			if($newName != $name || $newPass !== '') {
-				if($newName != $name && $newPass !== '') {
-					saveAdmin({aid: $aid, username: $newName, password: $newPass});
-				} else if($newPass !== '') {
-					saveAdmin({aid: $aid, password: $newPass});
-				} else {
-					saveAdmin({aid: $aid, username: $newName});
-				}
+	function editAdmin($e) {
+		var $this = $(this),
+		$div = $this.parent().parent().find('.name'),
+		$icon = $this.find('span')
+		$aid = $div.parent().attr('data-aid'),
+		$name = $div.parent().attr('data-name');
+		$e.preventDefault();
+		$newName = $div.find('[name="username"]').val(),
+		$newPass = $div.find('[name="password"]').val();
+		if($newName != $name || $newPass !== '') {
+			if($newName != $name && $newPass !== '') {
+				saveAdmin({aid: $aid, username: $newName, password: $newPass});
+			} else if($newPass !== '') {
+				saveAdmin({aid: $aid, password: $newPass});
+			} else {
+				saveAdmin({aid: $aid, username: $newName});
 			}
-			$div.empty();
-			$div.text($newName);
-			$this.off();
-			$this.click(editAdminClick);
-			$this.addClass('btn-default');
-			$this.removeClass('btn-primary');
-			$icon.addClass('glyphicon-pencil');
-			$icon.removeClass('glyphicon-floppy-disk');
-		};
+		}
+		$div.empty();
+		$div.text($newName);
+		$this.off();
+		$this.click(editAdminClick);
+		$this.addClass('btn-default');
+		$this.removeClass('btn-primary');
+		$icon.addClass('glyphicon-pencil');
+		$icon.removeClass('glyphicon-floppy-disk');
 	}
 
 	function saveAdmin($json) {
