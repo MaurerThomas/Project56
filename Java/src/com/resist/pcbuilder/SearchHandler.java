@@ -39,17 +39,15 @@ public class SearchHandler {
          if (json.has("filters")) {
                 return handleQuery(json.getJSONArray("filters"));
         }
-
-
              return null;
     }
 
-
-
 	public JSONArray handleQuery(JSONArray json) {
+       List<String> urls = new ArrayList<String>();
 
-      // pcBuilder.getMysql();
-        List<String> urls = new ArrayList<String>();
+       java.util.Date utilDate = new java.util.Date();
+       java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime()-24*60*60*1000);
+
 
        if (json.length() > 0 && validateTerm(json,0)) {
            FilterBuilder filters = FilterBuilders.termsFilter(json.getJSONObject(0).getString("key"),json.getJSONObject(0).getString("value"));
@@ -59,11 +57,11 @@ public class SearchHandler {
                    filters = FilterBuilders.andFilter(filters, nieuw);
                }
            }
+           System.out.println(filters);
                   SearchResponse response = client
-                    .prepareSearch("zoeker")
+                    .prepareSearch("mongoindex")
                     .setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
                     .setFrom(0).setSize(60)
-
                             .setPostFilter(filters)
                             .setExplain(true).execute().actionGet();
 
@@ -71,10 +69,13 @@ public class SearchHandler {
             JSONArray resultaten = new JSONArray();
             System.out.println("Current results: " + results.length);
             for (SearchHit hit : results) {
-                Map<String, Object> result = hit.getSource();
+                Map<String, Object> result = (Map<String, Object>)hit.getSource().get("specs");
+
                 urls.add((String)result.get("url"));
                 resultaten.put(new JSONObject(result));
             }
+           System.out.println(urls);
+           pcBuilder.getMysql().getPartsPrice(urls, sqlDate,null,null);
             return resultaten;
         }  else {
                 return null;
@@ -84,7 +85,7 @@ public class SearchHandler {
     public boolean validateTerm(JSONArray ar, int i) {
         try {
             String val = ar.getJSONObject(i).getString("key");
-            return val.equals("type") || val.equals("merk");
+            return val.equals("component") || val.equals("merk");
         } catch(JSONException e) {}
         return false;
     }
