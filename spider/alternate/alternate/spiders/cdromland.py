@@ -21,9 +21,7 @@ class SpinSpider(scrapy.Spider):
 			temp = product.xpath('a/span/span/h2/*[starts-with(@class,"name")]/span/text()').extract()
 			item['url'] = "https://www.cdromland.nl" + str(product.xpath('/*[@class = "link_titlesmall"]/@href').extract())
 			tempeuro = product.xpath('/*[@class = "productlist_cell_specs_footer_price"]/text()').extract()
-			print item['url']
-			item['euro'] = re.sub("/^[0-9+]*$/", "", str(tempeuro))
-			item['cent']	= re.sub("/^[0-9+]*$/","",  str(tempeuro))
+			item['euro'] = re.findall(r'\d+', ''.join(tempeuro))
 			print item['euro']
 			print item['cent']
 			print "=========================="
