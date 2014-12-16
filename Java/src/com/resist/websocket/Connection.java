@@ -492,7 +492,7 @@ public final class Connection implements Runnable {
 		byte[] out = new byte[3];
 		out[0] = (byte) (mask | 126);
 		out[1] = (byte) (length >> 8);
-		out[2] = (byte) (length & ((1 << 8) - 1));
+		out[2] = (byte) (length & 0xff);
 		return out;
 	}
 
@@ -503,13 +503,13 @@ public final class Connection implements Runnable {
 	 * @param length Length of the message
 	 * @return The payload length of the data frame
 	 */
-	private byte[] getMessageLargeLengthBytes(int mask, int length) {
+	private byte[] getMessageLargeLengthBytes(int mask, long length) {
 		byte[] out = new byte[9];
 		out[0] = (byte) (mask | 127);
-		for(int n=7, i=1;i < 8;n--,i++) {
-			out[i] = (byte) ((length >> (n * 8)) & ((1 << 8) - 1));
+		byte[] len = BigInteger.valueOf(length).toByteArray();
+		for(int n=len.length-1, i=8;i >= 0 && n >= 0;n--,i--) {
+			out[i] = len[n];
 		}
-		out[8] = (byte) (length & ((1 << 8) - 1));
 		return out;
 	}
 }

@@ -19,7 +19,7 @@ public class PcBuilder implements MessageHandler {
 	private JSONObject settings;
 
 	public static void main(String[] args) {
-		if(args.length > 0) {
+		if (args.length > 0) {
 			try {
 				new PcBuilder(getSettingsFromFile(args[0]));
 				return;
@@ -34,11 +34,12 @@ public class PcBuilder implements MessageHandler {
 		}
 	}
 
-	private static JSONObject getSettingsFromFile(String path) throws IOException {
+	private static JSONObject getSettingsFromFile(String path)
+			throws IOException {
 		FileReader reader = new FileReader(path);
 		StringBuffer settings = new StringBuffer();
 		int c = -1;
-		while((c = reader.read()) != -1) {
+		while ((c = reader.read()) != -1) {
 			settings.appendCodePoint(c);
 		}
 		reader.close();
@@ -51,21 +52,25 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	public PcBuilder(JSONObject settings) {
-		if(!settingsArePresent(settings)) {
+		if (!settingsArePresent(settings)) {
 			fatalError("Invalid settings file.");
 		}
 		this.settings = settings;
-		searchHandler = new SearchHandler(settings.getString("address"), settings.getInt("elasticPort"), settings.getString("elasticCluster"), this);
+		searchHandler = new SearchHandler(settings.getString("address"),
+				settings.getInt("elasticPort"),
+				settings.getString("elasticCluster"), this);
 		connectToMySQL();
 		listenForAdminConnections();
 		listenForConnections();
 	}
 
 	private boolean settingsArePresent(JSONObject settings) {
-		return settings.has("address") && settings.has("port") && settings.has("path")
-				&& settings.has("adminPort") && settings.has("adminPath")
-				&& settings.has("elasticPort") && settings.has("elasticCluster")
-				&& settings.has("mysqlAddress") && settings.has("mysqlPort") && settings.has("mysqlDatabase");
+		return settings.has("address") && settings.has("port")
+				&& settings.has("path") && settings.has("adminPort")
+				&& settings.has("adminPath") && settings.has("elasticPort")
+				&& settings.has("elasticCluster")
+				&& settings.has("mysqlAddress") && settings.has("mysqlPort")
+				&& settings.has("mysqlDatabase");
 	}
 
 	public SearchHandler getSearchHandler() {
@@ -82,8 +87,12 @@ public class PcBuilder implements MessageHandler {
 
 	private void connectToMySQL() {
 		try {
-			mysql = new MySQLConnection(settings.getString("mysqlAddress"),settings.getInt("mysqlPort"),settings.getString("mysqlDatabase"),settings.getString("mysqlUsername"),settings.getString("mysqlPassword"));
-			if(settings.has("adminPasswordSalt")) {
+			mysql = new MySQLConnection(settings.getString("mysqlAddress"),
+					settings.getInt("mysqlPort"),
+					settings.getString("mysqlDatabase"),
+					settings.getString("mysqlUsername"),
+					settings.getString("mysqlPassword"));
+			if (settings.has("adminPasswordSalt")) {
 				mysql.setSalt(settings.getString("adminPasswordSalt"));
 			}
 		} catch (SQLException e) {
@@ -94,9 +103,11 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	private void listenForAdminConnections() {
-		final ConnectionServer admin = new ConnectionServer(settings.getString("address"), settings.getInt("adminPort"), settings.getString("adminPath"))
-			.setMessageHandler(new AdminLoginHandler(this));
-		if(settings.has("adminTimeout")) {
+		final ConnectionServer admin = new ConnectionServer(
+				settings.getString("address"), settings.getInt("adminPort"),
+				settings.getString("adminPath"))
+				.setMessageHandler(new AdminLoginHandler(this));
+		if (settings.has("adminTimeout")) {
 			admin.setTimeout(settings.getInt("adminTimeout"));
 		}
 		new Thread(new Runnable() {
@@ -108,9 +119,10 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	private void listenForConnections() {
-		final ConnectionServer user = new ConnectionServer(settings.getString("address"), settings.getInt("port"), settings.getString("path"))
-			.setMessageHandler(this);
-		if(settings.has("timeout")) {
+		final ConnectionServer user = new ConnectionServer(
+				settings.getString("address"), settings.getInt("port"),
+				settings.getString("path")).setMessageHandler(this);
+		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
 		user.manageConnections();
@@ -118,11 +130,11 @@ public class PcBuilder implements MessageHandler {
 
 	@Override
 	public void handleMessage(Message message) {
-		if(message.getType() == Connection.OPCODE_TEXT_FRAME) {
+		if (message.getType() == Connection.OPCODE_TEXT_FRAME) {
 			JSONObject json = parseInput(message.toString());
-			if(json != null) {
-				JSONObject out = handleJSON(message,json);
-				sendReturn(message,out.toString());
+			if (json != null) {
+				JSONObject out = handleJSON(message, json);
+				sendReturn(message, out.toString());
 			}
 		}
 	}
@@ -136,20 +148,20 @@ public class PcBuilder implements MessageHandler {
 		}
 	}
 
-	private JSONObject handleJSON(Message message,JSONObject json) {
+	private JSONObject handleJSON(Message message, JSONObject json) {
 		JSONObject out = new JSONObject();
 
-		if(json.has("action") && json.getString("action").equals("filter")) {
+		if (json.has("action") && json.getString("action").equals("filter")) {
 			out.put("resultaten", searchHandler.handleIncomingMessage(json));
-		} else if(json.has("action") && json.get("action").equals("init")) {
-			out.put("init",mysql.getInit());
+		} else if (json.has("action") && json.get("action").equals("init")) {
+			out.put("init", mysql.getInit());
 		}
 
 		return out;
 	}
 
 	private void sendReturn(Message conn, String message) {
-		if(!conn.getConnection().isClosed()) {
+		if (!conn.getConnection().isClosed()) {
 			try {
 				conn.getConnection().sendMessage(message);
 			} catch (IOException e) {
