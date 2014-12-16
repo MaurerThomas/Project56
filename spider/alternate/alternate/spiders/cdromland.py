@@ -14,17 +14,23 @@ class SpinSpider(scrapy.Spider):
     )
 
     def parse(self, response):
-		products = response.xpath('//*[@class = "productlist_row"]')
+		products = response.xpath('//div/div/*[@class="productlist_row"]')
 		items = []
-		for product in products:
+		temp = products.xpath('a/span/span/h2/*[starts-with(@class,"name")]/span/text()').extract()
+		urls = products.xpath('//*[@class = "link_titlesmall"]/@href').extract()
+		euros = products.xpath('//*[@class = "productlist_cell_specs_footer_price"]/text()').extract()
+		print euros
+		for index,url in enumerate(urls):
 			item = AlternateItem()
-			temp = product.xpath('a/span/span/h2/*[starts-with(@class,"name")]/span/text()').extract()
-			item['url'] = "https://www.cdromland.nl" + str(product.xpath('/*[@class = "link_titlesmall"]/@href').extract())
-			tempeuro = product.xpath('/*[@class = "productlist_cell_specs_footer_price"]/text()').extract()
-			item['euro'] = re.findall(r'\d+', ''.join(tempeuro))
+			item['url'] = 'https://www.cdromland.nl' + url
+			price = re.findall(r'\d+', ''.join(euros[index]))
+			item['euro'] = price[0]
+			try:
+				item['cent']	= price[1]
+			except:
+				item['cent'] = '0'
+			print url
 			print item['euro']
-			print item['cent']
 			print "=========================="
-			
 			items.append(item)			
 		return items

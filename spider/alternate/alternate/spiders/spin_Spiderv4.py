@@ -1,20 +1,13 @@
-# -*- coding: utf-8 -*-
-import scrapy
+#coding: utf8 
 from scrapy.spider import Spider
 from scrapy.selector import Selector
 from alternate.items import AlternateItem
 import re
 
-
-class SpinSpider(scrapy.Spider):
-    name = "spin"
-    allowed_domains = ["alternate.nl"]
-    start_urls = (
-        'http://www.alternate.nl/',
-    )
-
-    def parse(self, response):
-        start_urls = [
+class spin_Spider(Spider):
+	name = "spin"
+	allowed_domains = ["alternate.nl"] 
+	start_urls = [
 						"https://www.alternate.nl/html/product/listing.html?filter_5=&filter_4=&filter_3=&filter_2=&filter_1=&size=1000&bgid=8148&lk=9309&tk=7&navId=2436", #behuizingen
 						"https://www.alternate.nl/html/product/listing.html?size=1000&lk=13472&tk=7&navId=20678", #DDR4
 						"https://www.alternate.nl/html/product/listing.html?filter_5=&filter_4=&filter_3=&filter_2=&filter_1=&size=1000&bgid=8296&lk=9326&tk=7&navId=11556", #DDR3
@@ -72,4 +65,4 @@ class SpinSpider(scrapy.Spider):
 			tempcent = product.xpath('div/p/span/sup/text()').extract()
 			item['cent'] = re.findall(r'\d+', ''.join(tempcent))
 			items.append(item)			
-		return items1
+		return items
