@@ -11,10 +11,12 @@
 		}
 	};
 	$('#newAdmin').click(function($e) {
-		var $json = addAdmin('',-1);
-		$e.preventDefault();
-		$('#admins').prepend($json);
-		$json.find('a[title="Bewerk"]').click();
+		if($('[data-aid="-1"]').length === 0) {
+			var $json = addAdmin('',-1);
+			$e.preventDefault();
+			$('#admins').prepend($json);
+			$json.find('a[title="Bewerk"]').click();
+		}
 	});
 
 	function handleJSON($json) {
@@ -26,13 +28,14 @@
 				$admins.append(addAdmin($json.admins[$aid],$aid));
 			}
 			return true;
-		} else if($json.adminModified !== undefined && $saving) {
+		} else if($json.adminModified !== undefined && $saving == 'adminModified') {
 			if(!$json.adminModified) {
 				window.alert('Uw veranderingen zijn niet opgeslagen.');
 			}
 			$('a.glyphicon').attr('disabled',false);
 			$saving = false;
 			return true;
+		} else if($json.adminAdded !== undefined && $saving = 'adminAdded') {
 		}
 		return false;
 	}
@@ -107,10 +110,16 @@
 	}
 
 	function saveAdmin($json) {
-		$json.action = 'modifyAdmin';
+		if($json.aid != -1) {
+			$json.action = 'modifyAdmin';
+			$saving = 'adminModified';
+		} else {
+			delete $json.aid;
+			$json.action = 'addAdmin';
+			$saving = 'adminAdded';
+		}
 		$webSocket.send($json);
 		$('a.glyphicon').attr('disabled',true);
-		$saving = true;
 	}
 
 	function parseJSON($str) {
