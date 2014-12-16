@@ -1,10 +1,21 @@
-$webSocket.receive = function($msg) {
-	var $json = parseJSON($msg.data);
-	if($json !== null) {
-		if(!handleJSON($json)) {
-			htmlHandler($msg);
+(function() {
+	var $saving = false;
+
+	$webSocket.send({action: 'getAdmins'});
+	$webSocket.receive = function($msg) {
+		var $json = parseJSON($msg.data);
+		if($json !== null) {
+			if(!handleJSON($json)) {
+				htmlHandler($msg);
+			}
 		}
-	}
+	};
+	$('#newAdmin').click(function($e) {
+		var $json = addAdmin('',-1);
+		$e.preventDefault();
+		$('#admins').before($json);
+		$json.find('a[title="Bewerk"]').click();
+	});
 
 	function handleJSON($json) {
 		var $admins,$aid;
@@ -14,6 +25,13 @@ $webSocket.receive = function($msg) {
 			for($aid in $json.admins) {
 				$admins.append(addAdmin($json.admins[$aid],$aid));
 			}
+			return true;
+		} else if($json.adminModified !== undefined && $saving) {
+			if(!$json.adminModified) {
+				window.alert('Uw veranderingen zijn niet opgeslagen.');
+			}
+			$('a.glyphicon').attr('disabled',false);
+			$saving = false;
 			return true;
 		}
 		return false;
@@ -63,17 +81,18 @@ $webSocket.receive = function($msg) {
 		return function($e) {
 			var $this = $(this),
 			$div = $this.parent().parent().find('.name'),
-			$icon = $this.find('span');
-			$e.preventDefault(),
+			$icon = $this.find('span')
+			$aid = $div.parent().attr('data-aid');
+			$e.preventDefault();
 			$newName = $div.find('[name="username"]').val(),
 			$newPass = $div.find('[name="password"]').val();
 			if($newName != $name || $newPass !== '') {
 				if($newName != $name && $newPass !== '') {
-					saveAdmin({username: $newName, password: $newPass});
+					saveAdmin({aid: $aid, username: $newName, password: $newPass});
 				} else if($newPass !== '') {
-					saveAdmin({password: $newPass});
+					saveAdmin({aid: $aid, password: $newPass});
 				} else {
-					saveAdmin({username: $newName});
+					saveAdmin({aid: $aid, username: $newName});
 				}
 				window.alert('Uw wijzigingen zijn niet opgeslagen.');
 			}
@@ -89,6 +108,9 @@ $webSocket.receive = function($msg) {
 	}
 
 	function saveAdmin($json) {
+		$webSocket.send($json);
+		$('a.glyphicon').attr('disabled',true);
+		$saving = true;
 	}
 
 	function parseJSON($str) {
@@ -97,5 +119,4 @@ $webSocket.receive = function($msg) {
 		} catch($e) {}
 		return null;
 	}
-};
-$webSocket.send({action: 'getAdmins'});
+})();
