@@ -162,11 +162,7 @@ public class PcBuilder implements MessageHandler {
 
 	private void sendReturn(Message conn, String message) {
 		if (!conn.getConnection().isClosed()) {
-			try {
-				conn.getConnection().sendMessage(message);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			conn.getConnection().sendMessage(message);
 		}
 	}
 }

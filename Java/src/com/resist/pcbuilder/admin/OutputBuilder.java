@@ -1,7 +1,5 @@
 package com.resist.pcbuilder.admin;
 
-import java.io.IOException;
-
 import org.json.JSONObject;
 
 import com.resist.websocket.Connection;
@@ -44,12 +42,7 @@ public class OutputBuilder {
 
 	public boolean send(Connection conn) {
 		if(!conn.isClosed()) {
-			try {
-				conn.sendMessage(output.toString());
-				return true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			return conn.sendMessage(output.toString());
 		}
 		return false;
 	}

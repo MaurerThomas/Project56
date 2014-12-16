@@ -1,6 +1,5 @@
 package com.resist.pcbuilder.admin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -72,12 +71,8 @@ public class AdminLoginHandler implements MessageHandler {
 				boolean loggedIn = pcbuilder.getMysql().isValidLogin(login.getString("username"),login.getString("password"));
 				returnMessage.put("login",loggedIn);
 				if(!message.getConnection().isClosed()) {
-					try {
-						message.getConnection().sendMessage(returnMessage.toString());
-						return loggedIn;
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					message.getConnection().sendMessage(returnMessage.toString());
+					return loggedIn;
 				}
 			}
 		}

@@ -1,6 +1,5 @@
 package com.resist.pcbuilder.admin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,11 +71,7 @@ public class AdminSession implements MessageHandler {
 
 	private void sendReturn(Connection conn, String message) {
 		if(!conn.isClosed()) {
-			try {
-				conn.sendMessage(message);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			conn.sendMessage(message);
 		}
 	}
 

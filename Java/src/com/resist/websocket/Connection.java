@@ -340,9 +340,8 @@ public final class Connection implements Runnable {
 	 * Handles default opcodes.
 	 * 
 	 * @param message The received message
-	 * @throws IOException
 	 */
-	private void handleOpcodes(Message message) throws IOException {
+	private void handleOpcodes(Message message) {
 		if(message.getType() == OPCODE_CONNECTION_CLOSE) {
 			stop = true;
 		} else if(message.getType() == OPCODE_PING) {
@@ -354,22 +353,18 @@ public final class Connection implements Runnable {
 	 * Sends a pong response to the client.
 	 * 
 	 * @param message The message to return
-	 * @throws IOException
+	 * @return True if no IOException was thrown
 	 */
-	public void sendPong(byte[] message) throws IOException {
-		sendMessage(true,OPCODE_PONG,null,message);
+	public boolean sendPong(byte[] message) {
+		return sendMessage(true,OPCODE_PONG,null,message);
 	}
 
 	/**
 	 * Tells the client to close the connection.
-	 * 
-	 * @throws IOException
 	 */
 	private void sendClose() {
-		try {
-			sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0]);
-		} catch (IOException e) {
-			e.printStackTrace();
+		if(!sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0])) {
+			System.err.println("Failed to send close: client gone.");
 		}
 	}
 
@@ -377,20 +372,20 @@ public final class Connection implements Runnable {
 	 * Sends a message to the client.
 	 * 
 	 * @param message The message
-	 * @throws IOException
+	 * @return True if no IOException was thrown
 	 */
-	public void sendMessage(String message) throws IOException {
-		sendMessage(true,OPCODE_TEXT_FRAME,null,message.getBytes());
+	public boolean sendMessage(String message) {
+		return sendMessage(true,OPCODE_TEXT_FRAME,null,message.getBytes());
 	}
 
 	/**
 	 * Sends a message to the client.
 	 * 
 	 * @param message The message
-	 * @throws IOException
+	 * @return True if no IOException was thrown
 	 */
-	public void sendMessage(byte[] message) throws IOException {
-		sendMessage(true,OPCODE_BINARY_FRAME,null,message);
+	public boolean sendMessage(byte[] message) {
+		return sendMessage(true,OPCODE_BINARY_FRAME,null,message);
 	}
 
 	/**
@@ -400,12 +395,18 @@ public final class Connection implements Runnable {
 	 * @param opcode One of Connection.OPCODE_*
 	 * @param mask The mask that has been applied to the message
 	 * @param message The message to send
-	 * @throws IOException
+	 * @return True if no IOException was thrown
 	 */
-	public void sendMessage(boolean fin, int opcode, int[] mask, byte[] message) throws IOException {
-		byte[] frame = encapsulateMessage(fin, opcode, mask, message);
-		output.write(frame);
-		output.flush();
+	public boolean sendMessage(boolean fin, int opcode, int[] mask, byte[] message) {
+		try {
+			byte[] frame = encapsulateMessage(fin, opcode, mask, message);
+			output.write(frame);
+			output.flush();
+			return true;
+		} catch(IOException e) {
+			close();
+			return false;
+		}
 	}
 
 	/**
@@ -453,7 +454,7 @@ public final class Connection implements Runnable {
 	 * @param length Length of the message
 	 * @return The payload length of the data frame
 	 */
-	private byte[] getMessageLengthBytes(boolean masked, int length) {
+	private byte[] getMessageLengthBytes(boolean masked, long length) {
 		int mask = 0;
 		if(masked) {
 			mask = 1;
@@ -475,7 +476,7 @@ public final class Connection implements Runnable {
 	 * @param length Length of the message
 	 * @return The payload length of the data frame
 	 */
-	private byte[] getMessageSmallLengthBytes(int mask, int length) {
+	private byte[] getMessageSmallLengthBytes(int mask, long length) {
 		return new byte[] {
 			(byte) (mask | length)
 		};
@@ -488,7 +489,7 @@ public final class Connection implements Runnable {
 	 * @param length Length of the message
 	 * @return The payload length of the data frame
 	 */
-	private byte[] getMessageMediumLengthBytes(int mask, int length) {
+	private byte[] getMessageMediumLengthBytes(int mask, long length) {
 		byte[] out = new byte[3];
 		out[0] = (byte) (mask | 126);
 		out[1] = (byte) (length >> 8);
