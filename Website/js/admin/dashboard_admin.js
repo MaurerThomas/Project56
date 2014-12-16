@@ -68,6 +68,13 @@ $webSocket.receive = function($msg) {
 			$newName = $div.find('[name="username"]').val(),
 			$newPass = $div.find('[name="password"]').val();
 			if($newName != $name || $newPass !== '') {
+				if($newName != $name && $newPass !== '') {
+					saveAdmin({username: $newName, password: $newPass});
+				} else if($newPass !== '') {
+					saveAdmin({password: $newPass});
+				} else {
+					saveAdmin({username: $newName});
+				}
 				window.alert('Uw wijzigingen zijn niet opgeslagen.');
 			}
 			$div.empty();
@@ -79,6 +86,9 @@ $webSocket.receive = function($msg) {
 			$icon.addClass('glyphicon-pencil');
 			$icon.removeClass('glyphicon-floppy-disk');
 		};
+	}
+
+	function saveAdmin($json) {
 	}
 
 	function parseJSON($str) {
