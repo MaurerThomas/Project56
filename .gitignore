@@ -5,3 +5,13 @@
 *.iml
 *.class
 Thumbs.db
+target/classes/Connection.java
+target/classes/ConnectionServer.java
+target/classes/example/ControlFrameEchoer.java
+target/classes/example/MessageEchoer.java
+target/classes/example/Server.java
+target/classes/Message.java
+target/classes/MessageHandler.java
+target/test-classes/ConnectionServerTest.java
+target/test-classes/example/ServerTest.java
+target/test-classes/PcBuilderTest.java

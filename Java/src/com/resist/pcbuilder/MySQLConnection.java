@@ -63,13 +63,13 @@ public class MySQLConnection {
 
 	/**
 	 * Gets a list of processor sockets by vendor from the database.
-	 *  
-	 * @return A list of processor sockets by vendor
+     *
+     * @return A list of processor sockets by vendor
 	 * @throws SQLException
 	 */
 	private JSONObject initProcessors() throws SQLException {
 		JSONObject out = new JSONObject();
-		PreparedStatement s = conn.prepareStatement("SELECT naam, socket FROM merk JOIN onderdeel_socket ON ( merk.mid = onderdeel_socket.mid )"); 
+		PreparedStatement s = conn.prepareStatement("SELECT type, merkmid FROM merk JOIN socket ON ( merk.mid = socket.merkmid )");
 		ResultSet res = s.executeQuery();
 		while(res.next()) {
 			String merk = res.getString(1);
@@ -83,6 +83,8 @@ public class MySQLConnection {
 		s.close();
 		return out;
 	}
+
+
 
 	/**
 	 * Calculates an admin password hash using the set salt.
