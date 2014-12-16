@@ -35,19 +35,18 @@ public class SearchHandler {
 		return client;
 	}
 
-    public JSONArray handleIncomingMessage(JSONObject json) {
+    public JSONObject handleIncomingMessage(JSONObject json) {
          if (json.has("filters")) {
                 return handleQuery(json.getJSONArray("filters"));
         }
              return null;
     }
 
-	public JSONArray handleQuery(JSONArray json) {
+	public JSONObject handleQuery(JSONArray json) {
        List<String> urls = new ArrayList<String>();
 
        java.util.Date utilDate = new java.util.Date();
        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime()-24*60*60*1000);
-
 
        if (json.length() > 0 && validateTerm(json,0)) {
            FilterBuilder filters = FilterBuilders.termsFilter(json.getJSONObject(0).getString("key"),json.getJSONObject(0).getString("value"));
@@ -66,21 +65,36 @@ public class SearchHandler {
                             .setExplain(true).execute().actionGet();
 
             SearchHit[] results = response.getHits().getHits();
-            JSONArray resultaten = new JSONArray();
+           JSONObject resultaten = new JSONObject();
             System.out.println("Current results: " + results.length);
             for (SearchHit hit : results) {
                 Map<String, Object> result = (Map<String, Object>)hit.getSource().get("specs");
-
-                urls.add((String)result.get("url"));
-                resultaten.put(new JSONObject(result));
+                String url = (String)result.get("url");
+                urls.add(url);
+                resultaten.put(url,new JSONObject(result));
             }
            System.out.println(urls);
-           pcBuilder.getMysql().getPartsPrice(urls, sqlDate,null,null);
+             resultaten = combineMysqlResultsWithElasticsearch(resultaten, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, null, null));
             return resultaten;
         }  else {
                 return null;
             }
         }
+
+    public JSONObject combineMysqlResultsWithElasticsearch(JSONObject elasticsearch,JSONArray mysql){
+
+
+        for (int i = 0; i < mysql.length(); i++) {
+            JSONObject element = mysql.getJSONObject(i);
+            JSONObject element2 = elasticsearch.getJSONObject(element.getString("url"));
+            element2.put("euro",element.getInt("euro"));
+            element2.put("cent",element.getInt("cent"));
+         }
+        System.out.println("JSON object van elasticsearch combiner" +elasticsearch);
+
+        return elasticsearch;
+    }
+
 
     public boolean validateTerm(JSONArray ar, int i) {
         try {
