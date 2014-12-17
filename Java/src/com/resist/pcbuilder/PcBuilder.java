@@ -64,6 +64,7 @@ public class PcBuilder implements MessageHandler {
 		listenForAdminConnections();
 		listenForConnections();
 		Runtime.getRuntime().addShutdownHook(new Thread(new PeacefulShutdown(this)));
+		System.out.println("Started...");
 	}
 
 	private boolean settingsArePresent(JSONObject settings) {
@@ -128,8 +129,13 @@ public class PcBuilder implements MessageHandler {
 		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				user.manageConnections();
+			}
+		}).start();
 		builderServer = user;
-		user.manageConnections();
 	}
 
 	@Override
