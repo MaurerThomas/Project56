@@ -17,6 +17,8 @@ public class PcBuilder implements MessageHandler {
 	private SearchHandler searchHandler;
 	private MySQLConnection mysql;
 	private JSONObject settings;
+	private ConnectionServer adminServer;
+	private ConnectionServer builderServer;
 
 	public static void main(String[] args) {
 		if (args.length > 0) {
@@ -34,8 +36,7 @@ public class PcBuilder implements MessageHandler {
 		}
 	}
 
-	private static JSONObject getSettingsFromFile(String path)
-			throws IOException {
+	private static JSONObject getSettingsFromFile(String path) throws IOException {
 		FileReader reader = new FileReader(path);
 		StringBuffer settings = new StringBuffer();
 		int c = -1;
@@ -62,6 +63,7 @@ public class PcBuilder implements MessageHandler {
 		connectToMySQL();
 		listenForAdminConnections();
 		listenForConnections();
+		Runtime.getRuntime().addShutdownHook(new Thread(new PeacefulShutdown(this)));
 	}
 
 	private boolean settingsArePresent(JSONObject settings) {
@@ -116,6 +118,7 @@ public class PcBuilder implements MessageHandler {
 				admin.manageConnections();
 			}
 		}).start();
+		adminServer = admin;
 	}
 
 	private void listenForConnections() {
@@ -125,6 +128,7 @@ public class PcBuilder implements MessageHandler {
 		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
+		builderServer = user;
 		user.manageConnections();
 	}
 
@@ -164,5 +168,12 @@ public class PcBuilder implements MessageHandler {
 		if (!conn.getConnection().isClosed()) {
 			conn.getConnection().sendMessage(message);
 		}
+	}
+
+	public void stop() {
+		builderServer.stop();
+		adminServer.stop();
+		searchHandler.close();
+		mysql.close();
 	}
 }

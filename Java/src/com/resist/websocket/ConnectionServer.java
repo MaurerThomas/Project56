@@ -3,6 +3,7 @@ package com.resist.websocket;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 public final class ConnectionServer {
 	private String address;
@@ -12,7 +13,7 @@ public final class ConnectionServer {
 	private MessageHandler controlFrameHandler = null;
 	private MessageHandler messageHandler = null;
 	private int timeout = 1000*60*60;
-
+	private ServerSocket serverSocket;
 
 	/**
 	 * Creates a new WebSocket server.
@@ -124,6 +125,11 @@ public final class ConnectionServer {
 	 */
 	public void stop() {
 		running = false;
+		try {
+			serverSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -143,11 +149,11 @@ public final class ConnectionServer {
 	 * @throws IOException
 	 */
 	private void createSocket() throws IOException {
-		ServerSocket socket = new ServerSocket(port);
+		serverSocket = new ServerSocket(port);
 		while(running) {
-			createConnections(socket);
+			createConnections();
 		}
-		socket.close();
+		serverSocket.close();
 	}
 
 	/**
@@ -156,15 +162,31 @@ public final class ConnectionServer {
 	 * @param socket The socket to accept connections on
 	 * @throws IOException
 	 */
-	private void createConnections(ServerSocket socket) throws IOException {
+	private void createConnections() throws IOException {
 		Connection conn = null;
-		Socket client = socket.accept();
-		client.setSoTimeout(timeout);
+		Socket client = accept();
+		if(client != null) {
+			client.setSoTimeout(timeout);
+			try {
+				conn = new Connection(this,client);
+				new Thread(conn).start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Accepts connections to read from.
+	 * 
+	 * @return A connection to read from
+	 * @throws IOException
+	 */
+	private Socket accept() throws IOException {
 		try {
-			conn = new Connection(this,client);
-			new Thread(conn).start();
-		} catch (Exception e) {
-			e.printStackTrace();
+			return serverSocket.accept();
+		} catch(SocketException e) {
+			return null;
 		}
 	}
 }

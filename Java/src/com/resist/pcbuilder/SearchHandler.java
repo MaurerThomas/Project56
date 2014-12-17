@@ -27,7 +27,8 @@ public class SearchHandler {
 	public SearchHandler(String address, int port, String clusterName, PcBuilder pcBuilder) {
 		this.pcBuilder = pcBuilder;
 		Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
-		client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(address, port));
+		client = new TransportClient(settings);
+		((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(address, port));
 	}
 
 	public JSONArray handleIncomingMessage(JSONObject json) {
@@ -58,6 +59,7 @@ public class SearchHandler {
 			JSONObject resultaten = new JSONObject();
 			System.out.println("Current results: " + results.length);
 			for (SearchHit hit : results) {
+				@SuppressWarnings("unchecked")
 				Map<String, Object> result = (Map<String, Object>) hit.getSource().get("specs");
 				String url = (String) result.get("url");
 				urls.add(url);
@@ -77,6 +79,7 @@ public class SearchHandler {
 		for (int i = 0; i < mysql.length(); i++) {
 			JSONObject mysqlElement = mysql.getJSONObject(i);
 			JSONObject elasticElement = elasticsearch.getJSONObject(mysqlElement.getString("url"));
+			@SuppressWarnings("unchecked")
 			Iterator<String> it = elasticElement.keys();
 			while(it.hasNext()) {
 				String key = it.next();
