@@ -160,6 +160,9 @@
 		if($json.aid != -1) {
 			$json.action = 'modifyAdmin';
 			$saving = 'adminModified';
+		} else if($json.username === undefined || $json.password === undefined) {
+			window.alert('Voer een naam en wachtwoord in.');
+			return;
 		} else {
 			delete $json.aid;
 			$json.action = 'addAdmin';

@@ -57,6 +57,9 @@ public class AdminFunctions implements Dashboard {
 	}
 
 	private JSONObject addAdmin(String username, String password) {
+		if(username.isEmpty() || password.isEmpty()) {
+			return null;
+		}
 		return new JSONObject().put("adminAdded",session.getPcBuilder().getMysql().addAdmin(username,password));
 	}
 
