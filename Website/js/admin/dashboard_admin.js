@@ -20,7 +20,7 @@
 	});
 
 	function handleJSON($json) {
-		var $admins,$aid;
+		var $admins,$aid,$div,$name,$icon,$button;
 		if($json.admins !== undefined) {
 			$admins = $('#admins');
 			$admins.empty();
@@ -35,7 +35,19 @@
 			$('a.glyphicon').attr('disabled',false);
 			$saving = false;
 			return true;
-		} else if($json.adminAdded !== undefined && $saving = 'adminAdded') {
+		} else if($json.adminAdded !== undefined && $saving == 'adminAdded') {
+			$div = $('[data-aid="-1"]');
+			$name = $div.find('input[name="username"]').val();
+			$div.attr('data-name',$name);
+			$div.text($name);
+			$button = $div.parent().find('a.btn-primary');
+			$icon = $button.find('.glyphicon');
+			$icon.addClass('glyphicon-pencil');
+			$icon.removeClass('glyphicon-floppy-disk');
+			$button.addClass('btn-default');
+			$button.removeClass('btn-primary');
+			$div.attr('data-aid',$json.adminAdded);
+			return true;
 		}
 		return false;
 	}

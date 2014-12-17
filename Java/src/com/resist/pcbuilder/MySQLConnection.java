@@ -194,6 +194,7 @@ public class MySQLConnection {
 	public int addAdmin(String username, String password) {
 		int out = -1;
 		try {
+			password = getPasswordHash(password);
 			PreparedStatement s = conn.prepareStatement("INSERT INTO admins (username,password) VALUES(?,?)",Statement.RETURN_GENERATED_KEYS);
 			s.setString(1,username);
 			s.setString(2,password);
@@ -204,7 +205,7 @@ public class MySQLConnection {
 			}
 			res.close();
 			s.close();
-		} catch (SQLException e) {
+		} catch (SQLException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		return out;
