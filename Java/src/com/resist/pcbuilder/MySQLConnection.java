@@ -69,7 +69,7 @@ public class MySQLConnection {
 	 */
 	private JSONObject initProcessors() throws SQLException {
 		JSONObject out = new JSONObject();
-		PreparedStatement s = conn.prepareStatement("SELECT type, merkmid FROM merk JOIN socket ON ( merk.mid = socket.merkmid )");
+		PreparedStatement s = conn.prepareStatement("SELECT merk.naam, socket.type FROM merk, socket WHERE merk.mid = socket.merkmid");
 		ResultSet res = s.executeQuery();
 		while(res.next()) {
 			String merk = res.getString(1);
