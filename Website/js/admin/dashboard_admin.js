@@ -118,7 +118,6 @@
 		$aid = $div.attr('data-aid');
 		$e.preventDefault();
 		if(window.confirm('Weet u zeker dat u deze beheerder wilt verwijderen?')) {
-			console.log($aid);
 			if($aid != -1) {
 				$webSocket.send({action: 'deleteAdmin', aid: $aid});
 				$deleting = $aid;
