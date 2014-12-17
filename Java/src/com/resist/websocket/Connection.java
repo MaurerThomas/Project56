@@ -165,7 +165,7 @@ public final class Connection implements Runnable {
 	private boolean isWebSocketRequest() throws IOException {
 		BufferedReader input = new BufferedReader(new InputStreamReader(this.input));
 		String line = input.readLine();
-		if(!line.equals("GET "+server.getPath()+" HTTP/1.1")) {
+		if(line == null || !line.equals("GET "+server.getPath()+" HTTP/1.1")) {
 			return false;
 		}
 		Map<String,List<String>> headers = parseHTTP(input);
