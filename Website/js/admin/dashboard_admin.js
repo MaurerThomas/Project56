@@ -1,5 +1,5 @@
 (function() {
-	var $saving = false;
+	var $saving = false, $deleting = false;
 
 	$webSocket.send({action: 'getAdmins'});
 	$webSocket.receive = function($msg) {
@@ -26,6 +26,8 @@
 			handleModifyAdmin($json);
 		} else if($json.adminAdded !== undefined && $saving == 'adminAdded') {
 			return handleAddAdmin($json);
+		} else if($json.adminDeleted !== undefined && $deleting !== false) {
+			return handleDeleteAdmin($json);
 		}
 		return false;
 	}
@@ -44,7 +46,7 @@
 		if(!$json.adminModified) {
 			window.alert('Uw veranderingen zijn niet opgeslagen.');
 		}
-		$('a.glyphicon').attr('disabled',false);
+		$('a.btn').attr('disabled',false);
 		$saving = false;
 		return true;
 	}
@@ -62,6 +64,19 @@
 		$button.addClass('btn-default');
 		$button.removeClass('btn-primary');
 		$div.attr('data-aid',$json.adminAdded);
+		$('a.btn').attr('disabled',false);
+		$saving = false;
+		return true;
+	}
+
+	function handleDeleteAdmin($json) {
+		if($json.adminDeleted) {
+			$('[data-aid="'+$deleting+'"]').remove();
+		} else {
+			window.alert('De gebruiker is niet verwijderd.');
+		}
+		$('a.btn').attr('disabled',false);
+		$deleting = false;
 		return true;
 	}
 
@@ -99,12 +114,17 @@
 	}
 
 	function deleteAdminClick($e) {
-		var $aid = $(this).parent().parent().find('.name').attr('data-aid');
+		var $div = $(this).parent().parent(),
+		$aid = $div.attr('data-aid');
 		$e.preventDefault();
 		if(window.confirm('Weet u zeker dat u deze beheerder wilt verwijderen?')) {
+			console.log($aid);
 			if($aid != -1) {
 				$webSocket.send({action: 'deleteAdmin', aid: $aid});
+				$deleting = $aid;
+				$('a.btn').attr('disabled',true);
 			} else {
+				$div.remove();
 			}
 		}
 	}
@@ -147,7 +167,7 @@
 			$saving = 'adminAdded';
 		}
 		$webSocket.send($json);
-		$('a.glyphicon').attr('disabled',true);
+		$('a.btn').attr('disabled',true);
 	}
 
 	function parseJSON($str) {
