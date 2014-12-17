@@ -63,7 +63,9 @@ public class SearchHandler {
 				urls.add(url);
 				resultaten.put(url, new JSONObject(result));
 			}
-			System.out.println(urls);
+			if(urls.isEmpty()) {
+				return null;
+			}
 			return combineMysqlResultsWithElasticsearch(resultaten, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, null, null));
 		} else {
 			return null;
