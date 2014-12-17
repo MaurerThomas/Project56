@@ -226,10 +226,12 @@ public class MySQLConnection {
 				s.setString(1,username);
 				s.setInt(2,aid);
 			} else if(username == null) {
+				password = getPasswordHash(password);
 				s = conn.prepareStatement("UPDATE admins SET password = ? WHERE aid = ?");
 				s.setString(1,password);
 				s.setInt(2,aid);
 			} else {
+				password = getPasswordHash(password);
 				s = conn.prepareStatement("UPDATE admins SET username = ?, password = ? WHERE aid = ?");
 				s.setString(1,username);
 				s.setString(2,password);
@@ -238,7 +240,7 @@ public class MySQLConnection {
 			s.executeUpdate();
 			s.close();
 			return true;
-		} catch (SQLException e) {
+		} catch (SQLException | NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		return false;
