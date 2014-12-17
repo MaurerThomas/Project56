@@ -42,11 +42,7 @@
             <artifactId>lucene-analyzers-common</artifactId>
             <version>4.9.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>4.9.1</version>
-        </dependency>
+        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
