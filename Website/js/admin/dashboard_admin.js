@@ -20,36 +20,49 @@
 	});
 
 	function handleJSON($json) {
-		var $admins,$aid,$div,$name,$icon,$button;
 		if($json.admins !== undefined) {
-			$admins = $('#admins');
-			$admins.empty();
-			for($aid in $json.admins) {
-				$admins.append(addAdmin($json.admins[$aid],$aid));
-			}
-			return true;
+			return handleShowAdmins($json);
 		} else if($json.adminModified !== undefined && $saving == 'adminModified') {
-			if(!$json.adminModified) {
-				window.alert('Uw veranderingen zijn niet opgeslagen.');
-			}
-			$('a.glyphicon').attr('disabled',false);
-			$saving = false;
-			return true;
+			handleModifyAdmin($json);
 		} else if($json.adminAdded !== undefined && $saving == 'adminAdded') {
-			$div = $('[data-aid="-1"]');
-			$name = $div.find('input[name="username"]').val();
-			$div.attr('data-name',$name);
-			$div.text($name);
-			$button = $div.parent().find('a.btn-primary');
-			$icon = $button.find('.glyphicon');
-			$icon.addClass('glyphicon-pencil');
-			$icon.removeClass('glyphicon-floppy-disk');
-			$button.addClass('btn-default');
-			$button.removeClass('btn-primary');
-			$div.attr('data-aid',$json.adminAdded);
-			return true;
+			return handleAddAdmin($json);
 		}
 		return false;
+	}
+
+	function handleShowAdmins($json) {
+		var $admins,$aid;
+		$admins = $('#admins');
+		$admins.empty();
+		for($aid in $json.admins) {
+			$admins.append(addAdmin($json.admins[$aid],$aid));
+		}
+		return true;
+	}
+
+	function handleModifyAdmin($json) {
+		if(!$json.adminModified) {
+			window.alert('Uw veranderingen zijn niet opgeslagen.');
+		}
+		$('a.glyphicon').attr('disabled',false);
+		$saving = false;
+		return true;
+	}
+
+	function handleAddAdmin($json) {
+		var $div,$name,$icon,$button;
+		$div = $('[data-aid="-1"]');
+		$name = $div.find('input[name="username"]').val();
+		$div.attr('data-name',$name);
+		$div.text($name);
+		$button = $div.parent().find('a.btn-primary');
+		$icon = $button.find('.glyphicon');
+		$icon.addClass('glyphicon-pencil');
+		$icon.removeClass('glyphicon-floppy-disk');
+		$button.addClass('btn-default');
+		$button.removeClass('btn-primary');
+		$div.attr('data-aid',$json.adminAdded);
+		return true;
 	}
 
 	function addAdmin($admin,$aid) {
@@ -86,9 +99,13 @@
 	}
 
 	function deleteAdminClick($e) {
+		var $aid = $(this).parent().parent().find('.name').attr('data-aid');
 		$e.preventDefault();
 		if(window.confirm('Weet u zeker dat u deze beheerder wilt verwijderen?')) {
-			window.alert('Jammer dan');
+			if($aid != -1) {
+				$webSocket.send({action: 'deleteAdmin', aid: $aid});
+			} else {
+			}
 		}
 	}
 
