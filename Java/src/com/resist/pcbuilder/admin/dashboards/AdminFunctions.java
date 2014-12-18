@@ -13,7 +13,7 @@ public class AdminFunctions implements Dashboard {
 	/**
 	 * Creates a new Admin Functions dashboard.
 	 * 
-	 * @param pcbuilder The PcBuilder this dashboard belongs to
+	 * @param session The admin session that spawned this dashboard
 	 */
 	public AdminFunctions(AdminSession session) {
 		this.session = session;
@@ -30,40 +30,53 @@ public class AdminFunctions implements Dashboard {
 	}
 
 	private JSONObject handleActions(JSONObject input) {
-		if(input.getString("action").equals("deleteAdmin") && input.has("aid")) {
+		String action = input.getString("action");
+		if(action.equals("deleteAdmin") && input.has("aid")) {
 			return deleteAdmin(input.getInt("aid"));
-		} else if(input.getString("action").equals("addAdmin") && input.has("username") && input.has("password")) {
+		} else if(action.equals("addAdmin") && input.has("username") && input.has("password")) {
 			return addAdmin(input.getString("username"),input.getString("password"));
-		} else if(input.getString("action").equals("getAdmins")) {
+		} else if(action.equals("getAdmins")) {
 			return getAdmins();
-		} else if(input.getString("action").equals("modifyAdmin") && input.has("aid")) {
-			if(input.has("username") && input.has("password")) {
-				return modifyAdmin(input.getInt("aid"),input.getString("username"),input.getString("password"));
-			} else if(input.has("username")) {
-				return modifyAdmin(input.getInt("aid"),input.getString("username"),null);
-			} else if(input.has("password")) {
-				return modifyAdmin(input.getInt("aid"),null,input.getString("password"));
-			}
+		} else if(action.equals("modifyAdmin") && input.has("aid")) {
+			return handleModifyAdmin(input);
 		}
 		return null;
 	}
 
 	private JSONObject getAdmins() {
-		return new JSONObject().put("admins",session.getPcBuilder().getMysql().getAdminList());
+		JSONObject admins = session.getPcBuilder().getMysql().getAdminList();
+		return new JSONObject().put("admins",admins);
 	}
 
 	private JSONObject deleteAdmin(int aid) {
-		return new JSONObject().put("adminDeleted",session.getPcBuilder().getMysql().deleteAdmin(aid));
+		boolean adminWasDeleted = session.getPcBuilder().getMysql().deleteAdmin(aid);
+		return new JSONObject().put("adminDeleted",adminWasDeleted);
 	}
 
 	private JSONObject addAdmin(String username, String password) {
 		if(username.isEmpty() || password.isEmpty()) {
 			return null;
 		}
-		return new JSONObject().put("adminAdded",session.getPcBuilder().getMysql().addAdmin(username,password));
+		int aid = session.getPcBuilder().getMysql().addAdmin(username,password);
+		return new JSONObject().put("adminAdded",aid);
 	}
 
-	private JSONObject modifyAdmin(int aid, String username, String password) {
-		return new JSONObject().put("adminModified",session.getPcBuilder().getMysql().modifyAdmin(aid,username,password));
+	private JSONObject handleModifyAdmin(JSONObject input) {
+		int aid = input.getInt("aid");
+		String username = getValueOrNull(input,"username");
+		String password = getValueOrNull(input,"password");
+		boolean adminWasModified = session.getPcBuilder().getMysql().modifyAdmin(aid,username,password);
+		return new JSONObject().put("adminModified",adminWasModified);
+	}
+
+	private String getValueOrNull(JSONObject object, String key) {
+		String value = null;
+		if(object.has(key)) {
+			value = object.getString(key);
+			if(value.isEmpty()) {
+				value = null;
+			}
+		}
+		return key;
 	}
 }
