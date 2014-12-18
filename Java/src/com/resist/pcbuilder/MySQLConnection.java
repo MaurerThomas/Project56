@@ -284,11 +284,12 @@ public class MySQLConnection {
             for(int i=0;i < urls.size();i++) {
                 s.setString(i+1+args,urls.get(i));
             }
+
             ResultSet res = s.executeQuery();
             while(res.next()) {
                 out.put(new JSONObject().put("url",res.getString(1))
-                        .put("euro",res.getString(2))
-                        .put("cent",res.getString(3)));
+                        .put("euro",res.getInt(2))
+                        .put("cent",res.getInt(3)));
             }
             res.close();
             s.close();
@@ -298,5 +299,9 @@ public class MySQLConnection {
 
         return out;
     }
+
+
+
+
 
 }

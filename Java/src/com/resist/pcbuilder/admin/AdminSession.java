@@ -1,16 +1,16 @@
 package com.resist.pcbuilder.admin;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.admin.dashboards.AdminFunctions;
+import com.resist.pcbuilder.admin.dashboards.Grafieken;
 import com.resist.websocket.Connection;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class AdminSession implements MessageHandler {
 	private PcBuilder pcbuilder;
@@ -29,6 +29,7 @@ public class AdminSession implements MessageHandler {
 		dashboards = new HashMap<String,Dashboard>();
 		dashboards.put("main",null);
 		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(this));
+        dashboards.put(Grafieken.IDENTIFIER,new Grafieken());
 	}
 
 	private void initSession(Connection conn) {
