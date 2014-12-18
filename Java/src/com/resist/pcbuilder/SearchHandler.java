@@ -1,5 +1,11 @@
 package com.resist.pcbuilder;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -15,11 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 public class SearchHandler {
 	private Client client;
 	private PcBuilder pcBuilder;
@@ -27,7 +28,8 @@ public class SearchHandler {
 	public SearchHandler(String address, int port, String clusterName, PcBuilder pcBuilder) {
 		this.pcBuilder = pcBuilder;
 		Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
-		client = new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(address, port));
+		client = new TransportClient(settings);
+		((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(address, port));
 	}
 
 	public JSONArray handleIncomingMessage(JSONObject json) {
@@ -38,38 +40,78 @@ public class SearchHandler {
 	}
 
 	private JSONArray handleQuery(JSONArray json) {
-		List<String> urls = new ArrayList<String>();
+		FilterBuilder filters = getElasticFilters(json);
+		if (filters != null) {
+			List<String> urls = new ArrayList<String>();
+			JSONObject results = elasticSearchQuery(filters, 20, urls);
+			if(!urls.isEmpty()) {
+				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
+				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 1000);
+				return combineMysqlResultsWithElasticsearch(results, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
+			}
+		}
+		return null;
+	}
 
+	private java.sql.Date getPastSQLDate(long ms) {
 		java.util.Date utilDate = new java.util.Date();
-		java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime() - 24 * 60 * 60 * 1000);
+		return new java.sql.Date(utilDate.getTime() - ms);
+	}
 
-		if (json.length() > 0 && validateTerm(json, 0)) {
-			FilterBuilder filters = FilterBuilders.termsFilter(json.getJSONObject(0).getString("key"), json.getJSONObject(0).getString("value"));
-			for (int i = 1; i < json.length(); i++) {
-				if (validateTerm(json, i)) {
-					TermsFilterBuilder nieuw = FilterBuilders.termsFilter(json.getJSONObject(i).getString("key"), json.getJSONObject(i).getString("value"));
-					filters = FilterBuilders.andFilter(filters, nieuw);
-				}
-			}
-			System.out.println(filters);
-			SearchResponse response = client.prepareSearch("mongoindex").setSearchType(SearchType.DFS_QUERY_THEN_FETCH).setFrom(0).setSize(60).setPostFilter(filters).setExplain(true).execute().actionGet();
+	private JSONObject elasticSearchQuery(FilterBuilder filters, int numResults, List<String> urls) {
+		JSONObject output = new JSONObject();
+		SearchResponse response = client.prepareSearch("mongoindex")
+				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
+				.setSize(numResults)
+				.setPostFilter(filters)
+				.setExplain(false)
+				.execute()
+				.actionGet();
+		SearchHit[] results = response.getHits().getHits();
+		for (SearchHit hit : results) {
+			@SuppressWarnings("unchecked")
+			Map<String, Object> result = (Map<String, Object>) hit.getSource().get("specs");
+			String url = (String) result.get("url");
+			urls.add(url);
+			output.put(url, new JSONObject(result));
+		}
+		return output;
+	}
 
-			SearchHit[] results = response.getHits().getHits();
-			JSONObject resultaten = new JSONObject();
-			System.out.println("Current results: " + results.length);
-			for (SearchHit hit : results) {
-                @SuppressWarnings("unchecked")
-				Map<String, Object> result = (Map<String, Object>) hit.getSource().get("specs");
-				String url = (String) result.get("url");
-				urls.add(url);
-				resultaten.put(url, new JSONObject(result));
+	private FilterBuilder getElasticFilters(JSONArray json) {
+		FilterBuilder filters = null;
+		for (int i = 0; i < json.length(); i++) {
+			JSONObject filter = json.getJSONObject(i);
+			if (validateTerm(filter)) {
+				filters = appendElasticFilter(filter,filters);
 			}
-			if(urls.isEmpty()) {
-				return null;
-			}
-			return combineMysqlResultsWithElasticsearch(resultaten, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, null, null));
-		} else {
-			return null;
+		}
+		return filters;
+	}
+
+	private FilterBuilder appendElasticFilter(JSONObject filter, FilterBuilder filters) {
+		String key = filter.getString("key");
+		String value = filter.getString("value");
+		if(filters == null) {
+			return FilterBuilders.termsFilter(key,value);
+		}
+		TermsFilterBuilder part = FilterBuilders.termsFilter(key,value);
+		return FilterBuilders.andFilter(filters, part);
+	}
+
+	private Map<String,Integer> getMinMaxPrice(JSONArray json) {
+		Map<String,Integer> filters = new HashMap<String,Integer>();
+		for(int i=0;i < json.length();i++) {
+			JSONObject filter = json.getJSONObject(i);
+			addMinMaxPrice(filter,filters);
+		}
+		return filters;
+	}
+
+	private void addMinMaxPrice(JSONObject filter, Map<String,Integer> filters) {
+		String key = filter.getString("key");
+		if(key.equals("minPrice") || key.equals("maxPrice")) {
+			filter.put(key, filter.getInt("value"));
 		}
 	}
 
@@ -78,7 +120,7 @@ public class SearchHandler {
 		for (int i = 0; i < mysql.length(); i++) {
 			JSONObject mysqlElement = mysql.getJSONObject(i);
 			JSONObject elasticElement = elasticsearch.getJSONObject(mysqlElement.getString("url"));
-            @SuppressWarnings("unchecked")
+			@SuppressWarnings("unchecked")
 			Iterator<String> it = elasticElement.keys();
 			while(it.hasNext()) {
 				String key = it.next();
@@ -90,13 +132,13 @@ public class SearchHandler {
 		return mysql;
 	}
 
-	private boolean validateTerm(JSONArray ar, int i) {
+	private boolean validateTerm(JSONObject term) {
 		try {
-			String val = ar.getJSONObject(i).getString("key");
+			String val = term.getString("key");
 			return val.equals("component") || val.equals("merk");
 		} catch (JSONException e) {
+			return false;
 		}
-		return false;
 	}
 
 	public void close() {
