@@ -9,13 +9,7 @@
         <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
         <url>https://github.com/MaurerThomas/Project56/</url>
     </scm>
-    <distributionManagement>
-        <repository>
-            <id>myrepository</id>
-            <url>https://github.com/MaurerThomas/Project56</url>
-        </repository>
-    </distributionManagement>
-
+    
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
