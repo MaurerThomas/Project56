@@ -9,6 +9,58 @@
         <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
         <url>https://github.com/MaurerThomas/Project56/</url>
     </scm>
+	<servers>
+    <server>
+      <username>jenkins</username>
+      <password>Welkom01</password>
+      <id>central</id>
+    </server>
+    <server>
+      <username>jenkins</username>
+      <password>Welkom01</password>
+	  <id>snapshots</id>
+    </server>
+  </servers>
+  <profiles>
+    <profile>
+      <repositories>
+        <repository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>central</id>
+          <name>libs-release</name>
+          <url>http://localhost:8081/artifactory/libs-release</url>
+        </repository>
+        <repository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>libs-snapshot</name>
+          <url>http://localhost:8081/artifactory/libs-snapshot</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <snapshots>
+            <enabled>false</enabled>
+          </snapshots>
+          <id>central</id>
+          <name>plugins-release</name>
+          <url>http://localhost:8081/artifactory/plugins-release</url>
+        </pluginRepository>
+        <pluginRepository>
+          <snapshots />
+          <id>snapshots</id>
+          <name>plugins-snapshot</name>
+          <url>http://localhost:8081/artifactory/plugins-snapshot</url>
+        </pluginRepository>
+      </pluginRepositories>
+      <id>artifactory</id>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>artifactory</activeProfile>
+  </activeProfiles>
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
