@@ -9,8 +9,18 @@
         <developerConnection>scm:git:https://github.com/MaurerThomas/Project56/</developerConnection>
         <url>https://github.com/MaurerThomas/Project56/</url>
     </scm>
-    
-
+    <distributionManagement>
+		<repository>
+			<id>ubuntu</id>
+			<name>ubuntu-releases</name>
+			<url>http://localhost:8081/artifactory/jenkins</url>
+		</repository>
+		<snapshotRepository>
+			<id>ubuntu</id>
+			<name>ubuntu-snapshots</name>
+			<url>http://localhost:8081/artifactory/jenkins</url>
+		</snapshotRepository>
+	</distributionManagement>
     <dependencies>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -37,7 +47,6 @@
             <artifactId>lucene-analyzers-common</artifactId>
             <version>4.9.1</version>
         </dependency>
-        
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
