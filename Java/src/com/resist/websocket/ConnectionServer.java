@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class ConnectionServer {
 	private String address;
@@ -14,6 +16,7 @@ public final class ConnectionServer {
 	private MessageHandler messageHandler = null;
 	private int timeout = 1000*60*60;
 	private ServerSocket serverSocket;
+	private Logger log;
 
 	/**
 	 * Creates a new WebSocket server.
@@ -22,10 +25,11 @@ public final class ConnectionServer {
 	 * @param port The port to listen on
 	 * @param path The path to accept clients on
 	 */
-	public ConnectionServer(String address, int port, String path) {
+	public ConnectionServer(String address, int port, String path, Logger log) {
 		this.address = address;
 		this.port = port;
 		this.path = path;
+		this.log = log;
 	}
 
 	/**
@@ -59,6 +63,15 @@ public final class ConnectionServer {
 	public ConnectionServer setTimeout(int timeout) {
 		this.timeout = timeout;
 		return this;
+	}
+
+	/**
+	 * Returns the logger used by the server.
+	 * 
+	 * @return The logger of the server
+	 */
+	public Logger getLogger() {
+		return log;
 	}
 
 	/**
@@ -128,7 +141,7 @@ public final class ConnectionServer {
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING,"Error closing socket.",e);
 		}
 	}
 
@@ -139,7 +152,7 @@ public final class ConnectionServer {
 		try {
 			createSocket();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING,"Error creating socket.",e);
 		}
 	}
 
@@ -171,7 +184,7 @@ public final class ConnectionServer {
 				conn = new Connection(this,client);
 				new Thread(conn).start();
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.log(Level.WARNING,"Connection failed.",e);
 			}
 		}
 	}

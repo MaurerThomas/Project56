@@ -1,19 +1,28 @@
 package com.resist.pcbuilder;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.resist.pcbuilder.admin.AdminLoginHandler;
 import com.resist.websocket.Connection;
 import com.resist.websocket.ConnectionServer;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.SQLException;
-
 public class PcBuilder implements MessageHandler {
+	public static final Logger LOG = Logger.getLogger(PcBuilder.class.getName());
+	static {
+		LOG.addHandler(new LogHandler());
+		LOG.setLevel(Level.ALL);
+		LOG.setUseParentHandlers(false);
+	}
+
 	private SearchHandler searchHandler;
 	private MySQLConnection mysql;
 	private JSONObject settings;
@@ -26,10 +35,9 @@ public class PcBuilder implements MessageHandler {
 				new PcBuilder(getSettingsFromFile(args[0]));
 				return;
 			} catch (IOException e) {
-				e.printStackTrace();
-				fatalError("Could not read settings file.");
+				LOG.log(Level.SEVERE, "Could not read settings file.", e);
 			} catch (JSONException e) {
-				fatalError("Invalid settings file.");
+				LOG.log(Level.SEVERE, "Invalid settings file.", e);
 			}
 		} else {
 			fatalError("No settings path specified.");
@@ -48,7 +56,7 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	public static void fatalError(String error) {
-		System.err.println(error);
+		LOG.log(Level.SEVERE,error);
 		System.exit(1);
 	}
 
@@ -64,7 +72,7 @@ public class PcBuilder implements MessageHandler {
 		listenForAdminConnections();
 		listenForConnections();
 		Runtime.getRuntime().addShutdownHook(new Thread(new PeacefulShutdown(this)));
-		System.out.println("Started...");
+		LOG.log(Level.INFO,"Started...");
 	}
 
 	private boolean settingsArePresent(JSONObject settings) {
@@ -100,7 +108,7 @@ public class PcBuilder implements MessageHandler {
 			}
 		} catch (SQLException e) {
 			searchHandler.close();
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "Failed to connect to MySQL server.", e);
 			System.exit(1);
 		}
 	}
@@ -108,7 +116,8 @@ public class PcBuilder implements MessageHandler {
 	private void listenForAdminConnections() {
 		final ConnectionServer admin = new ConnectionServer(
 				settings.getString("address"), settings.getInt("adminPort"),
-				settings.getString("adminPath"))
+				settings.getString("adminPath"),
+				LOG)
 				.setMessageHandler(new AdminLoginHandler(this));
 		if (settings.has("adminTimeout")) {
 			admin.setTimeout(settings.getInt("adminTimeout"));
@@ -125,7 +134,7 @@ public class PcBuilder implements MessageHandler {
 	private void listenForConnections() {
 		final ConnectionServer user = new ConnectionServer(
 				settings.getString("address"), settings.getInt("port"),
-				settings.getString("path")).setMessageHandler(this);
+				settings.getString("path"), LOG).setMessageHandler(this);
 		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
@@ -153,7 +162,7 @@ public class PcBuilder implements MessageHandler {
 		try {
 			return new JSONObject(message);
 		} catch (JSONException e) {
-			System.out.println(message);
+			LOG.log(Level.INFO, "Invalid JSON string.", e);
 			return null;
 		}
 	}

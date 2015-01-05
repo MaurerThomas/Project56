@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -94,11 +95,11 @@ public final class Connection implements Runnable {
 				readAndHandleMessage(data);
 			}
 		} catch (SocketTimeoutException e) {
-			System.out.println("Closing connection.");
+			server.getLogger().log(Level.INFO,"Closing connection.");
 		} catch (SocketException e) {
-			System.err.println("Connection closed unexpectedly.");
+			server.getLogger().log(Level.INFO,"Connection closed unexpectedly.");
 		} catch (IOException e) {
-			e.printStackTrace();
+			server.getLogger().log(Level.WARNING,"Connection closed unexpectedly.",e);
 		} finally {
 			close();
 		}
@@ -118,7 +119,7 @@ public final class Connection implements Runnable {
 			input.close();
 			socket.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			server.getLogger().log(Level.WARNING, "Failed to close connection.", e);
 		}
 	}
 
@@ -374,7 +375,7 @@ public final class Connection implements Runnable {
 	 */
 	private void sendClose() {
 		if(!sendMessage(true,OPCODE_CONNECTION_CLOSE,null,new byte[0])) {
-			System.err.println("Failed to send close: client gone.");
+			server.getLogger().log(Level.WARNING, "Failed to send close: client gone.");
 		}
 	}
 
