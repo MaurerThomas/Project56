@@ -1,6 +1,6 @@
 package com.resist.websocket;
 
-import java.io.BufferedReader;
+import	java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -221,17 +221,20 @@ public final class Connection implements Runnable {
 	 * @throws IOException
 	 */
 	private void readAndHandleMessage(int nextByte) throws IOException {
-		int fin = nextByte >> 7;						//First bit
+		//First bit
+		int fin = nextByte >> 7;
 		if(checkRSV(nextByte)) {
 			stop = true;
 			return;
 		}
-		int opcode = nextByte & ((1 << 4) - 1);			//Bit 5-8
+		//Bit 5-8
+		int opcode = nextByte & ((1 << 4) - 1);
 		if((currentMessage == null || opcode != OPCODE_CONTINUATION_FRAME) && opcode < OPCODE_CONNECTION_CLOSE) {
 			currentMessage = new Message(this,opcode);
 		}
 		nextByte = input.read();
-		int mask = nextByte >> 7;						//First bit
+		//First bit
+		int mask = nextByte >> 7;
 		long payloadLen = getPayloadLength(nextByte);
 		int[] maskingKey = getMaskingKey(mask == 1);
 		handleMessage(opcode,fin == 1,payloadLen,maskingKey);
@@ -244,9 +247,12 @@ public final class Connection implements Runnable {
 	 * @return False if the three RSV bytes are 0
 	 */
 	private boolean checkRSV(int nextByte) {
-		int rsv1 = (nextByte >> 6) & 1;					//Second bit
-		int rsv2 = (nextByte >> 5) & 1;					//Third bit
-		int rsv3 = (nextByte >> 4) & 1;					//Fourth bit
+		//Second bit
+		int rsv1 = (nextByte >> 6) & 1;
+		//Third bit
+		int rsv2 = (nextByte >> 5) & 1;
+		//Fourth bit
+		int rsv3 = (nextByte >> 4) & 1;
 		return (rsv1 | rsv2 | rsv3) != 0;
 	}
 
@@ -258,11 +264,14 @@ public final class Connection implements Runnable {
 	 * @throws IOException
 	 */
 	private long getPayloadLength(int nextByte) throws IOException {
-		long payloadLen = nextByte & ((1 << 7) - 1);	//Bit 2-8
+		//Bit 2-8
+		long payloadLen = nextByte & ((1 << 7) - 1);
 		if(payloadLen == 126) {
-			payloadLen = (input.read() << 8) + input.read();	//Next two bytes
+			//Next two bytes
+			payloadLen = (input.read() << 8) + input.read();
 		} else if(payloadLen == 127) {
-			byte[] length = new byte[8];						//Next 8 bytes as unsigned 64bit int
+			//Next 8 bytes as unsigned 64bit int
+			byte[] length = new byte[8];
 			input.read(length);
 			payloadLen = new BigInteger(length).longValue();
 		}
@@ -280,7 +289,8 @@ public final class Connection implements Runnable {
 		int[] maskingKey = new int[4];
 		if(mask) {
 			for(int n=0;n < 4;n++) {
-				maskingKey[n] = input.read();					//Next four bytes
+				//Next four bytes
+				maskingKey[n] = input.read();
 			}
 		}
 		return maskingKey;
