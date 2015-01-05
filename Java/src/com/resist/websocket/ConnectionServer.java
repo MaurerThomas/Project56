@@ -100,7 +100,7 @@ public final class ConnectionServer {
 				public void run() {
 					controlFrameHandler.handleMessage(message);
 				}
-			}).run();
+			}).start();
 		}
 	}
 
@@ -116,7 +116,7 @@ public final class ConnectionServer {
 				public void run() {
 					messageHandler.handleMessage(message);
 				}
-			}).run();
+			}).start();
 		}
 	}
 
