@@ -12,6 +12,7 @@ import java.util.logging.Level;
 public class MySQLConnection {
 	private Connection conn;
 	private String salt = null;
+	private String[] args;
 
 	/**
 	 * Creates a new database connections.
@@ -24,7 +25,23 @@ public class MySQLConnection {
 	 * @throws SQLException
 	 */
 	public MySQLConnection(String address, int port, String dbName, String username, String password) throws SQLException {
-		conn = DriverManager.getConnection("jdbc:mysql://"+address+":"+port+"/"+dbName,username,password);
+		args = new String[] {"jdbc:mysql://"+address+":"+port+"/"+dbName,username,password};
+		conn = DriverManager.getConnection(args[0],args[1],args[2]);
+	}
+
+	/**
+	 * Attempts to restore connection to the database.
+	 */
+	private void restoreConnection() {
+		try {
+			if(conn.isClosed() || !conn.isValid(3)) {
+				PcBuilder.LOG.log(Level.INFO,"Trying to restore MySQL connection.");
+				close();
+				conn = DriverManager.getConnection(args[0],args[1],args[2]);
+			}
+		} catch (SQLException e) {
+			PcBuilder.LOG.log(Level.SEVERE,"Failed to restore MySQL connection.",e);
+		}
 	}
 
 	/**
@@ -53,6 +70,7 @@ public class MySQLConnection {
 	 * @return The initial data for the PcBuilder
 	 */
 	public JSONObject getInit() {
+		restoreConnection();
 		JSONObject out = new JSONObject();
 		try {
 			out.put("processors", initProcessors());
@@ -129,6 +147,7 @@ public class MySQLConnection {
 	 * @return True if there is an admin with this username and password
 	 */
 	public boolean isValidLogin(String username,String password) {
+		restoreConnection();
 		try {
 			password = getPasswordHash(password);
 			PreparedStatement s = conn.prepareStatement("SELECT 1 FROM admins WHERE username = ? AND password = ?");
@@ -150,6 +169,7 @@ public class MySQLConnection {
 	 * @return A list of admins
 	 */
 	public JSONObject getAdminList() {
+		restoreConnection();
 		JSONObject out = new JSONObject();
 		try {
 			PreparedStatement s = conn.prepareStatement("SELECT aid, username FROM admins");
@@ -172,6 +192,7 @@ public class MySQLConnection {
 	 * @return True if the admin was deleted
 	 */
 	public boolean deleteAdmin(int aid) {
+		restoreConnection();
 		try {
 			PreparedStatement s = conn.prepareStatement("DELETE FROM admins WHERE aid = ?");
 			s.setInt(1,aid);
@@ -191,6 +212,7 @@ public class MySQLConnection {
 	 * @return The id of the new admin, -1 on failure
 	 */
 	public int addAdmin(String username, String password) {
+		restoreConnection();
 		int out = -1;
 		try {
 			password = getPasswordHash(password);
@@ -218,6 +240,7 @@ public class MySQLConnection {
 	 * @return True if the admin was modified
 	 */
 	public boolean modifyAdmin(int aid, String username, String password) {
+		restoreConnection();
 		PreparedStatement s;
 		try {
 			if(password == null) {
@@ -257,7 +280,8 @@ public class MySQLConnection {
         return sb.toString();
     }
 
-    public JSONArray getPartsPrice(List<String> urls, Date date, Integer minPrice, Integer maxPrice){
+    public JSONArray getPartsPrice(List<String> urls, Date date, Integer minPrice, Integer maxPrice) {
+    	restoreConnection();
         JSONArray out = new JSONArray();
         try {
             String sql = "SELECT url,euro,cent FROM prijs_verloop WHERE datum > ?";
