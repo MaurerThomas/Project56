@@ -171,16 +171,16 @@ public final class ConnectionServer {
 
 	/**
 	 * Listens for connections on a socket.
-	 *
+	 * 
+	 * @param socket The socket to accept connections on
 	 * @throws IOException
 	 */
 	private void createConnections() throws IOException {
-		Connection conn = null;
 		Socket client = accept();
 		if(client != null) {
 			client.setSoTimeout(timeout);
 			try {
-				conn = new Connection(this,client);
+				Connection conn = new Connection(this,client);
 				new Thread(conn).start();
 			} catch (Exception e) {
 				log.log(Level.WARNING,"Connection failed.",e);
