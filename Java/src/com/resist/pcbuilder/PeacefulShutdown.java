@@ -1,5 +1,7 @@
 package com.resist.pcbuilder;
 
+import java.util.logging.Level;
+
 public class PeacefulShutdown implements Runnable {
 	private PcBuilder pcbuilder;
 
@@ -9,12 +11,7 @@ public class PeacefulShutdown implements Runnable {
 
 	@Override
 	public void run() {
-		System.out.println("Shutting down...");
-		System.out.println("       |");
-		System.out.println("      /'\\");
-		System.out.println("     | 0 |");
-		System.out.println("      \\_/");
-		System.out.println("     / | \\");
+		PcBuilder.LOG.log(Level.INFO, "Shutting down...\n       |\n      /'\\\n     | 0 |\n      \\_/\n     / | \\");
 		pcbuilder.stop();
 	}
 }

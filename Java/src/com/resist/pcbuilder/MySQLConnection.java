@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.List;
+import java.util.logging.Level;
 
 public class MySQLConnection {
 	private Connection conn;
@@ -42,7 +43,7 @@ public class MySQLConnection {
 		try {
 			conn.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			PcBuilder.LOG.log(Level.WARNING, "Failed to close connection.", e);
 		}
 	}
 
@@ -56,7 +57,7 @@ public class MySQLConnection {
 		try {
 			out.put("processors", initProcessors());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			PcBuilder.LOG.log(Level.WARNING, "Failed to get init.", e);
 		}
 		return out;
 	}
@@ -159,7 +160,6 @@ public class MySQLConnection {
 			res.close();
 			s.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return null;
 		}
 		return out;
@@ -179,7 +179,6 @@ public class MySQLConnection {
 			s.close();
 			return true;
 		} catch (SQLException e) {
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -206,7 +205,6 @@ public class MySQLConnection {
 			res.close();
 			s.close();
 		} catch (SQLException | NoSuchAlgorithmException e) {
-			e.printStackTrace();
 		}
 		return out;
 	}
@@ -242,7 +240,6 @@ public class MySQLConnection {
 			s.close();
 			return true;
 		} catch (SQLException | NoSuchAlgorithmException e) {
-			e.printStackTrace();
 		}
 		return false;
 	}
@@ -294,14 +291,7 @@ public class MySQLConnection {
             res.close();
             s.close();
         } catch (SQLException e) {
-            e.printStackTrace();
         }
-
         return out;
     }
-
-
-
-
-
 }
