@@ -8,7 +8,7 @@ public final class Message {
 	private Connection connection;
 	private int type;
 	private ByteArrayOutputStream buffer;
-	private StringBuffer stringBuffer;
+	private StringBuilder stringBuffer;
 	private boolean complete = false;
 	private String message = null;
 
@@ -22,7 +22,7 @@ public final class Message {
 		this.connection = connection;
 		this.type = type;
 		if(type == Connection.OPCODE_TEXT_FRAME) {
-			stringBuffer = new StringBuffer();
+			stringBuffer = new StringBuilder();
 		} else {
 			buffer = new ByteArrayOutputStream();
 		}
