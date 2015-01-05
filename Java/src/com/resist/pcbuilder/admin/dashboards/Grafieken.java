@@ -1,6 +1,4 @@
 package com.resist.pcbuilder.admin.dashboards;
-
-
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import org.jfree.chart.ChartFactory;
@@ -8,6 +6,7 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -21,11 +20,13 @@ public class Grafieken implements Dashboard {
     public static final String IDENTIFIER = "grafieken";
     private AdminSession session;
 
+    public Grafieken(AdminSession session){this.session = session;}
+
     @Override
     public JSONObject handleJSON(JSONObject input) {
-        if (input.getString("action").equals("makechart")){
+        if (input.getString("action").equals("makechart") && input.getString("merk").equals("asus")){
             try {
-                makeChart();
+                makeChart(input);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -33,13 +34,15 @@ public class Grafieken implements Dashboard {
         return null;
     }
 
-
-    public void makeChart() throws IOException {
-        //session.getPcBuilder().getMysql().getPartsPrice();
-
+    public void makeChart(JSONObject json) throws IOException {
+        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleIncomingMessage(json);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
+        System.out.println(getPrijs);
 
-        line_chart_dataset.addValue(2, "schools", "2014");
+        int dataset = getPrijs.getInt(0);
+        System.out.println(dataset);
+
+        line_chart_dataset.addValue(dataset,"Prijs","2015");
 
         JFreeChart lineChartObject = ChartFactory.createLineChart(
                 "Schools Vs Years", "Year",
@@ -51,10 +54,7 @@ public class Grafieken implements Dashboard {
         int height = 480; /* Height of the image */
 
         // Voor linux
-        //File lineChart = new File("//var//www//img//LineChart.jpeg");
-
-        File lineChart = new File("LineChart.jpeg");
+        File lineChart = new File("//var//www//img//LineChart.jpeg");
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
-
 }

@@ -1,11 +1,5 @@
 package com.resist.pcbuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -20,6 +14,8 @@ import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.*;
 
 public class SearchHandler {
 	private Client client;
@@ -36,6 +32,9 @@ public class SearchHandler {
 		if (json.has("filters")) {
 			return handleQuery(json.getJSONArray("filters"));
 		}
+		if (json.has("makechart")){
+			return getPartsPriceForGraph(json.getJSONArray("makechart"));
+		}
 		return null;
 	}
 
@@ -48,6 +47,19 @@ public class SearchHandler {
 				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
 				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 1000);
 				return combineMysqlResultsWithElasticsearch(results, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
+			}
+		}
+		return null;
+	}
+
+	private JSONArray getPartsPriceForGraph(JSONArray json){
+		FilterBuilder filters = getElasticFilters(json);
+		if (filters != null) {
+			List<String> urls = new ArrayList<String>();
+			JSONObject results = elasticSearchQuery(filters, 1, urls);
+			if(!urls.isEmpty()) {
+				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 7 * 1000);
+				return combineMysqlResultsWithElasticsearch(results, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, null, null));
 			}
 		}
 		return null;
@@ -111,7 +123,8 @@ public class SearchHandler {
 	private void addMinMaxPrice(JSONObject filter, Map<String,Integer> filters) {
 		String key = filter.getString("key");
 		if(key.equals("minPrice") || key.equals("maxPrice")) {
-			filter.put(key, filter.getInt("value"));
+			filters.put(key, filter.getInt("value"));
+
 		}
 	}
 

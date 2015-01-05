@@ -171,8 +171,7 @@ public final class ConnectionServer {
 
 	/**
 	 * Listens for connections on a socket.
-	 * 
-	 * @param socket The socket to accept connections on
+	 *
 	 * @throws IOException
 	 */
 	private void createConnections() throws IOException {

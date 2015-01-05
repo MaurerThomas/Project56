@@ -1,19 +1,18 @@
 package com.resist.pcbuilder;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.resist.pcbuilder.admin.AdminLoginHandler;
 import com.resist.websocket.Connection;
 import com.resist.websocket.ConnectionServer;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PcBuilder implements MessageHandler {
 	public static final Logger LOG = Logger.getLogger(PcBuilder.class.getName());
@@ -33,7 +32,6 @@ public class PcBuilder implements MessageHandler {
 		if (args.length > 0) {
 			try {
 				new PcBuilder(getSettingsFromFile(args[0]));
-				return;
 			} catch (IOException e) {
 				LOG.log(Level.SEVERE, "Could not read settings file.", e);
 			} catch (JSONException e) {
@@ -152,7 +150,7 @@ public class PcBuilder implements MessageHandler {
 		if (message.getType() == Connection.OPCODE_TEXT_FRAME) {
 			JSONObject json = parseInput(message.toString());
 			if (json != null) {
-				JSONObject out = handleJSON(message, json);
+				JSONObject out = handleJSON(json);
 				sendReturn(message, out.toString());
 			}
 		}
@@ -167,7 +165,7 @@ public class PcBuilder implements MessageHandler {
 		}
 	}
 
-	private JSONObject handleJSON(Message message, JSONObject json) {
+	private JSONObject handleJSON(JSONObject json) {
 		JSONObject out = new JSONObject();
 
 		if (json.has("action") && json.getString("action").equals("filter")) {

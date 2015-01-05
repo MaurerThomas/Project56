@@ -41,9 +41,6 @@ public class OutputBuilder {
 	}
 
 	public boolean send(Connection conn) {
-		if(!conn.isClosed()) {
-			return conn.sendMessage(output.toString());
-		}
-		return false;
+		return !conn.isClosed() && conn.sendMessage(output.toString());
 	}
 }

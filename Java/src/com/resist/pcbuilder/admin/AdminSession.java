@@ -29,7 +29,7 @@ public class AdminSession implements MessageHandler {
 		dashboards = new HashMap<String,Dashboard>();
 		dashboards.put("main",null);
 		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(this));
-		dashboards.put(Grafieken.IDENTIFIER,new Grafieken());
+		dashboards.put(Grafieken.IDENTIFIER,new Grafieken(this));
 	}
 
 	private void initSession(Connection conn) {

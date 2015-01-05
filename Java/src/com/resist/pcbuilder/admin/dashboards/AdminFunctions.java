@@ -8,7 +8,7 @@ import com.resist.pcbuilder.admin.OutputBuilder;
 
 public class AdminFunctions implements Dashboard {
 	public static final String IDENTIFIER = "adminfunctions";
-	private AdminSession session;
+	private final AdminSession session;
 
 	/**
 	 * Creates a new Admin Functions dashboard.
