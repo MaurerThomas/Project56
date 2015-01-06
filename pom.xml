@@ -59,6 +59,7 @@
     </reporting>
     <build>
         <sourceDirectory>Java/src/com/resist/websocket</sourceDirectory>
+        <testSourceDirectory>Java/src/test/com/resist/websocket</testSourceDirectory>
         <resources>
             <resource>
                 <directory>Java/src/com/resist/searchhandler</directory>
@@ -67,6 +68,14 @@
                 <directory>Java/src/com/resist/websocket</directory>
             </resource>
         </resources>
+        <testResources>
+            <testResource>
+                <directory>Java/src/test/com/resist/searchhandler</directory>
+            </testResource>
+            <testResource>
+                <directory>Java/src/test/com/resist/websocket</directory>
+            </testResource>
+        </testResources>
         <pluginManagement>
             <plugins>
                 <plugin>
