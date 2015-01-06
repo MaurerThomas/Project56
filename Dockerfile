@@ -7,4 +7,4 @@ MAINTAINER Thomas
 #update the repository sources list
 RUN apt-get update
 
-EXPOSE 8080
+
