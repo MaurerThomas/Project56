@@ -8,7 +8,7 @@
 			$('#start').hide();
 		});
 		if($compatibility.WebSocket) {
-			$webSocket.init('145.24.222.119','8080','/search');
+			$webSocket.init('145.24.222.237','8080','/search');
 		}
 		$('#pcbuilder-selection-header h2 a.btn').click(function($e) {
 			var $btn = $(this);
