@@ -5,6 +5,8 @@
 			$webSocket.send({switchDashboard: 'main'});
 		} else if(['adminfunctions'].indexOf($page) != -1) {
 			$webSocket.send({switchDashboard: $page});
+		} else if (['grafieken'].indexOf($page) != -1) {
+			$webSocket.send({switchDashboard: $page});
 		}
 	});
 })();
