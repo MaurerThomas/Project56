@@ -121,7 +121,7 @@ public class MySQLConnection {
             String type = res.getString(1);
             String aansluiting = res.getString(2);
             if(!out.has(type)) {
-                out.put(aansluiting, new JSONArray());
+                out.put(type, new JSONArray());
             }
             out.getJSONArray(type).put(aansluiting);
         }
@@ -144,7 +144,7 @@ public class MySQLConnection {
             String type = res.getString(1);
             String onderdeeltype = res.getString(2);
             if(!out.has(type)) {
-                out.put(onderdeeltype, new JSONArray());
+                out.put(type, new JSONArray());
             }
             out.getJSONArray(type).put(onderdeeltype);
         }
@@ -159,13 +159,13 @@ public class MySQLConnection {
      * @return A list of RAM modules from the database.
      * @throws SQLException
      */
-    private JSONObject initRam() throws SQLException {
-        JSONObject out = new JSONObject();
+    private JSONArray initRam() throws SQLException {
+        JSONArray out = new JSONArray();
         PreparedStatement s = conn.prepareStatement("SELECT * FROM geheugen");
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String type = res.getString(1);
-            out.getJSONArray(type);
+            out.put(type);
         }
         res.close();
         s.close();
@@ -178,13 +178,13 @@ public class MySQLConnection {
      * @return A list of case formfactors from the database.
      * @throws SQLException
      */
-    private JSONObject initFormfactor() throws SQLException {
-        JSONObject out = new JSONObject();
+    private JSONArray initFormfactor() throws SQLException {
+        JSONArray out = new JSONArray();
         PreparedStatement s = conn.prepareStatement("SELECT * FROM formfactor");
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String formfactor = res.getString(1);
-            out.getJSONArray(formfactor);
+            out.put(formfactor);
         }
         res.close();
         s.close();
