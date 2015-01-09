@@ -74,6 +74,10 @@ public class MySQLConnection {
 		JSONObject out = new JSONObject();
 		try {
 			out.put("processors", initProcessors());
+            out.put("hardeschijven", initHarddisk());
+            out.put("grafischekaarten", initGpu());
+            out.put("geheugen", initRam());
+            out.put("behuizing", initFormfactor());
 		} catch (SQLException e) {
 			PcBuilder.LOG.log(Level.WARNING, "Failed to get init.", e);
 		}
@@ -103,7 +107,89 @@ public class MySQLConnection {
 		return out;
 	}
 
+    /**
+     * Gets a list of harddisks by hard disk type from the database.
+     *
+     * @return A list of harddisks by hard disk type
+     * @throws SQLException
+     */
+    private JSONObject initHarddisk() throws SQLException {
+        JSONObject out = new JSONObject();
+        PreparedStatement s = conn.prepareStatement("SELECT * FROM hardeschijf WHERE hardeschijf.type = \"Solid State Drive\" OR hardeschijf.type = \"Interne hardeschijf\"");
+        ResultSet res = s.executeQuery();
+        while(res.next()) {
+            String type = res.getString(1);
+            String aansluiting = res.getString(2);
+            if(!out.has(type)) {
+                out.put(aansluiting, new JSONArray());
+            }
+            out.getJSONArray(type).put(aansluiting);
+        }
+        res.close();
+        s.close();
+        return out;
+    }
 
+    /**
+     * Gets a list of graphic cards by connection type from the database.
+     *
+     * @return A list of graphic cards by connection type from the database.
+     * @throws SQLException
+     */
+    private JSONObject initGpu() throws SQLException {
+        JSONObject out = new JSONObject();
+        PreparedStatement s = conn.prepareStatement("SELECT * FROM aansluiting WHERE onderdeeltype = \"Grafischekaart\"");
+        ResultSet res = s.executeQuery();
+        while(res.next()) {
+            String type = res.getString(1);
+            String onderdeeltype = res.getString(2);
+            if(!out.has(type)) {
+                out.put(onderdeeltype, new JSONArray());
+            }
+            out.getJSONArray(type).put(onderdeeltype);
+        }
+        res.close();
+        s.close();
+        return out;
+    }
+
+    /**
+     * Gets a list of RAM modules from the database.
+     *
+     * @return A list of RAM modules from the database.
+     * @throws SQLException
+     */
+    private JSONObject initRam() throws SQLException {
+        JSONObject out = new JSONObject();
+        PreparedStatement s = conn.prepareStatement("SELECT * FROM geheugen");
+        ResultSet res = s.executeQuery();
+        while(res.next()) {
+            String type = res.getString(1);
+            out.getJSONArray(type);
+        }
+        res.close();
+        s.close();
+        return out;
+    }
+
+    /**
+     * Gets a list of case formfactors from the database.
+     *
+     * @return A list of case formfactors from the database.
+     * @throws SQLException
+     */
+    private JSONObject initFormfactor() throws SQLException {
+        JSONObject out = new JSONObject();
+        PreparedStatement s = conn.prepareStatement("SELECT * FROM formfactor");
+        ResultSet res = s.executeQuery();
+        while(res.next()) {
+            String formfactor = res.getString(1);
+            out.getJSONArray(formfactor);
+        }
+        res.close();
+        s.close();
+        return out;
+    }
 
 	/**
 	 * Calculates an admin password hash using the set salt.
