@@ -2,6 +2,7 @@ package com.resist.pcbuilder.admin;
 
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.admin.dashboards.AdminFunctions;
+import com.resist.pcbuilder.admin.dashboards.Filters;
 import com.resist.pcbuilder.admin.dashboards.Grafieken;
 import com.resist.websocket.Connection;
 import com.resist.websocket.Message;
@@ -30,6 +31,7 @@ public class AdminSession implements MessageHandler {
 		dashboards.put("main",null);
 		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(this));
 		dashboards.put(Grafieken.IDENTIFIER,new Grafieken(this));
+        dashboards.put(Filters.IDENTIFIER,new Filters(this));
 	}
 
 	private void initSession(Connection conn) {
