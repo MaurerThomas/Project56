@@ -110,3 +110,56 @@ footer > div {
 .marginleft {
 	margin-left:5 px;
 }
+
+#moederbordselectie {
+	background-image: url('./../img/motherboard_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+#processorselectie {
+	background-image: url('./../img/cpu_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#processorkoelerselectie {
+	background-image: url('./../img/fan_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#hardeschijfselectie {
+	background-image: url('./../img/hdd_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#geheugenselectie {
+	background-image: url('./../img/ram_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#grafischekaartselectie {
+	background-image: url('./../img/gpu_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#voedingselectie {
+	background-image: url('./../img/psu_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#behuizingselectie {
+	background-image: url('./../img/case_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
+
+#besturingssysteemselectie {
+	background-image: url('./../img/windows_transparant.png');
+	background-repeat: no-repeat;
+	background-position: 5% 50%;
+}
