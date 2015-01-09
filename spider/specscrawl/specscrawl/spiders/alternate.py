@@ -4,13 +4,14 @@ from scrapy.selector import Selector
 from specscrawl.items import SpecscrawlItem
 import MySQLdb
 import re
+import string
 
 class AlternateSpider(Spider):
 
 	conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""SELECT DISTINCT url FROM prijs_verloop WHERE crawled = 0""")
+		cursor.execute("""SELECT url FROM url_crawled WHERE ean = null AND url LIKE '%alternate%' """)
 		data = cursor.fetchall()
 		start_urls = []
 		for row in data:
@@ -21,12 +22,11 @@ class AlternateSpider(Spider):
 	
 	name = "alternate"
 	allowed_domains = ["alternate.nl"]
-	
 
 	def parse(self, response):
+		print "next item"
 		item = SpecscrawlItem()
 		datalist = response.xpath('//*[@class="techData"]')
-		print datalist
 		title = datalist.xpath('//*[starts-with(@class,"breadCrumbs")]/span/a/span/text()').extract()
 		title = title[1]
 		name = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"name")]/text()').extract()
@@ -39,12 +39,15 @@ class AlternateSpider(Spider):
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')
 		if(tempkeys):
+			
 			for i in range(len(tempkeys)):
+				tempkeys[i] = re.sub("[.]",",",tempkeys[i])
 				value = tempvalue[i].extract()
 				keys = re.findall('techDataSubCol techDataSubColDescription">(.*?)</td><td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">' ,value)
 				values = re.findall('<td class="techDataSubCol techDataSubColValue"><table cellpadding="0" cellspacing="0"><tr><td class="techDataSubCol techDataSubColValue">(.*?)</td></tr></table>',value)	
 				for key in keys:
-					key = re.sub(".",",",key)
+					key = re.sub("[.]",",",key)
+					
 				result = "null"
 				if len(keys) > 0:
 					result = zip(keys, values)
@@ -62,10 +65,12 @@ class AlternateSpider(Spider):
 					item['specs'].update({tempkeys[i]:result})
 				else:
 					item['specs'].update({tempkeys[i]:result[0]})
+		ean = response.xpath('//*[@id="details"]/script/text()').extract()
+		ean = re.findall("ccs_cc_args.push(['upcean', '(.*?) ']);  ccs_cc_args.push",ean)
 					
 		cursor = self.conn.cursor()
 		try:
-			cursor.execute("""UPDATE prijs_verloop SET crawled = %s WHERE url = %s""", ('1', response.url))
+			cursor.execute("""UPDATE url_crawled SET ean = %s WHERE url = %s""", (ean, response.url))
 			self.conn.commit()
 			
 		except MySQLdb.Error, e:

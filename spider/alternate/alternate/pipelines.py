@@ -17,13 +17,16 @@ class AlternatePipeline(object):
 
 	def process_item(self, item, spider):
 		try:
-			if len(item['url') <1:
+			if len(item['url']) > 1:
 				self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'], item['euro'], item['cent']))
+				self.cursor.execute("""INSERT INTO url_crawled (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url']))
 			else:
-				if len(item['cent']) >0:
+				if len(item['cent']) > 0:
 					self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'][0], item['euro'][0], item['cent'][0]))
 				else:
 					self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'][0], item['euro'][0],'0'))
+				self.cursor.execute("""INSERT INTO url_crawled (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url'][0]))
+				
 			self.conn.commit()
 		except MySQLdb.Error, e:
 			print "Error %d: %s" % (e.args[0], e.args[1])
