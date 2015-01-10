@@ -37,6 +37,7 @@ function initFilters() {
 				$socket.find('option:not([value|='+$val+'])').hide();
 				$socket.find('option[value="none"]').show();
 				$socket.removeClass('hidden');
+				$socket.val('none');
 			}
 		});
 
