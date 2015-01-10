@@ -1,4 +1,50 @@
-$(function() {
+function initFilters() {
+	$webSocket.receive = function($msg) {
+		var $json = parseJSON($msg.data);
+		if($json !== null) {
+			initProcessors($json.init.processors);
+		}
+	};
+	$webSocket.send({action: 'init'});
+
+	function parseJSON($string) {
+		try {
+			return JSON.parse($string);
+		} catch($e) {
+			return null;
+		}
+	}
+
+	function initProcessors($processors) {
+		var $merk,$n,
+		$brand = $('.pcbuilder-processor-brand'),
+		$socket = $('.pcbuilder-processor-socket');
+		for($merk in $processors) {
+			$brand.append('<option value="'+$merk+'">'+$merk+'</option>');
+			for($n=0;$n < $processors[$merk].length;$n++) {
+				$socket.append('<option value="'+$merk+'-'+$n+'">'+$processors[$merk][$n]+'</option>');
+			}
+		}
+
+		$brand.change(function($e) {
+			var $this = $(this),
+			$val = $this.val();
+			$brand.val($val);
+			if($val == 'none') {
+				$socket.addClass('hidden');
+			} else {
+				$socket.find('option').show();
+				$socket.find('option:not([value|='+$val+'])').hide();
+				$socket.find('option[value="none"]').show();
+				$socket.removeClass('hidden');
+			}
+		});
+
+		$socket.change(function($e) {
+			$socket.val($(this).val());
+		});
+	}
+/*
 	$('#moederbordsocketmerk').change(function (event) {
 		var socketmerk = $('#moederbordsocketmerk').val();
 		if(socketmerk == 'AMD') {
@@ -31,10 +77,10 @@ $(function() {
 			$('#group5').hide().fadeOut();
 		}
 	});
-    
-    $('input[type="range"]').each(function() {
-        $(this).change(function() {
-            $('output[for="'+this.id+'"]').text($(this).val());
-        });
-    });
-});
+		
+		$('input[type="range"]').each(function() {
+				$(this).change(function() {
+						$('output[for="'+this.id+'"]').text($(this).val());
+				});
+		});*/
+}

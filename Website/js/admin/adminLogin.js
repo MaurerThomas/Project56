@@ -5,7 +5,7 @@ $(function() {
 	$noLogin = $('#noLogin');
 	window.location.hash = '';
 	if($compatibility.WebSocket) {
-		$webSocket.init('145.24.222.237','8081','/admin');
+		$webSocket.init(window.location.host,'8081','/admin');
 		$webSocket.receive = function($msg) {
 			var $json = JSON.parse($msg.data);
 			$formButton.attr('disabled',false);

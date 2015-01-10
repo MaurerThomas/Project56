@@ -4,11 +4,12 @@
 		$compatibility = checkCompatibility($button);
 		$button.click(function($e) {
 			$e.preventDefault();
+			initFilters();
 			$('#pcbuilder').removeClass();
 			$('#start').hide();
 		});
 		if($compatibility.WebSocket) {
-			$webSocket.init('145.24.222.237','8080','/search');
+			$webSocket.init(window.location.host,'8080','/search');
 		}
 		$('#pcbuilder-selection-header h2 a.btn').click(function($e) {
 			var $btn = $(this);
