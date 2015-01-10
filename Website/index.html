@@ -126,7 +126,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-xs-2" style="max-width:64px;">
+					<div class="col-xs-2 col-md-1">
 						<ul class="pcbuilder-tabs">
 							<li class="active">
 								<a href="#moederbord" data-toggle="tab" title="Moederbord"></a>
@@ -157,10 +157,10 @@
 							</li>
 						</ul>
 					</div>
-					<div class="col-xs-10">
-						<div class="tab-content">
+					<div class="col-xs-10 col-md-11">
+						<div class="tab-content pcbuilder-search">
 							<div class="tab-pane active" id="moederbord">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -174,16 +174,20 @@
 										<select class="form-control pcbuilder-processor-brand">
 											<option value="none">Filter op processormerk</option>
 										</select>
-									</div>
-									<div class="form-group col-md-4">
 										<select class="form-control pcbuilder-processor-socket hidden">
 											<option value="none">Filter op processorsocket</option>
 										</select>
 									</div>
+									<div class="form-group col-md-4">
+										<select class="form-control pcbuilder-case">
+											<option value="none">Filter op behuizing</option>
+										</select>
+									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="processor">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -203,10 +207,11 @@
 											<option value="none">Filter op processorsocket</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="processorkoeler">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -226,10 +231,11 @@
 											<option value="none">Filter op processorsocket</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="geheugen">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -244,10 +250,11 @@
 											<option value="none">Filter op geheugentype</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="grafischekaart">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -267,10 +274,11 @@
 											<option value="none">Filter op aansluiting</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="hardeschijf">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -290,10 +298,11 @@
 											<option value="none">Filter op aansluiting</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="behuizing">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-md-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -308,10 +317,11 @@
 											<option value="none">Filter op behuizing</option>
 										</select>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="voeding">
-								<form class="marginleft row">
+								<form class="row">
 									<div class="form-group col-sm-4">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -321,15 +331,15 @@
 											<input class="form-control" id="searchvoeding" type="search" placeholder="Zoek een voeding" />
 										</div>
 									</div>
-									<div class="col-sm-8">
+									<div class="form-group col-sm-8">
 										<div class="row">
 											<div class="col-md-6">
 												<label for="voedingwattagemin">Filter op minimaal wattage</label>
 											</div>
 											<div class="input-group col-md-6">
-												<input class="form-control" type="range" min="50" max="1000" step="10" value="450" id="voedingwattagemin" style="min-width:155px" />
+												<input class="form-control" type="range" min="50" max="1000" step="10" value="450" id="voedingwattagemin" />
 												<div class="input-group-addon">
-													<output for="voedingwattagemin" style="padding-top: 0px;">450</output>
+													<output for="voedingwattagemin">450</output>
 												</div>
 											</div>
 										</div>
@@ -338,17 +348,18 @@
 												<label for="voedingwattagemax">Filter op maximaal wattage</label>
 											</div>
 											<div class="input-group col-md-6">
-												<input class="form-control" type="range" min="50" max="1000" step="10" value="700" id="voedingwattagemax" style="min-width:155px" />
+												<input class="form-control" type="range" min="50" max="1000" step="10" value="700" id="voedingwattagemax" />
 												<div class="input-group-addon">
-													<output for="voedingwattagemax" style="padding-top: 0px;">450</output>
+													<output for="voedingwattagemax">450</output>
 												</div>
 											</div>
 										</div>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 							<div class="tab-pane" id="besturingssysteem">
-								<form class="marginleft">
+								<form class="clearfix">
 									<div class="form-group">
 										<div class="input-group">
 											<div class="input-group-addon">
@@ -358,6 +369,7 @@
 											<input class="form-control" id="searchbesturingssysteem" type="search" placeholder="Zoek een besturingssysteem" />
 										</div>
 									</div>
+									<input type="submit" value="Pas filters toe" class="btn btn-success pull-right" />
 								</form>
 							</div>
 						</div>

@@ -21,7 +21,7 @@ function initFilters() {
 	}
 
 	function setupDependantSelect($parent,$child) {
-		$parent.change(function($e) {
+		$parent.change(function() {
 			var $this = $(this),
 			$val = $this.val();
 			$parent.val($val);
@@ -35,8 +35,12 @@ function initFilters() {
 			}
 		});
 
-		$child.change(function($e) {
-			$child.val($(this).val());
+		setupSyncingSelect($child);
+	}
+
+	function setupSyncingSelect($select) {
+		$select.change(function() {
+			$select.val($(this).val());
 		});
 	}
 
@@ -82,6 +86,8 @@ function initFilters() {
 		for($n=0;$n < $cases.length;$n++) {
 			$types.append('<option value="'+$cases[$n]+'">'+$cases[$n]+'</option>');
 		}
+
+		setupSyncingSelect($types);
 	}
 
 	function initSliders() {
@@ -89,37 +95,4 @@ function initFilters() {
 			$('output[for="'+this.id+'"]').text($(this).val());
 		});
 	}
-/*
-	$('#moederbordsocketmerk').change(function (event) {
-		var socketmerk = $('#moederbordsocketmerk').val();
-		if(socketmerk == 'AMD') {
-			$('#group1').show().fadeIn(); 
-			$('#group2').hide().fadeOut();
-		} else if ((socketmerk == 'Intel')){
-			$('#group2').show().fadeIn(); 
-			$('#group1').hide().fadeOut();
-		} else {
-			$('#group1').hide().fadeOut();
-			$('#group2').hide().fadeOut();
-		}
-	});
-
-	$('#processormerk').change(function (event) {
-		var processormerk = $('#processormerk').val();
-		var processorsocket = $('#processorsocketintel').val();
-
-		if(processormerk == 'AMD') {
-			$('#group3').show().fadeIn(); 
-			$('#group4').hide().fadeOut();
-			$('#group5').hide().fadeOut();
-		} else if ((processormerk == 'Intel')){
-			$('#group4').show().fadeIn(); 
-			$('#group3').hide().fadeOut();
-			$('#group5').show().fadeIn();
-		} else {
-			$('#group3').hide().fadeOut();
-			$('#group4').hide().fadeOut();
-			$('#group5').hide().fadeOut();
-		}
-	});*/
 }
