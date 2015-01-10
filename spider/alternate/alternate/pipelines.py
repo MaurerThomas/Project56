@@ -19,13 +19,13 @@ class AlternatePipeline(object):
 		try:
 			if len(item['url']) > 1:
 				self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'], item['euro'], item['cent']))
-				self.cursor.execute("""INSERT INTO url_crawled (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url']))
+				self.cursor.execute("""INSERT INTO url_ean (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url']))
 			else:
 				if len(item['cent']) > 0:
 					self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'][0], item['euro'][0], item['cent'][0]))
 				else:
 					self.cursor.execute("""INSERT INTO prijs_verloop (url, euro, cent) VALUES (%s, %s, %s)""", (item['url'][0], item['euro'][0],'0'))
-				self.cursor.execute("""INSERT INTO url_crawled (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url'][0]))
+				self.cursor.execute("""INSERT INTO url_ean (url) VALUES (%s) ON DUPLICATE KEY UPDATE url=url""", (item['url'][0]))
 				
 			self.conn.commit()
 		except MySQLdb.Error, e:

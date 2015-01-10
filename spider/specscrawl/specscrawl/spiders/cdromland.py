@@ -11,7 +11,7 @@ class cdromlandSpider(Spider):
 	conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""SELECT url FROM url_crawled WHERE ean = null AND url LIKE '%cdromland%' """)
+		cursor.execute("""SELECT url FROM url_ean WHERE ean = "" AND url LIKE '%cdromland%'; """)
 		data = cursor.fetchall()
 		start_urls = []
 		for row in data:
@@ -25,11 +25,13 @@ class cdromlandSpider(Spider):
 
 	def parse(self, response):
 		
-		ean = response.xpath('//*[@id="sitemain_content_cell"]/div/div[7]/div/div[2]/div[1]/div/div/div/div[18]/div[2]').extract()
-					
+		ean = response.xpath('//*[@class = "product_cell_specs_content"]').extract()
+		ean = re.findall('<div class="product_speclist_1"><h5>EAN</h5></div><div class="product_speclist_2">(.*)</div></div>', ''.join(ean))
+		
+		item = SpecscrawlItem()
 		cursor = self.conn.cursor()
 		try:
-			cursor.execute("""UPDATE url_crawled SET ean = %s WHERE url = %s""", (ean, response.url))
+			cursor.execute("""UPDATE url_ean SET ean = %s WHERE url = %s""", (ean[0], response.url))
 			self.conn.commit()
 			
 		except MySQLdb.Error, e:

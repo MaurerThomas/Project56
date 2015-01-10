@@ -11,7 +11,7 @@ class AlternateSpider(Spider):
 	conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""SELECT url FROM url_crawled WHERE ean = null AND url LIKE '%alternate%' """)
+		cursor.execute("""SELECT url FROM url_ean WHERE ean = "" AND url LIKE '%alternate%' """)
 		data = cursor.fetchall()
 		start_urls = []
 		for row in data:
@@ -31,11 +31,18 @@ class AlternateSpider(Spider):
 		title = title[1]
 		name = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"name")]/text()').extract()
 		brand = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"brand")]/text()').extract()
+		ean = response.xpath('//*[@id="details"]/script/text()').extract()
+		ean = (''.join(ean)).split("upcean")[1]
+		ean = re.findall(r'\d+', ''.join(ean))[0]
 		item['specs'] ={}
 		item['specs'] = {"component":datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0],
 							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract()[0],
 							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract()[0],
-							"url": response.url}
+							"url": response.url,
+							"ean":ean
+							}
+		
+		
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')
 		if(tempkeys):
@@ -65,12 +72,10 @@ class AlternateSpider(Spider):
 					item['specs'].update({tempkeys[i]:result})
 				else:
 					item['specs'].update({tempkeys[i]:result[0]})
-		ean = response.xpath('//*[@id="details"]/script/text()').extract()
-		ean = re.findall("ccs_cc_args.push(['upcean', '(.*?) ']);  ccs_cc_args.push",ean)
-					
+		
 		cursor = self.conn.cursor()
 		try:
-			cursor.execute("""UPDATE url_crawled SET ean = %s WHERE url = %s""", (ean, response.url))
+			cursor.execute("""UPDATE url_ean SET ean = %s WHERE url = %s""", (ean, response.url))
 			self.conn.commit()
 			
 		except MySQLdb.Error, e:

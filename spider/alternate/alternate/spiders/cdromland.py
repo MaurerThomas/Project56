@@ -54,14 +54,21 @@ class SpinSpider(scrapy.Spider):
 		items = []
 		urls = response.xpath('//*[@class = "link_titlesmall"]/@href').extract()
 		euros = response.xpath('//*[@class = "productlist_cell_specs_footer_price"]/text()').extract()
+		euros = [ v for v in euros if hasNumbers(v)]
+		
 		for index,url in enumerate(urls):
 			item = AlternateItem()
 			item['url'] = 'https://www.cdromland.nl' + url
 			price = re.findall(r'\d+', ''.join(euros[index]))
-			item['euro'] = price[0]
+			item['euro'] = price[0] 
 			try:
 				item['cent']	= price[1]
 			except:
 				item['cent'] = '0'
 			items.append(item)			
 		return items
+	
+def hasNumbers(inputString):
+    return any(char.isdigit() for char in inputString)
+		
+		
