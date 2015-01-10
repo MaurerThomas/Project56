@@ -6,6 +6,7 @@ function initFilters() {
 			initMemory($json.init.geheugen);
 			initHDD($json.init.hardeschijven);
 			initCases($json.init.behuizing);
+			initGPU($json.init.grafischekaarten);
 		}
 		initSliders();
 	};
@@ -88,6 +89,18 @@ function initFilters() {
 		}
 
 		setupSyncingSelect($types);
+	}
+
+	function initGPU($gpus) {
+		var $n,
+		$brands = $('.pcbuilder-gpu-brand'),
+		$types = $('.pcbuilder-gpu-interface');
+		for($n=0;$n < $gpus.aansluitingen.length;$n++) {
+			$types.append('<option value="'+$gpus.aansluitingen[$n]+'">'+$gpus.aansluitingen[$n]+'</option>');
+		}
+		for($n=0;$n < $gpus.merken.length;$n++) {
+			$brands.append('<option value="'+$gpus.merken[$n]+'">'+$gpus.merken[$n]+'</option>');
+		}
 	}
 
 	function initSliders() {
