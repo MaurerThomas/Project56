@@ -115,7 +115,7 @@ public class MySQLConnection {
      */
     private JSONObject initHarddisk() throws SQLException {
         JSONObject out = new JSONObject();
-        PreparedStatement s = conn.prepareStatement("SELECT * FROM hardeschijf WHERE hardeschijf.type = \"Solid State Drive\" OR hardeschijf.type = \"Interne hardeschijf\"");
+        PreparedStatement s = conn.prepareStatement("SELECT type,aansluitingtype FROM hardeschijf");
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String type = res.getString(1);
@@ -137,16 +137,27 @@ public class MySQLConnection {
      * @throws SQLException
      */
     private JSONObject initGpu() throws SQLException {
+    	final String onderdeeltype = "Grafischekaart";
         JSONObject out = new JSONObject();
-        PreparedStatement s = conn.prepareStatement("SELECT * FROM aansluiting WHERE onderdeeltype = \"Grafischekaart\"");
+        JSONArray aansluitingen = new JSONArray();
+        out.put("aansluitingen",aansluitingen);
+        PreparedStatement s = conn.prepareStatement("SELECT type FROM aansluiting WHERE onderdeeltype = ?");
+        s.setString(1,onderdeeltype);
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String type = res.getString(1);
-            String onderdeeltype = res.getString(2);
-            if(!out.has(type)) {
-                out.put(type, new JSONArray());
-            }
-            out.getJSONArray(type).put(onderdeeltype);
+            aansluitingen.put(type);
+        }
+        res.close();
+        s.close();
+        JSONArray merken = new JSONArray();
+        out.put("merken",merken);
+        s = conn.prepareStatement("SELECT merk.naam FROM merk JOIN tussentabel ON (tussentabel.merkmid = merk.mid) WHERE onderdeeltype = ?");
+        s.setString(1, onderdeeltype);
+        res = s.executeQuery();
+        while(res.next()) {
+        	String naam = res.getString(1);
+        	merken.put(naam);
         }
         res.close();
         s.close();
@@ -161,7 +172,7 @@ public class MySQLConnection {
      */
     private JSONArray initRam() throws SQLException {
         JSONArray out = new JSONArray();
-        PreparedStatement s = conn.prepareStatement("SELECT * FROM geheugen");
+        PreparedStatement s = conn.prepareStatement("SELECT type FROM geheugen");
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String type = res.getString(1);
@@ -180,7 +191,7 @@ public class MySQLConnection {
      */
     private JSONArray initFormfactor() throws SQLException {
         JSONArray out = new JSONArray();
-        PreparedStatement s = conn.prepareStatement("SELECT * FROM formfactor");
+        PreparedStatement s = conn.prepareStatement("SELECT formfactor FROM formfactor");
         ResultSet res = s.executeQuery();
         while(res.next()) {
             String formfactor = res.getString(1);
