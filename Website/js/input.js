@@ -3,6 +3,7 @@ function initFilters() {
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
 			initProcessors($json.init.processors);
+			initMemory($json.init.geheugen);
 		}
 	};
 	$webSocket.send({action: 'init'});
@@ -22,7 +23,7 @@ function initFilters() {
 		for($merk in $processors) {
 			$brand.append('<option value="'+$merk+'">'+$merk+'</option>');
 			for($n=0;$n < $processors[$merk].length;$n++) {
-				$socket.append('<option value="'+$merk+'-'+$n+'">'+$processors[$merk][$n]+'</option>');
+				$socket.append('<option value="'+$merk+'-'+$processors[$merk][$n]+'">'+$processors[$merk][$n]+'</option>');
 			}
 		}
 
@@ -44,6 +45,14 @@ function initFilters() {
 		$socket.change(function($e) {
 			$socket.val($(this).val());
 		});
+	}
+
+	function initMemory($memory) {
+		var $n,
+		$types = $('.pcbuilder-ram');
+		for($n=0;$n < $memory.length;$n++) {
+			$types.append('<option value="'+$memory[$n]+'">'+$memory[$n]+'</option>');
+		}
 	}
 /*
 	$('#moederbordsocketmerk').change(function (event) {

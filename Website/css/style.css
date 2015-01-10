@@ -47,6 +47,7 @@ footer > div {
 	border-top-left-radius: 20%;
 	border-bottom-left-radius: 20%;
 	border-right: 1px solid #ccc;
+	outline: none;
 }
 .pcbuilder-tabs li a:hover, .pcbuilder-tabs li.active a {
 	background-color: #f8f8f8;
