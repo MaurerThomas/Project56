@@ -4,9 +4,13 @@ function initFilters() {
 		if($json !== null) {
 			initProcessors($json.init.processors);
 			initMemory($json.init.geheugen);
+			initHDD($json.init.hardeschijven);
+			initCases($json.init.behuizing);
 		}
+		initSliders();
 	};
 	$webSocket.send({action: 'init'});
+	initFilters = undefined;
 
 	function parseJSON($string) {
 		try {
@@ -16,6 +20,26 @@ function initFilters() {
 		}
 	}
 
+	function setupDependantSelect($parent,$child) {
+		$parent.change(function($e) {
+			var $this = $(this),
+			$val = $this.val();
+			$parent.val($val);
+			if($val == 'none') {
+				$child.addClass('hidden');
+			} else {
+				$child.find('option').show();
+				$child.find('option:not([data-parent="'+$val+'"])').hide();
+				$child.removeClass('hidden');
+				$child.val('none');
+			}
+		});
+
+		$child.change(function($e) {
+			$child.val($(this).val());
+		});
+	}
+
 	function initProcessors($processors) {
 		var $merk,$n,
 		$brand = $('.pcbuilder-processor-brand'),
@@ -23,28 +47,11 @@ function initFilters() {
 		for($merk in $processors) {
 			$brand.append('<option value="'+$merk+'">'+$merk+'</option>');
 			for($n=0;$n < $processors[$merk].length;$n++) {
-				$socket.append('<option value="'+$merk+'-'+$processors[$merk][$n]+'">'+$processors[$merk][$n]+'</option>');
+				$socket.append('<option data-parent="'+$merk+'" value="'+$processors[$merk][$n]+'">'+$processors[$merk][$n]+'</option>');
 			}
 		}
 
-		$brand.change(function($e) {
-			var $this = $(this),
-			$val = $this.val();
-			$brand.val($val);
-			if($val == 'none') {
-				$socket.addClass('hidden');
-			} else {
-				$socket.find('option').show();
-				$socket.find('option:not([value|='+$val+'])').hide();
-				$socket.find('option[value="none"]').show();
-				$socket.removeClass('hidden');
-				$socket.val('none');
-			}
-		});
-
-		$socket.change(function($e) {
-			$socket.val($(this).val());
-		});
+		setupDependantSelect($brand,$socket);
 	}
 
 	function initMemory($memory) {
@@ -53,6 +60,34 @@ function initFilters() {
 		for($n=0;$n < $memory.length;$n++) {
 			$types.append('<option value="'+$memory[$n]+'">'+$memory[$n]+'</option>');
 		}
+	}
+
+	function initHDD($harddrives) {
+		var $n,$hdd,
+		$types = $('.pcbuilder-hdd-type'),
+		$interface = $('.pcbuilder-hdd-interface');
+		for($hdd in $harddrives) {
+			$types.append('<option value="'+$hdd+'">'+$hdd+'</option>');
+			for($n=0;$n < $harddrives[$hdd].length;$n++) {
+				$interface.append('<option data-parent="'+$hdd+'" value="'+$harddrives[$hdd][$n]+'">'+$harddrives[$hdd][$n]+'</option>');
+			}
+		}
+
+		setupDependantSelect($types,$interface);
+	}
+
+	function initCases($cases) {
+		var $n,
+		$types = $('.pcbuilder-case');
+		for($n=0;$n < $cases.length;$n++) {
+			$types.append('<option value="'+$cases[$n]+'">'+$cases[$n]+'</option>');
+		}
+	}
+
+	function initSliders() {
+		$('input[type="range"]').change(function() {
+			$('output[for="'+this.id+'"]').text($(this).val());
+		});
 	}
 /*
 	$('#moederbordsocketmerk').change(function (event) {
@@ -86,11 +121,5 @@ function initFilters() {
 			$('#group4').hide().fadeOut();
 			$('#group5').hide().fadeOut();
 		}
-	});
-		
-		$('input[type="range"]').each(function() {
-				$(this).change(function() {
-						$('output[for="'+this.id+'"]').text($(this).val());
-				});
-		});*/
+	});*/
 }
