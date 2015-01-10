@@ -1,6 +1,8 @@
 package com.resist.pcbuilder.admin.dashboards;
+
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
+import com.resist.pcbuilder.admin.OutputBuilder;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -24,13 +26,16 @@ public class Grafieken implements Dashboard {
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
-        if (input.getString("action").equals("makechart") && input.getString("merk").equals("asus")){
+        if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             try {
                 makeChart(input);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            return new OutputBuilder().htmlTemplate("#main","dashboard_grafieken").getOutput();
         }
+
         return null;
     }
 
@@ -54,7 +59,7 @@ public class Grafieken implements Dashboard {
         int height = 480; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//img//LineChart.jpeg");
+        File lineChart = new File("//var//www//html//img//LineChart.jpeg");
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 }
