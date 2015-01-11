@@ -1,14 +1,15 @@
 function initFilters() {
 	$webSocket.receive = function($msg) {
 		var $json = parseJSON($msg.data);
-		if($json !== null) {
+		if($json !== null && $json.init !== undefined) {
 			initProcessors($json.init.processors);
 			initMemory($json.init.geheugen);
 			initHDD($json.init.hardeschijven);
 			initCases($json.init.behuizing);
 			initGPU($json.init.grafischekaarten);
+			initSliders();
+			initSearch();
 		}
-		initSliders();
 	};
 	$webSocket.send({action: 'init'});
 	initFilters = undefined;
@@ -104,8 +105,10 @@ function initFilters() {
 	}
 
 	function initSliders() {
-		$('input[type="range"]').change(function() {
+		var $ranges = $('input[type="range"]');
+		$ranges.change(function() {
 			$('output[for="'+this.id+'"]').text($(this).val());
 		});
+		$ranges.change();
 	}
 }

@@ -160,11 +160,10 @@ footer > div {
 	min-width: 155px;
 }
 
-.pcbuilder-search form.row {
-	margin-right: 0;
+.pcbuilder-search form > .row {
+	margin-bottom: 0.5em;
 }
 
 .pcbuilder-search form {
 	border-bottom: 1px solid #ccc;
-	padding-bottom: 0.5em;
 }
