@@ -1,5 +1,49 @@
-<div id="main" class="container">
+<div class="col-sm-12">
+	<h2>Dashboard Filteropties</h2>
+	
 	<div class="col-sm-12">
-		<h1>Dashboard Filters</h1>
+	<h3>Filteroptie toevoegen</h3>
+		<form class="form" role="form">
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="Filternaam"></input>
+			</div>
+				<button id="btn_add" class="btn btn-default">Voeg toe</button>
+		</form>
+	</div>
+	<div class="col-sm-12">
+	<h3>Filteroptie wijzigen</h3>
+		<form class="form" role="form">
+			<div class="form-group">
+				<select class="form-control">
+					<option>Sockettype</option>
+					<option>Merk</option>
+					<option>Aansluitingtype</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<select class="form-control">
+				<option>Socket 1155</option>
+				<option>Socket 1156</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" placeholder="Filternaam"></input>
+			</div>
+				<button id="btn_update" class="btn btn-default">Wijzig</button>
+			
+		</form>
+	</div>
+	<div class="col-sm-12">
+	<h3>Filteroptie verwijderen</h3>
+		<form class="form" role="form">
+			<div class="form-group">
+				<select class="form-control">
+					<option>Socket 1155</option>
+					<option>Socket 1156</option>
+					<option>Socket 775</option>
+				</select>
+			</div>
+				<button id="btn_delete"class="btn btn-default">Verwijder</button>
+		</form>
 	</div>
 </div>
