@@ -150,6 +150,7 @@ public class MySQLConnection {
         }
         res.close();
         s.close();
+
         JSONArray merken = new JSONArray();
         out.put("merken",merken);
         s = conn.prepareStatement("SELECT merk.naam FROM merk JOIN tussentabel ON (tussentabel.merkmid = merk.mid) WHERE onderdeeltype = ?");
