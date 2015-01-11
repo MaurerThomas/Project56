@@ -1,7 +1,7 @@
 #coding: utf8 
 from scrapy.spider import Spider
 from scrapy.selector import Selector
-from prijscrawler.items import AlternateItem
+from prijscrawler.items import PrijsItem
 import re
 
 class AlternateSpider(Spider):
@@ -41,7 +41,7 @@ class AlternateSpider(Spider):
 		products = response.xpath('//*[starts-with(@class,"listRow")]')
 		items = []
 		for product in products:
-			item = AlternateItem()
+			item = PrijsItem()
 			temp = product.xpath('a/span/span/h2/*[starts-with(@class,"name")]/span/text()').extract()
 			item['url'] = product.xpath('a/@href').extract()
 			tempeuro = product.xpath('div/p/*[starts-with(@class,"price right")]/text()').extract()

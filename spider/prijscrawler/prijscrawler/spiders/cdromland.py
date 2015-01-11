@@ -2,7 +2,7 @@
 import scrapy
 from scrapy.spider import Spider
 from scrapy.selector import Selector
-from prijscrawler.items import AlternateItem
+from prijscrawler.items import PrijsItem
 import re
 
 
@@ -57,7 +57,7 @@ class CdromlandSpider(scrapy.Spider):
 		euros = [ v for v in euros if hasNumbers(v)]
 		
 		for index,url in enumerate(urls):
-			item = AlternateItem()
+			item = PrijsItem()
 			item['url'] = 'https://www.cdromland.nl' + url
 			price = re.findall(r'\d+', ''.join(euros[index]))
 			item['euro'] = price[0] 
