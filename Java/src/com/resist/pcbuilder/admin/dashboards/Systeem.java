@@ -15,24 +15,18 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by Thomas on 16-12-2014.
+ * Created by Wouter
  */
-public class Grafieken implements Dashboard {
+public class Systeem implements Dashboard {
 
     public static final String IDENTIFIER = "systeem";
     private AdminSession session;
 
-    public Grafieken(AdminSession session){this.session = session;}
+    public Systeem(AdminSession session){this.session = session;}
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
-            try {
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
         }
 
