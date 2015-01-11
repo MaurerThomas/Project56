@@ -3,7 +3,7 @@
 		var $page = window.location.hash.replace('#','');
 		if($page === '' || $page == 'main') {
 			$webSocket.send({switchDashboard: 'main'});
-		} else if(['adminfunctions','grafieken','filters'].indexOf($page) != -1) {
+		} else if(['adminfunctions','grafieken','filters','systeem'].indexOf($page) != -1) {
 			$webSocket.send({switchDashboard: $page});
 		}
 	});
