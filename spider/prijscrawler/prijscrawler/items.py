@@ -8,7 +8,7 @@
 
 import scrapy
 
-class AlternateItem(scrapy.Item):
+class PrijsItem(scrapy.Item):
 	url = scrapy.Field()
 	euro = scrapy.Field()
 	cent = scrapy.Field()

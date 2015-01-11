@@ -32,6 +32,7 @@ public class AdminSession implements MessageHandler {
 		dashboards.put(AdminFunctions.IDENTIFIER,new AdminFunctions(this));
 		dashboards.put(Grafieken.IDENTIFIER,new Grafieken(this));
         dashboards.put(Filters.IDENTIFIER,new Filters(this));
+        dashboards.put(Systeem.IDENTIFIER,new Systeem(this));
 	}
 
 	private void initSession(Connection conn) {

@@ -8,12 +8,12 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #
 
-BOT_NAME = 'alternate'
+BOT_NAME = 'prijscrawler'
 
-SPIDER_MODULES = ['alternate.spiders']
-NEWSPIDER_MODULE = 'alternate.spiders'
+SPIDER_MODULES = ['prijscrawler.spiders']
+NEWSPIDER_MODULE = 'prijscrawler.spiders'
 DOWNLOAD_DELAY = 2
 DOWNLOADER_STATS = False
 ITEM_PIPELINES = {
-	'alternate.pipelines.AlternatePipeline' : 300,
+	'prijscrawler.pipelines.PrijsPipeline' : 300,
 }

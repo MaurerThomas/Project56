@@ -2,11 +2,11 @@
 import scrapy
 from scrapy.spider import Spider
 from scrapy.selector import Selector
-from alternate.items import AlternateItem
+from prijscrawler.items import AlternateItem
 import re
 
 
-class SpinSpider(scrapy.Spider):
+class CdromlandSpider(scrapy.Spider):
     name = "cdromland"
     allowed_domains = ["cdromland.nl"]
     start_urls = (

@@ -10,7 +10,7 @@ import hashlib
 from scrapy.exceptions import DropItem
 from scrapy.http import Request
 
-class AlternatePipeline(object):
+class PrijsPipeline(object):
 	def __init__(self):
 		self.conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
 		self.cursor = self.conn.cursor()
