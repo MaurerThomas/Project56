@@ -395,10 +395,10 @@ public class MySQLConnection {
             PreparedStatement s = conn.prepareStatement(sql+" AND url "+getInQuery(urls.size()));
             s.setDate(1, date);
             if(minPrice != null) {
-                s.setInt(2,minPrice);
+                s.setInt(2,minPrice*100);
             }
             if(maxPrice != null) {
-                s.setInt(args,maxPrice);
+                s.setInt(args,maxPrice*100);
             }
             for(int i=0;i < urls.size();i++) {
                 s.setString(i+1+args,urls.get(i));

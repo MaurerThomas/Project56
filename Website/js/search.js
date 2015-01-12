@@ -8,6 +8,7 @@ function initSearch() {
 	$('#behuizing form').submit(submitCase);
 	$('#voeding form').submit(submitPSU);
 	$('#besturingssysteem form').submit(submitOS);
+	$('.pcbuilder-search .tab-pane.active').submit();
 	initSearch = undefined;
 
 	function getFilter($filters,$key,$selector) {
@@ -33,7 +34,7 @@ function initSearch() {
 		if($filters.merk !== undefined) {
 			getFilter($filters,'socket','#moederbord .pcbuilder-processor-socket');
 		}
-		submitPart($e,'searchmoederbord','moederbord-minprijs','moederbord-maxprijs',$filters);
+		submitPart(this,$e,'searchmoederbord','moederbord-minprijs','moederbord-maxprijs',$filters);
 	}
 
 	function submitCPU($e) {
@@ -44,7 +45,7 @@ function initSearch() {
 		if($filters.merk !== undefined) {
 			getFilter($filters,'socket','#processor .pcbuilder-processor-socket');
 		}
-		submitPart($e,'searchprocessor','processor-minprijs','processor-maxprijs',$filters);
+		submitPart(this,$e,'searchprocessor','processor-minprijs','processor-maxprijs',$filters);
 	}
 
 	function submitProcessorCooler($e) {
@@ -52,7 +53,7 @@ function initSearch() {
 		if($filters.merk !== undefined) {
 			getFilter($filters,'socket','#processorkoeler .pcbuilder-processor-socket');
 		}
-		submitPart($e,'searchprocessorkoeler','processorkoeler-minprijs','processorkoeler-maxprijs',$filters);
+		submitPart(this,$e,'searchprocessorkoeler','processorkoeler-minprijs','processorkoeler-maxprijs',$filters);
 	}
 
 	function submitRAM($e) {
@@ -60,7 +61,7 @@ function initSearch() {
 			component: 'geheugen'
 		};
 		getFilter($filters,'geheugentype','#geheugen .pcbuilder-ram');
-		submitPart($e,'searchgeheugen','geheugen-minprijs','geheugen-maxprijs',$filters);
+		submitPart(this,$e,'searchgeheugen','geheugen-minprijs','geheugen-maxprijs',$filters);
 	}
 
 	function submitGPU($e) {
@@ -69,16 +70,16 @@ function initSearch() {
 		};
 		getFilter($filters,'merk','#grafischekaart .pcbuilder-gpu-brand');
 		getFilter($filters,'socket','#grafischekaart .pcbuilder-gpu-interface');
-		submitPart($e,'searchgrafischekaart','grafischekaart-minprijs','grafischekaart-maxprijs',$filters);
+		submitPart(this,$e,'searchgrafischekaart','grafischekaart-minprijs','grafischekaart-maxprijs',$filters);
 	}
 
 	function submitHDD($e) {
 		var $filters = {
-			component: 'hardeschijf'
+			component: 'schijven'
 		};
 		getFilter($filters,'hardeschijftype','#hardeschijf .pcbuilder-hdd-type');
 		getFilter($filters,'socket','#hardeschijf .pcbuilder-hdd-interface');
-		submitPart($e,'searchhardeschijf','hardeschijf-minprijs','hardeschijf-maxprijs',$filters);
+		submitPart(this,$e,'searchhardeschijf','hardeschijf-minprijs','hardeschijf-maxprijs',$filters);
 	}
 
 	function submitCase($e) {
@@ -86,7 +87,7 @@ function initSearch() {
 			component: 'behuizing'
 		};
 		getFilter($filters,'behuizing','#behuizing .pcbuilder-case');
-		submitPart($e,'searchbehuizing','behuizing-minprijs','behuizing-maxprijs',$filters);
+		submitPart(this,$e,'searchbehuizing','behuizing-minprijs','behuizing-maxprijs',$filters);
 	}
 
 	function submitPSU($e) {
@@ -95,17 +96,17 @@ function initSearch() {
 		};
 		getNumFilter($filters,'minwattage','#voeding .voeding-minwattage');
 		getNumFilter($filters,'maxwattage','#voeding .voeding-maxwattage');
-		submitPart($e,'searchvoeding','voeding-minprijs','voeding-maxprijs',$filters);
+		submitPart(this,$e,'searchvoeding','voeding-minprijs','voeding-maxprijs',$filters);
 	}
 
 	function submitOS($e) {
 		var $filters = {
 			component: 'besturingssysteem'
 		};
-		submitPart($e,'searchbesturingssysteem','besturingssysteem-minprijs','besturingssysteem-maxprijs',$filters);
+		submitPart(this,$e,'searchbesturingssysteem','besturingssysteem-minprijs','besturingssysteem-maxprijs',$filters);
 	}
 
-	function submitPart($e,$nameId,$minId,$maxId,$filters) {
+	function submitPart($form,$e,$nameId,$minId,$maxId,$filters) {
 		var $val;
 		$e.preventDefault();
 		$val = $('#'+$nameId).val();
@@ -114,6 +115,54 @@ function initSearch() {
 		}
 		getNumFilter($filters,'minPrice','#'+$minId);
 		getNumFilter($filters,'maxPrice','#'+$maxId);
-		console.log($filters);
+		handleSearch($form,$filters);
+	}
+
+	function handleSearch($form,$filters) {
+		$webSocket.receive = getSearchResultReceiver($form);
+		$webSocket.send({
+			action: 'filter',
+			filters: getFilters($filters)
+		});
+	}
+
+	function getFilters($filters) {
+		var $key,$out = [];
+		for($key in $filters) {
+			$out.push({
+				key: $key,
+				value: $filters[$key]
+			});
+		}
+		console.log($out);
+		return $out;
+	}
+
+	function getSearchResultReceiver($form) {
+		return function($msg) {
+			var $results,$n,$json;
+			if($msg.data !== undefined) {
+				$json = getJSON($msg.data);
+				if($json !== null && $json.resultaten !== undefined) {
+					$results = $($form).parent().find('.search-results');
+					$results.empty();
+					for($n=0;$n < $json.resultaten.length;$n++) {
+						$results.append(getItemHTML($json.resultaten[$n]));
+					}
+				}
+			}
+		};
+	}
+
+	function getJSON($string) {
+		try {
+			return JSON.parse($string);
+		} catch($e) {
+			return null;
+		}
+	}
+
+	function getItemHTML($item) {
+		return '<div class="item"><h3>'+$item.naam+'</h3>&euro; '+$item.euro+','+$item.cent+'</div>';
 	}
 }
