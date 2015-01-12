@@ -20,6 +20,13 @@ import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 
 public class PcPart {
+	private static final String priceTable = "prijs_verloop";
+	private static final String urlColumn = "url";
+	private static final String euroColumn = "euro";
+	private static final String centColumn = "cent";
+	private static final String dateColumn = "datum";
+	private static final String mongoSearchIndex = "mongoindex";
+
 	private String url;
 	private int euro;
 	private int cent;
@@ -56,17 +63,17 @@ public class PcPart {
     public static List<PcPart> getPartsPrice(Connection conn, List<String> urls, Date date, Integer minPrice, Integer maxPrice) {
     	List<PcPart> out = new ArrayList<PcPart>();
         try {
-            String sql = "SELECT url,euro,cent FROM prijs_verloop WHERE datum > ?";
+            String sql = "SELECT "+urlColumn+","+euroColumn+","+centColumn+" FROM "+priceTable+" WHERE "+dateColumn+" > ?";
             int args = 1;
             if(minPrice != null) {
-                sql += " AND euro*100+cent >= ?";
+                sql += " AND "+euroColumn+"*100+"+centColumn+" >= ?";
                 args++;
             }
             if(maxPrice != null) {
-                sql += " AND euro*100+cent <= ?";
+                sql += " AND "+euroColumn+"*100+"+centColumn+" <= ?";
                 args++;
             }
-            PreparedStatement s = conn.prepareStatement(sql+" AND url "+DBConnection.getInQuery(urls.size()));
+            PreparedStatement s = conn.prepareStatement(sql+" AND "+urlColumn+" "+DBConnection.getInQuery(urls.size()));
             s.setDate(1, date);
             if(minPrice != null) {
                 s.setInt(2,minPrice*100);
@@ -92,7 +99,7 @@ public class PcPart {
 
     public static List<PcPart> getFilteredParts(Client client, FilterBuilder filters, int numResults) {
     	List<PcPart> out = new ArrayList<PcPart>();
-		SearchResponse response = client.prepareSearch("mongoindex")
+		SearchResponse response = client.prepareSearch(mongoSearchIndex)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setSize(numResults)
 				.setPostFilter(filters)
