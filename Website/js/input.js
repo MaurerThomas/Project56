@@ -117,19 +117,21 @@ function initFilters() {
 
 		function checkMinMax($slider) {
 			var $val,$other,
-			$id = this.id.split('-');
+			$id = $slider.id.split('-');
 			if($id.length == 2) {
 				if($id[1].indexOf('max') === 0) {
-					$val = $(this).val();
-					$other = $('#'+$id[0]+$id[1].replace('max','min'));
+					$val = $($slider).val();
+					$other = $('#'+$id[0]+'-'+$id[1].replace('max','min'));
 					if($other.val() > $val) {
 						$other.val($val);
+						$other.change();
 					}
 				} else if($id[1].indexOf('min') === 0) {
-					$val = $(this).val();
-					$other = $('#'+$id[0]+$id[1].replace('min','max'));
+					$val = $($slider).val();
+					$other = $('#'+$id[0]+'-'+$id[1].replace('min','max'));
 					if($other.val() < $val) {
 						$other.val($val);
+						$other.change();
 					}
 				}
 			}
