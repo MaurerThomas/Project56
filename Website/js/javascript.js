@@ -25,6 +25,34 @@
 			}
 			$('#pcbuilder-selection').animate({height: 'toggle'});
 		});
+		
+		$('#moederbordselectie').click(function() {
+			$('a[href="#moederbord"]').click();
+		});
+		$('#processorselectie').click(function() {
+			$('a[href="#processor"]').click();
+		});
+		$('#processorkoelerselectie').click(function() {
+			$('a[href="#processorkoeler"]').click();
+		});
+		$('#hardeschijfselectie').click(function() {
+			$('a[href="#hardeschijf"]').click();
+		});
+		$('#geheugenselectie').click(function() {
+			$('a[href="#geheugen"]').click();
+		});
+		$('#grafischekaartselectie').click(function() {
+			$('a[href="#grafischekaart"]').click();
+		});
+		$('#voedingselectie').click(function() {
+			$('a[href="#voeding"]').click();
+		});
+		$('#behuizingselectie').click(function() {
+			$('a[href="#behuizing"]').click();
+		});
+		$('#besturingssysteemselectie').click(function() {
+			$('a[href="#besturingssysteem"]').click();
+		});
 	});
 	$(document).tooltip({position: {my: 'left top', at: 'right top'}});
 })(jQuery);
