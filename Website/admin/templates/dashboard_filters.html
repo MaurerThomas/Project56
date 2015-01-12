@@ -4,8 +4,27 @@
 	<div class="col-sm-6">
 	<h3>Filteroptie toevoegen</h3>
 		<form class="form" role="form">
-			<div class="form-group col-sm-4">
-				<input type="text" class="form-control" placeholder="Filternaam"></input>
+			<div class="col-sm-12" style="padding-left:0px !important">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
+					<select class="form-control">
+						<option>Sockettype</option>
+						<option>Merk</option>
+						<option>Aansluitingtype</option>
+					</select>
+				</div>
+			</div>
+			<div id="add_div_sockettype" class="col-sm-12" style="padding-left:0px !important">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
+					<select class="form-control">
+					<option>Socket 1155</option>
+					<option>Socket 1156</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-sm-12" style="padding-left:0px !important">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
+					<input type="text" class="form-control" placeholder="Filternaam"></input>
+				</div>
 			</div>
 			<div class="col-sm-12">
 				<button id="btn_add" class="btn btn-default">Voeg toe</button>
@@ -16,12 +35,25 @@
 	<h3>Filteroptie verwijderen</h3>
 		<form class="form" role="form">
 			<div class="col-sm-12" style="padding-left:0px !important">
-				<div class="form-group col-sm-4">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
 					<select class="form-control">
-						<option>Socket 1155</option>
-						<option>Socket 1156</option>
-						<option>Socket 775</option>
+						<option>Sockettype</option>
+						<option>Merk</option>
+						<option>Aansluitingtype</option>
 					</select>
+				</div>
+			</div>
+			<div id="del_div_sockettype" class="col-sm-12" style="padding-left:0px !important">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
+					<select class="form-control">
+					<option>Socket 1155</option>
+					<option>Socket 1156</option>
+					</select>
+				</div>
+			</div>
+			<div class="col-sm-12" style="padding-left:0px !important">
+				<div class="form-group col-sm-4 col-md-4 col-lg-4">
+					<input type="text" class="form-control" placeholder="Filternaam"></input>
 				</div>
 			</div>
 			<div class="col-sm-12">
@@ -41,7 +73,7 @@
 					</select>
 				</div>
 			</div>
-			<div class="col-sm-12" style="padding-left:0px !important">
+			<div id="change_div_sockettype" class="col-sm-12" style="padding-left:0px !important">
 				<div class="form-group col-sm-4 col-md-4 col-lg-4">
 					<select class="form-control">
 					<option>Socket 1155</option>
