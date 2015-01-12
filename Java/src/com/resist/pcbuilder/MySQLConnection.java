@@ -385,11 +385,11 @@ public class MySQLConnection {
             String sql = "SELECT url,euro,cent FROM prijs_verloop WHERE datum > ?";
             int args = 1;
             if(minPrice != null) {
-                sql += " AND euro*100+cent > ?";
+                sql += " AND euro*100+cent >= ?";
                 args++;
             }
             if(maxPrice != null) {
-                sql += " AND euro*100+cent < ?";
+                sql += " AND euro*100+cent <= ?";
                 args++;
             }
             PreparedStatement s = conn.prepareStatement(sql+" AND url "+getInQuery(urls.size()));
