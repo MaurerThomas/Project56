@@ -106,9 +106,33 @@ function initFilters() {
 
 	function initSliders() {
 		var $ranges = $('input[type="range"]');
-		$ranges.change(function() {
-			$('output[for="'+this.id+'"]').text($(this).val());
-		});
+		$ranges.change(changeOutput);
+		$ranges.on('input',changeOutput);
 		$ranges.change();
+
+		function changeOutput() {
+			$('output[for="'+this.id+'"]').text($(this).val());
+			checkMinMax(this);
+		}
+
+		function checkMinMax($slider) {
+			var $val,$other,
+			$id = this.id.split('-');
+			if($id.length == 2) {
+				if($id[1].indexOf('max') === 0) {
+					$val = $(this).val();
+					$other = $('#'+$id[0]+$id[1].replace('max','min'));
+					if($other.val() > $val) {
+						$other.val($val);
+					}
+				} else if($id[1].indexOf('min') === 0) {
+					$val = $(this).val();
+					$other = $('#'+$id[0]+$id[1].replace('min','max'));
+					if($other.val() < $val) {
+						$other.val($val);
+					}
+				}
+			}
+		}
 	}
 }
