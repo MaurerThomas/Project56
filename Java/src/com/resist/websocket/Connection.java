@@ -46,7 +46,6 @@ public final class Connection implements Runnable {
 	private OutputStream output;
 	private InputStream input;
 	private String key;
-	private boolean stop = false;
 	private Message currentMessage = null;
 	private boolean closed = false;
 
@@ -91,7 +90,7 @@ public final class Connection implements Runnable {
 	public void run() {
 		try {
 			int data;
-			while((data = input.read()) != -1 && !stop) {
+			while(!closed && (data = input.read()) != -1) {
 				readAndHandleMessage(data);
 			}
 		} catch (SocketTimeoutException e) {
@@ -225,7 +224,7 @@ public final class Connection implements Runnable {
 		//First bit
 		int fin = nextByte >> 7;
 		if(checkRSV(nextByte)) {
-			stop = true;
+			close();
 			return;
 		}
 		//Bit 5-8
@@ -343,21 +342,7 @@ public final class Connection implements Runnable {
 		Message controlMessage = new Message(this,opcode);
 		controlMessage.add(input,payloadLen,maskingKey);
 		controlMessage.complete();
-		handleOpcodes(controlMessage);
 		server.handleControlFrame(controlMessage);
-	}
-
-	/**
-	 * Handles default opcodes.
-	 * 
-	 * @param message The received message
-	 */
-	private void handleOpcodes(Message message) {
-		if(message.getType() == OPCODE_CONNECTION_CLOSE) {
-			stop = true;
-		} else if(message.getType() == OPCODE_PING) {
-			sendPong(message.toByteArray());
-		}
 	}
 
 	/**

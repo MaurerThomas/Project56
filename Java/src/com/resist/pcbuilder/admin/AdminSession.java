@@ -16,16 +16,35 @@ import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
 
 public class AdminSession implements MessageHandler {
-	private PcBuilder pcbuilder;
+	private AdminLoginHandler loginHandler;
 	private String username;
 	private Dashboard currentDashboard;
 	private Map<String,Dashboard> dashboards;
 
-	public AdminSession(PcBuilder pcbuilder, Message message) {
-		this.pcbuilder = pcbuilder;
+	public AdminSession(AdminLoginHandler loginHandler, Message message) {
+		this.loginHandler = loginHandler;
 		this.username = new JSONObject(message.toString()).getJSONObject("login").getString("username");
 		initDashboards();
 		initSession(message.getConnection());
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public java.sql.Connection getConnection() {
+		return loginHandler.getConnection();
+	}
+
+	public String getPasswordHash(String password) {
+		if(password == null) {
+			return null;
+		}
+		return loginHandler.getPasswordHash(password);
+	}
+
+	public PcBuilder getPcBuilder() {
+		return loginHandler.getPcBuilder();
 	}
 
 	private void initDashboards() {
@@ -79,13 +98,5 @@ public class AdminSession implements MessageHandler {
 		if(!conn.isClosed()) {
 			conn.sendMessage(message);
 		}
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public PcBuilder getPcBuilder() {
-		return pcbuilder;
 	}
 }

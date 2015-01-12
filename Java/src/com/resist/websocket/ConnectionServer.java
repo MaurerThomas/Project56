@@ -12,7 +12,7 @@ public final class ConnectionServer {
 	private int port;
 	private String path;
 	private boolean running = true;
-	private MessageHandler controlFrameHandler = null;
+	private MessageHandler controlFrameHandler = new DefaultControlFrameHandler();
 	private MessageHandler messageHandler = null;
 	private int timeout = 1000*60*60;
 	private ServerSocket serverSocket;

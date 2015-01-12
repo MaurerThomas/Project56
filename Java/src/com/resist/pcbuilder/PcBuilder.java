@@ -1,20 +1,18 @@
 package com.resist.pcbuilder;
 
-import com.resist.pcbuilder.admin.AdminLoginHandler;
-import com.resist.websocket.Connection;
-import com.resist.websocket.ConnectionServer;
-import com.resist.websocket.Message;
-import com.resist.websocket.MessageHandler;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class PcBuilder implements MessageHandler {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.resist.pcbuilder.admin.AdminLoginHandler;
+import com.resist.websocket.ConnectionServer;
+
+public class PcBuilder {
 	public static final Logger LOG = Logger.getLogger(PcBuilder.class.getName());
 	static {
 		LOG.addHandler(new LogHandler());
@@ -23,7 +21,7 @@ public class PcBuilder implements MessageHandler {
 	}
 
 	private SearchHandler searchHandler;
-	private MySQLConnection mysql;
+	private DBConnection conn;
 	private JSONObject settings;
 	private ConnectionServer adminServer;
 	private ConnectionServer builderServer;
@@ -86,8 +84,8 @@ public class PcBuilder implements MessageHandler {
 		return searchHandler;
 	}
 
-	public MySQLConnection getMysql() {
-		return mysql;
+	public DBConnection getDBConnection() {
+		return conn;
 	}
 
 	public JSONObject getSettings() {
@@ -96,14 +94,11 @@ public class PcBuilder implements MessageHandler {
 
 	private void connectToMySQL() {
 		try {
-			mysql = new MySQLConnection(settings.getString("mysqlAddress"),
+			conn = new DBConnection(settings.getString("mysqlAddress"),
 					settings.getInt("mysqlPort"),
 					settings.getString("mysqlDatabase"),
 					settings.getString("mysqlUsername"),
 					settings.getString("mysqlPassword"));
-			if (settings.has("adminPasswordSalt")) {
-				mysql.setSalt(settings.getString("adminPasswordSalt"));
-			}
 		} catch (SQLException e) {
 			searchHandler.close();
 			LOG.log(Level.SEVERE, "Failed to connect to MySQL server.", e);
@@ -132,7 +127,7 @@ public class PcBuilder implements MessageHandler {
 	private void listenForConnections() {
 		final ConnectionServer user = new ConnectionServer(
 				settings.getString("address"), settings.getInt("port"),
-				settings.getString("path"), LOG).setMessageHandler(this);
+				settings.getString("path"), LOG).setMessageHandler(new InputHandler(this));
 		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
@@ -145,48 +140,10 @@ public class PcBuilder implements MessageHandler {
 		builderServer = user;
 	}
 
-	@Override
-	public void handleMessage(Message message) {
-		if (message.getType() == Connection.OPCODE_TEXT_FRAME) {
-			JSONObject json = parseInput(message.toString());
-			if (json != null) {
-				JSONObject out = handleJSON(json);
-				sendReturn(message, out.toString());
-			}
-		}
-	}
-
-	private JSONObject parseInput(String message) {
-		try {
-			return new JSONObject(message);
-		} catch (JSONException e) {
-			LOG.log(Level.INFO, "Invalid JSON string.", e);
-			return null;
-		}
-	}
-
-	private JSONObject handleJSON(JSONObject json) {
-		JSONObject out = new JSONObject();
-
-		if (json.has("action") && json.getString("action").equals("filter")) {
-			out.put("resultaten", searchHandler.handleIncomingMessage(json));
-		} else if (json.has("action") && json.get("action").equals("init")) {
-			out.put("init", mysql.getInit());
-		}
-
-		return out;
-	}
-
-	private void sendReturn(Message conn, String message) {
-		if (!conn.getConnection().isClosed()) {
-			conn.getConnection().sendMessage(message);
-		}
-	}
-
 	public void stop() {
 		builderServer.stop();
 		adminServer.stop();
 		searchHandler.close();
-		mysql.close();
+		conn.close();
 	}
 }

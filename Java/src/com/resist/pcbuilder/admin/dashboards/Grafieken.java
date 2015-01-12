@@ -40,7 +40,7 @@ public class Grafieken implements Dashboard {
     }
 
     public void makeChart(JSONObject json) throws IOException {
-        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleIncomingMessage(json);
+        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleSearch(json);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
         System.out.println(getPrijs);
 

@@ -1,7 +1,12 @@
 package com.resist.pcbuilder;
 
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -10,35 +15,39 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
 import org.elasticsearch.index.query.TermsFilterBuilder;
-import org.elasticsearch.search.SearchHit;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.*;
+import com.resist.pcbuilder.pcparts.Case;
+import com.resist.pcbuilder.pcparts.GraphicsCard;
+import com.resist.pcbuilder.pcparts.HardDisk;
+import com.resist.pcbuilder.pcparts.Memory;
+import com.resist.pcbuilder.pcparts.PcPart;
+import com.resist.pcbuilder.pcparts.Processor;
 
 public class SearchHandler {
 	private Client client;
-	private PcBuilder pcBuilder;
+	private PcBuilder pcbuilder;
 
-	public SearchHandler(String address, int port, String clusterName, PcBuilder pcBuilder) {
-		this.pcBuilder = pcBuilder;
+	public SearchHandler(String address, int port, String clusterName, PcBuilder pcbuilder) {
+		this.pcbuilder = pcbuilder;
 		Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
 		client = new TransportClient(settings);
 		((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(address, port));
 	}
 
-	public JSONArray handleIncomingMessage(JSONObject json) {
+	public JSONArray handleSearch(JSONObject json) {
+		Connection conn = pcbuilder.getDBConnection().getConnection();
 		if (json.has("filters")) {
-			return handleQuery(json.getJSONArray("filters"));
-		}
-		if (json.has("makechart")){
-			return getPartsPriceForGraph(json.getJSONArray("makechart"));
+			return handleQuery(conn,json.getJSONArray("filters"));
+		} else if (json.has("makechart")){
+			return getPartsPriceForGraph(conn,json.getJSONArray("makechart"));
 		}
 		return null;
 	}
 
-	private JSONArray handleQuery(JSONArray json) {
+	private JSONArray handleQuery(Connection conn,JSONArray json) {
 		FilterBuilder filters = getElasticFilters(json);
 		if (filters != null) {
 			List<String> urls = new ArrayList<String>();
@@ -46,20 +55,20 @@ public class SearchHandler {
 			if(!urls.isEmpty()) {
 				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
 				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 1000);
-				return combineMysqlResultsWithElasticsearch(results, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
+				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
 			}
 		}
 		return null;
 	}
 
-	private JSONArray getPartsPriceForGraph(JSONArray json){
+	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json){
 		FilterBuilder filters = getElasticFilters(json);
 		if (filters != null) {
 			List<String> urls = new ArrayList<String>();
 			JSONObject results = elasticSearchQuery(filters, 1, urls);
 			if(!urls.isEmpty()) {
 				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 7 * 1000);
-				return combineMysqlResultsWithElasticsearch(results, pcBuilder.getMysql().getPartsPrice(urls, sqlDate, null, null));
+				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, null, null));
 			}
 		}
 		return null;
@@ -72,20 +81,13 @@ public class SearchHandler {
 
 	private JSONObject elasticSearchQuery(FilterBuilder filters, int numResults, List<String> urls) {
 		JSONObject output = new JSONObject();
-		SearchResponse response = client.prepareSearch("mongoindex")
-				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-				.setSize(numResults)
-				.setPostFilter(filters)
-				.setExplain(false)
-				.execute()
-				.actionGet();
-		SearchHit[] results = response.getHits().getHits();
-		for (SearchHit hit : results) {
+		List<PcPart> list = PcPart.getFilteredParts(client, filters, numResults);
+		for(PcPart p : list) {
 			@SuppressWarnings("unchecked")
-			Map<String, Object> result = (Map<String, Object>) hit.getSource().get("specs");
-			String url = (String) result.get("url");
+			Map<String,Object> specs = (Map<String, Object>) p.getSpecs().get("specs");
+			String url = (String) specs.get("url");
 			urls.add(url);
-			output.put(url, new JSONObject(result));
+			output.put(url,new JSONObject(specs));
 		}
 		return output;
 	}
@@ -128,21 +130,20 @@ public class SearchHandler {
 		}
 	}
 
-	private JSONArray combineMysqlResultsWithElasticsearch(JSONObject elasticsearch, JSONArray mysql) {
-
-		for (int i = 0; i < mysql.length(); i++) {
-			JSONObject mysqlElement = mysql.getJSONObject(i);
-			JSONObject elasticElement = elasticsearch.getJSONObject(mysqlElement.getString("url"));
+	private JSONArray combineMysqlResultsWithElasticsearch(JSONObject elasticsearch, List<PcPart> prices) {
+		JSONArray out = new JSONArray();
+		for(PcPart price : prices) {
+			JSONObject part = new JSONObject().put("url", price.getUrl()).put("euro", price.getEuro()).put("cent", price.getCent());
+			JSONObject elasticElement = elasticsearch.getJSONObject(price.getUrl());
 			@SuppressWarnings("unchecked")
 			Iterator<String> it = elasticElement.keys();
 			while(it.hasNext()) {
 				String key = it.next();
-				mysqlElement.put(key, elasticElement.get(key));
+				part.put(key, elasticElement.get(key));
 			}
+			out.put(part);
 		}
-		System.out.println(mysql.toString().length());
-
-		return mysql;
+		return out;
 	}
 
 	private boolean validateTerm(JSONObject term) {
@@ -157,4 +158,104 @@ public class SearchHandler {
 	public void close() {
 		client.close();
 	}
+
+	public JSONObject getInit() {
+		JSONObject out = new JSONObject();
+		Connection conn = pcbuilder.getDBConnection().getConnection();
+		out.put("processors", initProcessors(conn));
+        out.put("hardeschijven", initHarddisk(conn));
+        out.put("grafischekaarten", initGpu(conn));
+        out.put("geheugen", initRam(conn));
+        out.put("behuizing", initFormfactor(conn));
+		return out;
+	}
+
+	/**
+	 * Returns a list of processor sockets by vendor.
+     *
+     * @param conn The connection to the database
+     * @return A list of processor sockets by vendor
+	 */
+	public JSONObject initProcessors(Connection conn) {
+		JSONObject out = new JSONObject();
+		List<Processor> list = Processor.getProcessors(conn);
+		for(Processor p : list) {
+			if(!out.has(p.getBrand())) {
+				out.put(p.getBrand(), new JSONArray());
+			}
+			out.getJSONArray(p.getBrand()).put(p.getSocket());
+		}
+		return out;
+	}
+
+    /**
+     * Returns a list of harddisks by hard disk type.
+     *
+     * @param conn The connection to the database
+     * @return A list of harddisks by hard disk type
+     */
+    private JSONObject initHarddisk(Connection conn) {
+        JSONObject out = new JSONObject();
+        List<HardDisk> list = HardDisk.getHardDisks(conn);
+        for(HardDisk d : list) {
+        	if(!out.has(d.getType())) {
+        		out.put(d.getType(), new JSONArray());
+        	}
+        	out.getJSONArray(d.getType()).put(d.getSocket());
+        }
+        return out;
+    }
+
+    /**
+     * Returns a list of graphic card brands and interfaces.
+     *
+     * @param conn The connection to the database
+     * @return A list of graphic card brands and interfaces
+     */
+    private JSONObject initGpu(Connection conn) {
+    	JSONObject out = new JSONObject();
+    	List<GraphicsCard> list = GraphicsCard.getSockets(conn);
+    	JSONArray aansluitingen = new JSONArray();
+    	for(GraphicsCard g : list) {
+    		aansluitingen.put(g.getSocket());
+    	}
+        out.put("aansluitingen",aansluitingen);
+    	list = GraphicsCard.getBrands(conn);
+    	JSONArray merken = new JSONArray();
+    	for(GraphicsCard g : list) {
+    		merken.put(g.getSocket());
+    	}
+        out.put("merken",merken);
+        return out;
+    }
+
+    /**
+     * Returns a list of RAM modules.
+     *
+     * @param conn The connection to the database
+     * @return A list of RAM modules.
+     */
+    private JSONArray initRam(Connection conn) {
+    	List<Memory> list = Memory.getSockets(conn);
+    	JSONArray out = new JSONArray();
+    	for(Memory m : list) {
+    		out.put(m.getSocket());
+    	}
+        return out;
+    }
+
+    /**
+     * Returns a list of case formfactors.
+     *
+     * @param conn The connection to the database
+     * @return A list of case formfactors
+     */
+    private JSONArray initFormfactor(Connection conn) {
+    	JSONArray out = new JSONArray();
+    	List<Case> cases = Case.getFormFactors(conn);
+    	for(Case c : cases) {
+    		out.put(c.getFormFactor());
+    	}
+        return out;
+    }
 }

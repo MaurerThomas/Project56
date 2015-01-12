@@ -1,7 +1,10 @@
 package com.resist.pcbuilder.admin.dashboards;
 
+import java.util.List;
+
 import org.json.JSONObject;
 
+import com.resist.pcbuilder.admin.Admin;
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
@@ -44,12 +47,16 @@ public class AdminFunctions implements Dashboard {
 	}
 
 	private JSONObject getAdmins() {
-		JSONObject admins = session.getPcBuilder().getMysql().getAdminList();
-		return new JSONObject().put("admins",admins);
+		List<Admin> admins = Admin.getAdminList(session.getConnection());
+		JSONObject out = new JSONObject();
+		for(Admin admin : admins) {
+			out.put(String.valueOf(admin.getAid()),admin.getUsername());
+		}
+		return new JSONObject().put("admins",out);
 	}
 
 	private JSONObject deleteAdmin(int aid) {
-		boolean adminWasDeleted = session.getPcBuilder().getMysql().deleteAdmin(aid);
+		boolean adminWasDeleted = Admin.deleteAdmin(session.getConnection(),aid);
 		return new JSONObject().put("adminDeleted",adminWasDeleted);
 	}
 
@@ -57,7 +64,7 @@ public class AdminFunctions implements Dashboard {
 		if(username.isEmpty() || password.isEmpty()) {
 			return null;
 		}
-		int aid = session.getPcBuilder().getMysql().addAdmin(username,password);
+		int aid = Admin.addAdmin(session.getConnection(),username,session.getPasswordHash(password));
 		return new JSONObject().put("adminAdded",aid);
 	}
 
@@ -65,7 +72,7 @@ public class AdminFunctions implements Dashboard {
 		int aid = input.getInt("aid");
 		String username = getValueOrNull(input,"username");
 		String password = getValueOrNull(input,"password");
-		boolean adminWasModified = session.getPcBuilder().getMysql().modifyAdmin(aid,username,password);
+		boolean adminWasModified = Admin.modifyAdmin(session.getConnection(),aid,username,session.getPasswordHash(password));
 		return new JSONObject().put("adminModified",adminWasModified);
 	}
 
