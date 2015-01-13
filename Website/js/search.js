@@ -27,7 +27,7 @@ function initSearch() {
 
 	function submitMotherboard($e) {
 		var $filters = {
-			component: 'moederbord'
+			component: 'Moederborden'
 		};
 		getFilter($filters,'behuizing','#moederbord .pcbuilder-case');
 		getFilter($filters,'merk','#moederbord .pcbuilder-processor-brand');

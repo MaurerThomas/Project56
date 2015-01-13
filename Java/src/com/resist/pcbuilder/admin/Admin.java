@@ -113,8 +113,8 @@ public class Admin {
 	 * @return True if the admin was modified
 	 */
 	public static boolean modifyAdmin(Connection conn, int aid, String username, String password) {
-		PreparedStatement s;
 		try {
+			PreparedStatement s;
 			if(password == null) {
 				s = conn.prepareStatement("UPDATE "+adminTable+" SET "+usernameColumn+" = ? WHERE "+aidColumn+" = ?");
 				s.setString(1,username);

@@ -133,10 +133,10 @@
 		$div = $this.parent().parent().find('.name'),
 		$icon = $this.find('span')
 		$aid = $div.parent().attr('data-aid'),
-		$name = $div.parent().attr('data-name');
-		$e.preventDefault();
+		$name = $div.parent().attr('data-name'),
 		$newName = $div.find('[name="username"]').val(),
 		$newPass = $div.find('[name="password"]').val();
+		$e.preventDefault();
 		if($newName != $name || $newPass !== '') {
 			if($newName != $name && $newPass !== '') {
 				saveAdmin({aid: $aid, username: $newName, password: $newPass});

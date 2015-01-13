@@ -2,12 +2,11 @@ $(function() {
 	var $formButton = $('form input[type="submit"]'),
 	$compatibility = checkCompatibility($formButton),
 	$wrongLogin = $('#wrongLogin'),
-	$noLogin = $('#noLogin');
-	window.location.hash = '';
+	$noLogin = $('#noLogin'),
 	$loginMenu = $('#menu');
-	
-	$loginMenu.hide();
-	
+
+	window.location.hash = '';
+
 	if($compatibility.WebSocket) {
 		$webSocket.init(window.location.host,'8081','/admin');
 		$webSocket.receive = function($msg) {
@@ -18,7 +17,8 @@ $(function() {
 			} else {
 				$('a.navbar-brand').attr('href','#');
 				$webSocket.receive = htmlHandler;
-				$loginMenu.show(400);
+				$loginMenu.removeClass('hidden');
+				$loginMenu.hide().show(400);
 			}
 		};
 	}
