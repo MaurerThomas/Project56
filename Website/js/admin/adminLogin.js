@@ -4,6 +4,10 @@ $(function() {
 	$wrongLogin = $('#wrongLogin'),
 	$noLogin = $('#noLogin');
 	window.location.hash = '';
+	$loginMenu = $('#menu');
+	
+	$loginMenu.hide();
+	
 	if($compatibility.WebSocket) {
 		$webSocket.init(window.location.host,'8081','/admin');
 		$webSocket.receive = function($msg) {
@@ -14,6 +18,7 @@ $(function() {
 			} else {
 				$('a.navbar-brand').attr('href','#');
 				$webSocket.receive = htmlHandler;
+				$loginMenu.show(400);
 			}
 		};
 	}
