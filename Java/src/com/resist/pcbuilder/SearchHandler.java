@@ -27,6 +27,8 @@ import com.resist.pcbuilder.pcparts.PcPart;
 import com.resist.pcbuilder.pcparts.Processor;
 
 public class SearchHandler {
+	public static final long DAY_IN_MS = 24 * 60 * 60 * 1000;
+
 	private Client client;
 	private PcBuilder pcbuilder;
 
@@ -48,27 +50,22 @@ public class SearchHandler {
 	}
 
 	private JSONArray handleQuery(Connection conn,JSONArray json) {
-		FilterBuilder filters = getElasticFilters(json);
-		if (filters != null) {
-			List<String> urls = new ArrayList<String>();
-			JSONObject results = elasticSearchQuery(filters, 20, urls);
-			if(!urls.isEmpty()) {
-				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
-				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 1000);
-				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
-			}
-		}
-		return null;
+		return getParts(conn,json,pcbuilder.getSettings().getInt("daysPartsRemainValid")*DAY_IN_MS,pcbuilder.getSettings().getInt("maxElasticResults"));
 	}
 
-	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json){
+	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json) {
+		return getParts(conn,json,7*DAY_IN_MS,1);
+	}
+
+	private JSONArray getParts(Connection conn,JSONArray json,long timeago,int maxResults) {
 		FilterBuilder filters = getElasticFilters(json);
 		if (filters != null) {
 			List<String> urls = new ArrayList<String>();
-			JSONObject results = elasticSearchQuery(filters, 1, urls);
+			JSONObject results = elasticSearchQuery(filters, maxResults, urls);
 			if(!urls.isEmpty()) {
-				java.sql.Date sqlDate = getPastSQLDate(24 * 60 * 60 * 7 * 1000);
-				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, null, null));
+				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
+				java.sql.Date sqlDate = getPastSQLDate(timeago);
+				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
 			}
 		}
 		return null;
@@ -176,7 +173,7 @@ public class SearchHandler {
      * @param conn The connection to the database
      * @return A list of processor sockets by vendor
 	 */
-	public JSONObject initProcessors(Connection conn) {
+	private JSONObject initProcessors(Connection conn) {
 		JSONObject out = new JSONObject();
 		List<Processor> list = Processor.getProcessors(conn);
 		for(Processor p : list) {

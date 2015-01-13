@@ -63,17 +63,20 @@ public class PcPart {
     public static List<PcPart> getPartsPrice(Connection conn, List<String> urls, Date date, Integer minPrice, Integer maxPrice) {
     	List<PcPart> out = new ArrayList<PcPart>();
         try {
-            String sql = "SELECT "+urlColumn+","+euroColumn+","+centColumn+" FROM "+priceTable+" WHERE "+dateColumn+" > ?";
+        	StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
+        	sql.append(urlColumn).append(",").append(euroColumn).append(",").append(centColumn)
+        	.append(" FROM ").append(priceTable).append(" WHERE ").append(dateColumn).append(" > ?");
             int args = 1;
             if(minPrice != null) {
-                sql += " AND "+euroColumn+"*100+"+centColumn+" >= ?";
+                sql.append(" AND ").append(euroColumn).append("*100+").append(centColumn).append(" >= ?");
                 args++;
             }
             if(maxPrice != null) {
-                sql += " AND "+euroColumn+"*100+"+centColumn+" <= ?";
+                sql.append(" AND ").append(euroColumn).append("*100+").append(centColumn).append(" <= ?");
                 args++;
             }
-            PreparedStatement s = conn.prepareStatement(sql+" AND "+urlColumn+" "+DBConnection.getInQuery(urls.size()));
+            sql.append(" AND ").append(urlColumn).append(DBConnection.getInQuery(urls.size()));
+            PreparedStatement s = conn.prepareStatement(sql.toString());
             s.setDate(1, date);
             if(minPrice != null) {
                 s.setInt(2,minPrice*100);
@@ -84,7 +87,6 @@ public class PcPart {
             for(int i=0;i < urls.size();i++) {
                 s.setString(i+1+args,urls.get(i));
             }
-
             ResultSet res = s.executeQuery();
             while(res.next()) {
                 out.add(new PcPart(res.getString(1),res.getInt(2),res.getInt(3)));

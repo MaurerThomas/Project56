@@ -68,14 +68,14 @@ public class DBConnection {
 	 */
     public static String getInQuery(int size) {
         StringBuilder sb = new StringBuilder();
-        sb.append("IN (");
+        sb.append(" IN (");
         for(int i=0;i < size;i++) {
             if(i != 0) {
                 sb.append(", ");
             }
             sb.append('?');
         }
-        sb.append(")");
+        sb.append(") ");
         return sb.toString();
     }
 }
