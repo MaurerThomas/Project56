@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+
+import com.resist.pcbuilder.PcBuilder;
 
 public class Admin {
 	private static final String adminTable = "admins";
@@ -52,6 +55,7 @@ public class Admin {
 			res.close();
 			s.close();
 		} catch (SQLException e) {
+			PcBuilder.LOG.log(Level.WARNING,"Failed to get admins.",e);
 			return null;
 		}
 		return out;
@@ -72,6 +76,7 @@ public class Admin {
 			s.close();
 			return true;
 		} catch (SQLException e) {
+			PcBuilder.LOG.log(Level.WARNING,"Failed to delete admin.",e);
 			return false;
 		}
 	}
@@ -99,6 +104,7 @@ public class Admin {
 			s.close();
 			return out;
 		} catch (SQLException e) {
+			PcBuilder.LOG.log(Level.WARNING,"Failed to add admin.",e);
 			return -1;
 		}
 	}
@@ -133,6 +139,7 @@ public class Admin {
 			s.close();
 			return true;
 		} catch (SQLException e) {
+			PcBuilder.LOG.log(Level.WARNING,"Failed to update admins.",e);
 			return false;
 		}
 	}

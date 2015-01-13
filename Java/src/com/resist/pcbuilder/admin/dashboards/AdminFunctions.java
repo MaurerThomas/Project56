@@ -84,6 +84,6 @@ public class AdminFunctions implements Dashboard {
 				value = null;
 			}
 		}
-		return key;
+		return value;
 	}
 }
