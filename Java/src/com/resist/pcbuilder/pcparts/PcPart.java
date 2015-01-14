@@ -1,23 +1,18 @@
 package com.resist.pcbuilder.pcparts;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-
+import com.resist.pcbuilder.DBConnection;
+import com.resist.pcbuilder.PcBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.search.SearchHit;
 
-import com.resist.pcbuilder.DBConnection;
-import com.resist.pcbuilder.PcBuilder;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 
 public class PcPart {
 	private static final String priceTable = "prijs_verloop";
@@ -101,6 +96,7 @@ public class PcPart {
 
     public static List<PcPart> getFilteredParts(Client client, FilterBuilder filters, int numResults) {
     	List<PcPart> out = new ArrayList<PcPart>();
+        PcBuilder.LOG.log(Level.INFO,filters.toString());
 		SearchResponse response = client.prepareSearch(mongoSearchIndex)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setSize(numResults)

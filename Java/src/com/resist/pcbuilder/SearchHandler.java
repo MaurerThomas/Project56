@@ -1,12 +1,6 @@
 package com.resist.pcbuilder;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.resist.pcbuilder.pcparts.*;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.ImmutableSettings;
@@ -19,12 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.resist.pcbuilder.pcparts.Case;
-import com.resist.pcbuilder.pcparts.GraphicsCard;
-import com.resist.pcbuilder.pcparts.HardDisk;
-import com.resist.pcbuilder.pcparts.Memory;
-import com.resist.pcbuilder.pcparts.PcPart;
-import com.resist.pcbuilder.pcparts.Processor;
+import java.sql.Connection;
+import java.util.*;
 
 public class SearchHandler {
 	public static final long DAY_IN_MS = 24 * 60 * 60 * 1000;
@@ -54,7 +44,7 @@ public class SearchHandler {
 	}
 
 	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json) {
-		return getParts(conn,json,7*DAY_IN_MS,1);
+		return getParts(conn,json,7*DAY_IN_MS,10);
 	}
 
 	private JSONArray getParts(Connection conn,JSONArray json,long timeago,int maxResults) {
@@ -101,7 +91,7 @@ public class SearchHandler {
 	}
 
 	private FilterBuilder appendElasticFilter(JSONObject filter, FilterBuilder filters) {
-		String key = filter.getString("key");
+        String key = filter.getString("key");
 		String value = filter.getString("value");
 		if(filters == null) {
 			return FilterBuilders.termsFilter(key,value);

@@ -28,8 +28,7 @@ public class Grafieken implements Dashboard {
     public JSONObject handleJSON(JSONObject input) {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             try {
-                makeChart(input);
-
+                makeChart();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -39,19 +38,30 @@ public class Grafieken implements Dashboard {
         return null;
     }
 
-    public void makeChart(JSONObject json) throws IOException {
-        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleSearch(json);
+    public void makeChart() throws IOException {
+        JSONArray filters = new JSONArray();
+        JSONObject x = new JSONObject();
+        JSONObject z = new JSONObject();
+        x.put("key","component").put("value","schijven");
+        z.put("makechart",filters);
+        filters.put(x);
+        System.out.println(z);
+        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleSearch(z);
+
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-        System.out.println(getPrijs);
+        System.out.println("De resultaten: " + getPrijs);
 
-        int dataset = getPrijs.getInt(0);
-        System.out.println(dataset);
+       // int[] dataset = new int[getPrijs.length()];
 
-        line_chart_dataset.addValue(dataset,"Prijs","2015");
+        for (int i = 0; i < getPrijs.length(); ++i){
+            JSONObject prijs = getPrijs.getJSONObject(i);
+            line_chart_dataset.addValue(prijs.getInt("euro")+prijs.getInt("cent")/100.0, "Prijs", prijs.getString("datum") );
+        }
+
 
         JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Schools Vs Years", "Year",
-                "Schools Count",
+                "Schijven", "Year",
+                "Prijs",
                 line_chart_dataset, PlotOrientation.VERTICAL,
                 true, true, false);
 
