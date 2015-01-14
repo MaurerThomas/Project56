@@ -5,6 +5,11 @@ import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Wouter
  */
@@ -20,8 +25,38 @@ public class Systeem implements Dashboard {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
         }
+		else if(input.has("clearLog"))
+		{
+			
+			clearLog();
+		}
 
         return null;
+    }
+	
+	private void clearLog()
+	{
+        JSONObject settings = session.getPcBuilder().getSettings();
+        String errorPath = settings.getString("errorLogPath");
+        String outputPath = settings.getString("outputLogPath");
+        String backupPath = settings.getString("logBackupDir");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = Calendar.getInstance().getTime();
+
+
+        File outputlog = new File(outputPath+"output.log");
+        File errorlog = new File(errorPath+"error.log");
+        Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
+        String outputlogname = "output_"+simpleDateFormat.format(date);
+        String errorlogname = "error_"+simpleDateFormat.format(date);
+        File destination = new File(backupPath);
+        File archive = archiver.create(outputlogname, destination, outputlog);
+        archive = archiver.create(outputlogname, destination, errorlog);
+        //outputlog.delete();
+        //errorlog.delete();
+        //outputlog = new File(outputPath+"output.log");
+        //errorlog = new File(errorPath+"error.log");
+
     }
 
 }

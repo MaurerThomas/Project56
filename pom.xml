@@ -10,6 +10,11 @@
         <url>https://github.com/MaurerThomas/Project56/</url>
     </scm>
     <dependencies>
+		<dependency>
+		  <groupId>org.rauschig</groupId>
+		  <artifactId>jarchivelib</artifactId>
+		  <version>0.6.0</version>
+		</dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
