@@ -22,7 +22,7 @@ public class Processor extends PcPart {
 	private String socket;
 
 	public Processor(String brand, String socket) {
-		super(null,0,0);
+		super(null,0,0,null);
 		this.brand = brand;
 		this.socket = socket;
 	}

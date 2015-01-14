@@ -8,11 +8,16 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.time.Day;
+import org.jfree.data.time.Millisecond;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Created by Thomas on 16-12-2014.
@@ -21,6 +26,7 @@ public class Grafieken implements Dashboard {
 
     public static final String IDENTIFIER = "grafieken";
     private AdminSession session;
+    Day day = new Day();
 
     public Grafieken(AdminSession session){this.session = session;}
 
@@ -38,6 +44,8 @@ public class Grafieken implements Dashboard {
         return null;
     }
 
+
+
     public void makeChart() throws IOException {
         JSONArray filters = new JSONArray();
         JSONObject x = new JSONObject();
@@ -51,22 +59,23 @@ public class Grafieken implements Dashboard {
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
         System.out.println("De resultaten: " + getPrijs);
 
+       // Voor debugging
        // int[] dataset = new int[getPrijs.length()];
 
         for (int i = 0; i < getPrijs.length(); ++i){
             JSONObject prijs = getPrijs.getJSONObject(i);
-            line_chart_dataset.addValue(prijs.getInt("euro")+prijs.getInt("cent")/100.0, "Prijs", prijs.getString("datum") );
+            line_chart_dataset.addValue(prijs.getInt("euro")+prijs.getInt("cent")/100.0, "Prijs", prijs.get("datum").toString());
         }
 
 
         JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Schijven", "Year",
+                "Schijven", "Datum",
                 "Prijs",
                 line_chart_dataset, PlotOrientation.VERTICAL,
                 true, true, false);
 
-        int width = 640; /* Width of the image */
-        int height = 480; /* Height of the image */
+        int width = 1024; /* Width of the image */
+        int height = 240; /* Height of the image */
 
         // Voor linux
         File lineChart = new File("//var//www//html//img//LineChart.jpeg");

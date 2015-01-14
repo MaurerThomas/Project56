@@ -120,7 +120,7 @@ public class SearchHandler {
 	private JSONArray combineMysqlResultsWithElasticsearch(JSONObject elasticsearch, List<PcPart> prices) {
 		JSONArray out = new JSONArray();
 		for(PcPart price : prices) {
-			JSONObject part = new JSONObject().put("url", price.getUrl()).put("euro", price.getEuro()).put("cent", price.getCent());
+			JSONObject part = new JSONObject().put("url", price.getUrl()).put("euro", price.getEuro()).put("cent", price.getCent()).put("datum",price.getDatum());
 			JSONObject elasticElement = elasticsearch.getJSONObject(price.getUrl());
 			@SuppressWarnings("unchecked")
 			Iterator<String> it = elasticElement.keys();

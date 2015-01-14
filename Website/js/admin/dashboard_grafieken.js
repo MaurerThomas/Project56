@@ -3,6 +3,6 @@
  */
 
 
-    $webSocket.send({action: 'makeChart'});
-    alert("Actie verstuurd")
+    $webSocket.send({action: 'makechart', 'makeChart':[ {'key' : 'component', 'value':'schijven' } ]});
+
 

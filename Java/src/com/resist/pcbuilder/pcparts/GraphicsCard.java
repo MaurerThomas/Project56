@@ -25,7 +25,7 @@ public class GraphicsCard extends PcPart {
 	private String brand;
 
 	private GraphicsCard(String brand, String socket) {
-		super(null,0,0);
+		super(null,0,0,null);
 		this.socket = socket;
 		this.brand = brand;
 	}

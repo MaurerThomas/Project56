@@ -17,7 +17,7 @@ public class Memory extends PcPart {
 	private String socket;
 
 	private Memory(String socket) {
-		super(null,0,0);
+		super(null,0,0,null);
 		this.socket = socket;
 	}
 

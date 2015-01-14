@@ -4,8 +4,13 @@ import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
 import org.json.JSONObject;
+import org.rauschig.jarchivelib.ArchiveFormat;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
+import org.rauschig.jarchivelib.CompressionType;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,15 +32,18 @@ public class Systeem implements Dashboard {
         }
 		else if(input.has("clearLog"))
 		{
-			
-			clearLog();
-		}
+
+            try {
+                clearLog();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
 
         return null;
     }
 	
-	private void clearLog()
-	{
+	private void clearLog() throws IOException {
         JSONObject settings = session.getPcBuilder().getSettings();
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");

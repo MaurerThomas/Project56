@@ -16,7 +16,7 @@ public class Case extends PcPart {
 	private String formFactor;
 	
 	public Case(String formFactor) {
-		super(null,0,0);
+		super(null,0,0,null);
 		this.formFactor = formFactor;
 	}
 

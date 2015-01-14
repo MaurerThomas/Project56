@@ -25,17 +25,19 @@ public class PcPart {
 	private String url;
 	private int euro;
 	private int cent;
+    private Date datum;
 	private Map<String, Object> specs;
 
-	public PcPart(String url, int euro, int cent) {
+	public PcPart(String url, int euro, int cent, Date datum) {
 		this.url = url;
 		this.euro = euro;
 		this.cent = cent;
+        this.datum = datum;
 		this.specs = null;
 	}
 
-	public PcPart(Map<String, Object> specs) {
-		this(null,0,0);
+	public PcPart(Map<String, Object> specs)  {
+		this(null,0,0,null);
 		this.specs = specs;
 	}
 
@@ -51,6 +53,8 @@ public class PcPart {
 		return cent;
 	}
 
+    public Date getDatum(){return datum;}
+
 	public Map<String, Object> getSpecs() {
 		return specs;
 	}
@@ -59,7 +63,8 @@ public class PcPart {
     	List<PcPart> out = new ArrayList<PcPart>();
         try {
         	StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
-        	sql.append(urlColumn).append(",").append(euroColumn).append(",").append(centColumn)
+
+        	sql.append(urlColumn).append(",").append(euroColumn).append(",").append(centColumn).append(",").append(dateColumn)
         	.append(" FROM ").append(priceTable).append(" WHERE ").append(dateColumn).append(" > ?");
             int args = 1;
             if(minPrice != null) {
@@ -84,7 +89,7 @@ public class PcPart {
             }
             ResultSet res = s.executeQuery();
             while(res.next()) {
-                out.add(new PcPart(res.getString(1),res.getInt(2),res.getInt(3)));
+                out.add(new PcPart(res.getString(1),res.getInt(2),res.getInt(3),res.getDate(4)));
             }
             res.close();
             s.close();
