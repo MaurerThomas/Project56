@@ -140,14 +140,16 @@ function initSearch() {
 
 	function getSearchResultReceiver($form) {
 		return function($msg) {
-			var $results,$n,$json;
+			var $results,$n,$json,$table;
 			if($msg.data !== undefined) {
 				$json = getJSON($msg.data);
 				if($json !== null && $json.resultaten !== undefined) {
 					$results = $($form).parent().find('.search-results');
 					$results.empty();
+					$table = $('<table style="width:100%;"><th>Naam</th><th>Merk</th><th>Prijs</th><th></th></table>');
+					$results.append($table);
 					for($n=0;$n < $json.resultaten.length;$n++) {
-						$results.append(getItemHTML($json.resultaten[$n]));
+						$table.append(getItemHTML($json.resultaten[$n]));
 					}
 				}
 			}
@@ -163,6 +165,6 @@ function initSearch() {
 	}
 
 	function getItemHTML($item) {
-		return '<div class="item"><h3>'+$item.naam+'</h3>&euro; '+$item.euro+','+$item.cent+'</div>';
+		return '<tr class="item"><td>'+$item.naam+'</td><td>'+$item.merk+'</td><td>&euro; '+$item.euro+','+$item.cent+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>';
 	}
 }

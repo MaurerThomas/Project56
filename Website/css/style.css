@@ -197,3 +197,21 @@ footer > div {
 	font-size: 1.7em;
 	color: #777;
 }
+
+.search-results {
+	margin:0px;padding:0px;
+	width:100%;
+}
+.search-results table{
+    border-collapse: collapse;
+	width:100%;
+	height:100%;
+	margin:0px;
+	padding:0px;
+}
+
+.search-results tr:nth-child(odd){ background-color:transparent; }
+.search-results tr:nth-child(even)    { background-color:#ffffff; }
+.search-results td:nth-child(3n){
+	white-space: nowrap;
+}
