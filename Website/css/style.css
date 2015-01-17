@@ -215,3 +215,8 @@ footer > div {
 .search-results td:nth-child(3n){
 	white-space: nowrap;
 }
+
+#infinito{
+  width:500px;
+  height:300px;
+}
