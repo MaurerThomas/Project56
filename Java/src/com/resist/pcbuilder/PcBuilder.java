@@ -6,6 +6,11 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +27,7 @@ public class PcBuilder {
 
 	private SearchHandler searchHandler;
 	private DBConnection conn;
+	private Client searchClient;
 	private JSONObject settings;
 	private ConnectionServer adminServer;
 	private ConnectionServer builderServer;
@@ -61,23 +67,13 @@ public class PcBuilder {
 			fatalError("Invalid settings file.");
 		}
 		this.settings = settings;
-		searchHandler = new SearchHandler(settings.getString("address"),
-				settings.getInt("elasticPort"),
-				settings.getString("elasticCluster"), this);
+		initSearch(settings.getString("address"),settings.getInt("elasticPort"),settings.getString("elasticCluster"));
+		searchHandler = new SearchHandler(this);
 		connectToMySQL();
 		listenForAdminConnections();
 		listenForConnections();
 		Runtime.getRuntime().addShutdownHook(new Thread(new PeacefulShutdown(this)));
 		LOG.log(Level.INFO,"Started...");
-	}
-
-	private boolean settingsArePresent(JSONObject settings) {
-		return settings.has("address") && settings.has("port")
-				&& settings.has("path") && settings.has("adminPort")
-				&& settings.has("adminPath") && settings.has("elasticPort")
-				&& settings.has("elasticCluster")
-				&& settings.has("mysqlAddress") && settings.has("mysqlPort")
-				&& settings.has("mysqlDatabase");
 	}
 
 	public SearchHandler getSearchHandler() {
@@ -92,6 +88,25 @@ public class PcBuilder {
 		return settings;
 	}
 
+	public Client getSearchClient() {
+		return searchClient;
+	}
+
+	private boolean settingsArePresent(JSONObject settings) {
+		return settings.has("address") && settings.has("port")
+				&& settings.has("path") && settings.has("adminPort")
+				&& settings.has("adminPath") && settings.has("elasticPort")
+				&& settings.has("elasticCluster")
+				&& settings.has("mysqlAddress") && settings.has("mysqlPort")
+				&& settings.has("mysqlDatabase");
+	}
+
+	private void initSearch(String address, int port, String clusterName) {
+		Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
+		searchClient = new TransportClient(settings);
+		((TransportClient) searchClient).addTransportAddress(new InetSocketTransportAddress(address, port));
+	}
+
 	private void connectToMySQL() {
 		try {
 			conn = new DBConnection(settings.getString("mysqlAddress"),
@@ -100,7 +115,7 @@ public class PcBuilder {
 					settings.getString("mysqlUsername"),
 					settings.getString("mysqlPassword"));
 		} catch (SQLException e) {
-			searchHandler.close();
+			searchClient.close();
 			LOG.log(Level.SEVERE, "Failed to connect to MySQL server.", e);
 			System.exit(1);
 		}
@@ -143,7 +158,7 @@ public class PcBuilder {
 	public void stop() {
 		builderServer.stop();
 		adminServer.stop();
-		searchHandler.close();
+		searchClient.close();
 		conn.close();
 	}
 }

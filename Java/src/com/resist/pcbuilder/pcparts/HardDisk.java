@@ -1,16 +1,19 @@
 package com.resist.pcbuilder.pcparts;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.resist.pcbuilder.PcBuilder;
 
 public class HardDisk extends PcPart {
+	public static final String COMPONENT = "schijven";
 	private static final String hddTable = "hardeschijf";
 	private static final String typeColumn = "type";
 	private static final String socketColumn = "aansluitingtype";
@@ -18,8 +21,15 @@ public class HardDisk extends PcPart {
 	private String type;
 	private String socket;
 
+	public HardDisk(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
+		super(euro,cent,crawlDate,specs);
+		socket = (String) specs.get("Interface");
+		this.specs.put("interface",socket);
+		type = this.component;
+	}
+
 	private HardDisk(String type, String socket) {
-		super(null,0,0,null);
+		super(0,0,null,null);
 		this.type = type;
 		this.socket = socket;
 	}
@@ -30,6 +40,10 @@ public class HardDisk extends PcPart {
 
 	public String getSocket() {
 		return socket;
+	}
+
+	public static boolean isPart(Map<String, Object> specs) {
+		return ((String)specs.get("component")).contains(COMPONENT) && specs.containsKey("Interface");
 	}
 
 	public static List<HardDisk> getHardDisks(Connection conn) {

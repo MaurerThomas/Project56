@@ -1,32 +1,26 @@
 package com.resist.pcbuilder;
 
-import com.resist.pcbuilder.pcparts.*;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.TermsFilterBuilder;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Connection;
-import java.util.*;
+import com.resist.pcbuilder.pcparts.Case;
+import com.resist.pcbuilder.pcparts.GraphicsCard;
+import com.resist.pcbuilder.pcparts.HardDisk;
+import com.resist.pcbuilder.pcparts.Memory;
+import com.resist.pcbuilder.pcparts.PcPart;
+import com.resist.pcbuilder.pcparts.Processor;
 
 public class SearchHandler {
 	public static final long DAY_IN_MS = 24 * 60 * 60 * 1000;
 
-	private Client client;
 	private PcBuilder pcbuilder;
 
-	public SearchHandler(String address, int port, String clusterName, PcBuilder pcbuilder) {
+	public SearchHandler(PcBuilder pcbuilder) {
 		this.pcbuilder = pcbuilder;
-		Settings settings = ImmutableSettings.settingsBuilder().put("cluster.name", clusterName).build();
-		client = new TransportClient(settings);
-		((TransportClient) client).addTransportAddress(new InetSocketTransportAddress(address, port));
 	}
 
 	public JSONArray handleSearch(JSONObject json) {
@@ -47,103 +41,32 @@ public class SearchHandler {
 		return getParts(conn,json,7*DAY_IN_MS,10);
 	}
 
-	private JSONArray getParts(Connection conn,JSONArray json,long timeago,int maxResults) {
-		FilterBuilder filters = getElasticFilters(json);
-		if (filters != null) {
-			List<String> urls = new ArrayList<String>();
-			JSONObject results = elasticSearchQuery(filters, maxResults, urls);
-			if(!urls.isEmpty()) {
-				Map<String,Integer> mysqlFilters = getMinMaxPrice(json);
-				java.sql.Date sqlDate = getPastSQLDate(timeago);
-				return combineMysqlResultsWithElasticsearch(results, PcPart.getPartsPrice(conn, urls, sqlDate, mysqlFilters.get("minPrice"), mysqlFilters.get("maxPrice")));
-			}
+	private JSONArray getParts(Connection conn,JSONArray json,long timeAgo,int maxResults) {
+		List<SearchFilter> filters = parseJSONFilters(json);
+		if (filters.size() != 0) {
+			List<PcPart> results = PcPart.getParts(pcbuilder.getSearchClient(), conn, filters, timeAgo, maxResults);
+			return partsToJSON(results);
 		}
 		return null;
 	}
 
-	private java.sql.Date getPastSQLDate(long ms) {
-		java.util.Date utilDate = new java.util.Date();
-		return new java.sql.Date(utilDate.getTime() - ms);
-	}
-
-	private JSONObject elasticSearchQuery(FilterBuilder filters, int numResults, List<String> urls) {
-		JSONObject output = new JSONObject();
-		List<PcPart> list = PcPart.getFilteredParts(client, filters, numResults);
-		for(PcPart p : list) {
-			@SuppressWarnings("unchecked")
-			Map<String,Object> specs = (Map<String, Object>) p.getSpecs().get("specs");
-			String url = (String) specs.get("url");
-			urls.add(url);
-			output.put(url,new JSONObject(specs));
-		}
-		return output;
-	}
-
-	private FilterBuilder getElasticFilters(JSONArray json) {
-		FilterBuilder filters = null;
-		for (int i = 0; i < json.length(); i++) {
-			JSONObject filter = json.getJSONObject(i);
-			if (validateTerm(filter)) {
-				filters = appendElasticFilter(filter,filters);
+	private List<SearchFilter> parseJSONFilters(JSONArray filters) {
+		List<SearchFilter> out = new ArrayList<SearchFilter>(filters.length());
+		for (int i = 0; i < filters.length(); i++) {
+			JSONObject filter = filters.getJSONObject(i);
+			if(filter != null && filter.has("key") && filter.has("value")) {
+				out.add(new SearchFilter(filter.getString("key"),filter.getString("value")));
 			}
-		}
-		return filters;
-	}
-
-	private FilterBuilder appendElasticFilter(JSONObject filter, FilterBuilder filters) {
-        String key = filter.getString("key");
-		String value = filter.getString("value");
-		if(filters == null) {
-			return FilterBuilders.termsFilter(key,value);
-		}
-		TermsFilterBuilder part = FilterBuilders.termsFilter(key,value);
-		return FilterBuilders.andFilter(filters, part);
-	}
-
-	private Map<String,Integer> getMinMaxPrice(JSONArray json) {
-		Map<String,Integer> filters = new HashMap<String,Integer>();
-		for(int i=0;i < json.length();i++) {
-			JSONObject filter = json.getJSONObject(i);
-			addMinMaxPrice(filter,filters);
-		}
-		return filters;
-	}
-
-	private void addMinMaxPrice(JSONObject filter, Map<String,Integer> filters) {
-		String key = filter.getString("key");
-		if(key.equals("minPrice") || key.equals("maxPrice")) {
-			filters.put(key, filter.getInt("value"));
-
-		}
-	}
-
-	private JSONArray combineMysqlResultsWithElasticsearch(JSONObject elasticsearch, List<PcPart> prices) {
-		JSONArray out = new JSONArray();
-		for(PcPart price : prices) {
-			JSONObject part = new JSONObject().put("url", price.getUrl()).put("euro", price.getEuro()).put("cent", price.getCent()).put("datum",price.getDatum());
-			JSONObject elasticElement = elasticsearch.getJSONObject(price.getUrl());
-			@SuppressWarnings("unchecked")
-			Iterator<String> it = elasticElement.keys();
-			while(it.hasNext()) {
-				String key = it.next();
-				part.put(key, elasticElement.get(key));
-			}
-			out.put(part);
 		}
 		return out;
 	}
 
-	private boolean validateTerm(JSONObject term) {
-		try {
-			String val = term.getString("key");
-			return val.equals("component") || val.equals("merk");
-		} catch (JSONException e) {
-			return false;
+	private JSONArray partsToJSON(List<PcPart> parts) {
+		JSONArray out = new JSONArray();
+		for(PcPart part : parts) {
+			out.put(new JSONObject(part.getSpecs()));
 		}
-	}
-
-	public void close() {
-		client.close();
+		return out;
 	}
 
 	public JSONObject getInit() {

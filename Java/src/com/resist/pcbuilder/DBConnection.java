@@ -1,6 +1,7 @@
 package com.resist.pcbuilder;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -78,4 +79,15 @@ public class DBConnection {
         sb.append(") ");
         return sb.toString();
     }
+
+    /**
+     * Returns a past date.
+     * 
+     * @param ms The number of milliseconds to subtract from the current time
+     * @return A past date
+     */
+	public static Date getPastSQLDate(long ms) {
+		java.util.Date utilDate = new java.util.Date();
+		return new Date(utilDate.getTime() - ms);
+	}
 }

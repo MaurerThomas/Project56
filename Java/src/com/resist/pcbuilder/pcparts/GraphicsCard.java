@@ -1,16 +1,19 @@
 package com.resist.pcbuilder.pcparts;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.resist.pcbuilder.PcBuilder;
 
 public class GraphicsCard extends PcPart {
+	public static final String COMPONENT = "Grafische kaarten";
 	private static final String socketTable = "aansluiting";
 	private static final String socketTypeColumn = "type";
 	private static final String socketPartColumn = "onderdeeltype";
@@ -22,10 +25,15 @@ public class GraphicsCard extends PcPart {
 	private static final String joinMidColumn = "tussentabel.merkmid";
 
 	private String socket;
-	private String brand;
+
+	public GraphicsCard(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
+		super(euro,cent,crawlDate,specs);
+		socket = (String) specs.get("Aansluiting");
+		this.specs.put("interface",socket);
+	}
 
 	private GraphicsCard(String brand, String socket) {
-		super(null,0,0,null);
+		super(0,0,null,null);
 		this.socket = socket;
 		this.brand = brand;
 	}
@@ -34,8 +42,8 @@ public class GraphicsCard extends PcPart {
 		return socket;
 	}
 
-	public String getBrand() {
-		return brand;
+	public static boolean isPart(Map<String, Object> specs) {
+		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Aansluiting");
 	}
 
 	public static List<GraphicsCard> getSockets(Connection conn) {
