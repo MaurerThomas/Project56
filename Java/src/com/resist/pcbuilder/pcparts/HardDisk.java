@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.resist.pcbuilder.PcBuilder;
+import com.resist.pcbuilder.SearchFilter;
 
 public class HardDisk extends PcPart {
 	public static final String COMPONENT = "schijven";
@@ -44,6 +45,10 @@ public class HardDisk extends PcPart {
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return ((String)specs.get("component")).contains(COMPONENT) && specs.containsKey("Interface");
+	}
+
+	public static boolean isValidElasticFilter(SearchFilter filter) {
+		return filter.getKey().equals("Interface");
 	}
 
 	public static List<HardDisk> getHardDisks(Connection conn) {

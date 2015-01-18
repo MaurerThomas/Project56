@@ -136,7 +136,15 @@ public class PcPart {
 	}
 
 	public static boolean isValidElasticFilter(SearchFilter filter) {
-		return filter.getKey().equals("component");
+		String key = filter.getKey();
+		return key.equals("component") ||
+				key.equals("merk") ||
+				key.equals("naam") ||
+				key.equals("eun") ||
+				Case.isValidElasticFilter(filter) ||
+				GraphicsCard.isValidElasticFilter(filter) ||
+				HardDisk.isValidElasticFilter(filter) ||
+				Processor.isValidElasticFilter(filter);
 	}
 
 	private static FilterBuilder addFilter(FilterBuilder filters, SearchFilter filter) {

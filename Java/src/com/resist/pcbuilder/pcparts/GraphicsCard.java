@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import com.resist.pcbuilder.PcBuilder;
+import com.resist.pcbuilder.SearchFilter;
 
 public class GraphicsCard extends PcPart {
 	public static final String COMPONENT = "Grafische kaarten";
@@ -44,6 +45,10 @@ public class GraphicsCard extends PcPart {
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Aansluiting");
+	}
+
+	public static boolean isValidElasticFilter(SearchFilter filter) {
+		return filter.getKey().equals("Aansluiting");
 	}
 
 	public static List<GraphicsCard> getSockets(Connection conn) {
