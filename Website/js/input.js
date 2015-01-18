@@ -32,6 +32,7 @@ function initFilters() {
 			} else {
 				$child.find('option').show();
 				$child.find('option:not([data-parent="'+$val+'"])').hide();
+				$child.find('option[value="none"]').show();
 				$child.removeClass('hidden');
 				$child.val('none');
 			}
