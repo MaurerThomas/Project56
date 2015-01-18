@@ -29,36 +29,39 @@ function initSearch() {
 		var $filters = {
 			component: 'Moederborden'
 		};
-		getFilter($filters,'behuizing','#moederbord .pcbuilder-case');
+		getFilter($filters,'Bouwvorm','#moederbord .pcbuilder-case');
 		getFilter($filters,'merk','#moederbord .pcbuilder-processor-brand');
 		if($filters.merk !== undefined) {
-			getFilter($filters,'socket','#moederbord .pcbuilder-processor-socket');
+			getFilter($filters,'Socket','#moederbord .pcbuilder-processor-socket');
 		}
 		submitPart(this,$e,'searchmoederbord','moederbord-minprijs','moederbord-maxprijs',$filters);
 	}
 
 	function submitCPU($e) {
 		var $filters = {
-			component: 'processor'
+			component: 'Processoren'
 		};
 		getFilter($filters,'merk','#processor .pcbuilder-processor-brand');
 		if($filters.merk !== undefined) {
-			getFilter($filters,'socket','#processor .pcbuilder-processor-socket');
+			getFilter($filters,'Socket','#processor .pcbuilder-processor-socket');
 		}
 		submitPart(this,$e,'searchprocessor','processor-minprijs','processor-maxprijs',$filters);
 	}
 
 	function submitProcessorCooler($e) {
+		var $filters = {
+			component: 'Koeling'
+		};
 		getFilter($filters,'merk','#processorkoeler .pcbuilder-processor-brand');
 		if($filters.merk !== undefined) {
-			getFilter($filters,'socket','#processorkoeler .pcbuilder-processor-socket');
+			getFilter($filters,'Socket','#processorkoeler .pcbuilder-processor-socket');
 		}
 		submitPart(this,$e,'searchprocessorkoeler','processorkoeler-minprijs','processorkoeler-maxprijs',$filters);
 	}
 
 	function submitRAM($e) {
 		var $filters = {
-			component: 'geheugen'
+			component: 'Geheugen'
 		};
 		getFilter($filters,'geheugentype','#geheugen .pcbuilder-ram');
 		submitPart(this,$e,'searchgeheugen','geheugen-minprijs','geheugen-maxprijs',$filters);
@@ -66,10 +69,10 @@ function initSearch() {
 
 	function submitGPU($e) {
 		var $filters = {
-			component: 'grafischekaart'
+			component: 'Grafische kaarten'
 		};
 		getFilter($filters,'merk','#grafischekaart .pcbuilder-gpu-brand');
-		getFilter($filters,'socket','#grafischekaart .pcbuilder-gpu-interface');
+		getFilter($filters,'Aansluiting','#grafischekaart .pcbuilder-gpu-interface');
 		submitPart(this,$e,'searchgrafischekaart','grafischekaart-minprijs','grafischekaart-maxprijs',$filters);
 	}
 
@@ -77,22 +80,22 @@ function initSearch() {
 		var $filters = {
 			component: 'schijven'
 		};
-		getFilter($filters,'hardeschijftype','#hardeschijf .pcbuilder-hdd-type');
+		getFilter($filters,'component','#hardeschijf .pcbuilder-hdd-type');
 		getFilter($filters,'socket','#hardeschijf .pcbuilder-hdd-interface');
 		submitPart(this,$e,'searchhardeschijf','hardeschijf-minprijs','hardeschijf-maxprijs',$filters);
 	}
 
 	function submitCase($e) {
 		var $filters = {
-			component: 'behuizing'
+			component: 'Behuizingen'
 		};
-		getFilter($filters,'behuizing','#behuizing .pcbuilder-case');
+		getFilter($filters,'Bouwvorm','#behuizing .pcbuilder-case');
 		submitPart(this,$e,'searchbehuizing','behuizing-minprijs','behuizing-maxprijs',$filters);
 	}
 
 	function submitPSU($e) {
 		var $filters = {
-			component: 'voeding'
+			component: 'Voedingen'
 		};
 		getNumFilter($filters,'minwattage','#voeding .voeding-minwattage');
 		getNumFilter($filters,'maxwattage','#voeding .voeding-maxwattage');
@@ -101,7 +104,7 @@ function initSearch() {
 
 	function submitOS($e) {
 		var $filters = {
-			component: 'besturingssysteem'
+			component: 'Besturingssystemen'
 		};
 		submitPart(this,$e,'searchbesturingssysteem','besturingssysteem-minprijs','besturingssysteem-maxprijs',$filters);
 	}
