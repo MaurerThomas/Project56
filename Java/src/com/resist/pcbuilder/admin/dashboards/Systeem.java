@@ -1,5 +1,6 @@
 package com.resist.pcbuilder.admin.dashboards;
 
+import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.logging.Level;
 
 /**
  * Created by Wouter
@@ -32,14 +34,12 @@ public class Systeem implements Dashboard {
         }
 		else if(input.has("clearLog"))
 		{
-
             try {
                 clearLog();
             } catch (IOException e) {
-                e.printStackTrace();
+                PcBuilder.LOG.log(Level.WARNING, "Failed to clear log ", e);
             }
         }
-
         return null;
     }
 	
@@ -47,8 +47,7 @@ public class Systeem implements Dashboard {
         JSONObject settings = session.getPcBuilder().getSettings();
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");
-        String backupPath = settings.getString("logBackupDir");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String backupPath = settings.getString("logBackupDir"); SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date date = Calendar.getInstance().getTime();
 
 

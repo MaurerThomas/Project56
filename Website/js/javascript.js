@@ -5,8 +5,12 @@
 		$button.click(function($e) {
 			$e.preventDefault();
 			initFilters();
-			$('#pcbuilder').removeClass();
 			$('#start').hide();
+			$('#pcbuilder-loading').removeClass();
+			$("#pcbuilder-loading").show().delay(1500).queue(function(n) {
+			  $(this).hide(); n();
+			  $('#pcbuilder').removeClass();
+			});
 		});
 		if($compatibility.WebSocket) {
 			$webSocket.init(window.location.host,'8080','/search');
