@@ -143,17 +143,21 @@ function initSearch() {
 
 	function getSearchResultReceiver($form) {
 		return function($msg) {
-			var $results,$n,$json,$table;
+			var $results,$n,$json,$table,$tbody;
 			if($msg.data !== undefined) {
 				$json = getJSON($msg.data);
 				if($json !== null && $json.resultaten !== undefined) {
 					$results = $($form).parent().find('.search-results');
 					$results.empty();
-					$table = $('<table style="width:100%;"><th>Naam</th><th>Merk</th><th>Prijs</th><th></th></table>');
+					$table = $('<table style="width:100%;"><thead><tr><th>Naam</th><th>Merk</th><th>Prijs</th><th></th></tr></thead></table>');
+					$table.find('th').append(' <span class="glyphicon glyphicon-chevron-up"></span><span class="glyphicon glyphicon-chevron-down"></span>');
 					$results.append($table);
+					$tbody = $('<tbody></tbody>');
+					$table.append($tbody);
 					for($n=0;$n < $json.resultaten.length;$n++) {
-						$table.append(getItemHTML($json.resultaten[$n]));
+						$tbody.append(getItemHTML($json.resultaten[$n]));
 					}
+					$table.tablesorter();
 				}
 			}
 		};

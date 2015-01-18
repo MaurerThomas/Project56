@@ -202,21 +202,43 @@ footer > div {
 	margin:0px;padding:0px;
 	width:100%;
 }
+
 .search-results table{
-    border-collapse: collapse;
+	border-collapse: collapse;
 	width:100%;
 	height:100%;
 	margin:0px;
 	padding:0px;
 }
 
-.search-results tr:nth-child(odd){ background-color:transparent; }
-.search-results tr:nth-child(even)    { background-color:#ffffff; }
+.search-results th {
+	cursor: pointer;
+}
+
+.search-results tr:nth-child(odd){
+	background-color:transparent;
+}
+.search-results tr:nth-child(even) {
+	background-color:#ffffff;
+}
+
 .search-results td:nth-child(3n){
 	white-space: nowrap;
 }
 
-#infinito{
+#infinito {
   width:500px;
   height:300px;
+}
+
+.search-results th .glyphicon {
+	display: none;
+}
+
+.search-results th.headerSortDown .glyphicon-chevron-down {
+	display: inline;
+}
+
+.search-results th.headerSortUp .glyphicon-chevron-up {
+	display: inline;
 }
