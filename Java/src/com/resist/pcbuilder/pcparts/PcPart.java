@@ -25,13 +25,6 @@ import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchFilter;
 
 public class PcPart {
-	private static final String priceTable = "prijs_verloop";
-	private static final String urlColumn = "url";
-	private static final String euroColumn = "euro";
-	private static final String centColumn = "cent";
-	private static final String dateColumn = "datum";
-	private static final String mongoSearchIndex = "mongoindex";
-
 	protected String url;
 	protected String component;
 	protected String brand;
@@ -160,7 +153,7 @@ public class PcPart {
 	private static Map<String, Map<String, Object>> getFilteredParts(Client client, FilterBuilder filters, int numResults) {
 		Map<String, Map<String, Object>> out = new HashMap<String, Map<String, Object>>();
 		PcBuilder.LOG.log(Level.INFO, filters.toString());
-		SearchResponse response = client.prepareSearch(mongoSearchIndex)
+		SearchResponse response = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setSize(numResults).setPostFilter(filters).setExplain(false)
 				.execute().actionGet();
@@ -208,20 +201,20 @@ public class PcPart {
 		Set<String> urls = parts.keySet();
 		try {
 			StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
-			sql.append(urlColumn).append(",").append(euroColumn).append(",")
-					.append(centColumn).append(",").append(dateColumn)
-					.append(" FROM ").append(priceTable).append(" WHERE ")
-					.append(dateColumn).append(" > ?");
+			sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
+					.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
+					.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
+					.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
 			int args = 1;
 			if (minPrice != null) {
-				sql.append(" AND ").append(euroColumn).append("*100+").append(centColumn).append(" >= ?");
+				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
 				args++;
 			}
 			if (maxPrice != null) {
-				sql.append(" AND ").append(euroColumn).append("*100+").append(centColumn).append(" <= ?");
+				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
 				args++;
 			}
-			sql.append(" AND ").append(urlColumn).append(DBConnection.getInQuery(urls.size()));
+			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
 			PreparedStatement s = conn.prepareStatement(sql.toString());
 			s.setDate(1, date);
 			if (minPrice != null) {

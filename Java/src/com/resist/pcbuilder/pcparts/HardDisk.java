@@ -10,14 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchFilter;
 
 public class HardDisk extends PcPart {
 	public static final String COMPONENT = "schijven";
-	private static final String hddTable = "hardeschijf";
-	private static final String typeColumn = "type";
-	private static final String socketColumn = "aansluitingtype";
 
 	private String type;
 	private String socket;
@@ -54,7 +52,7 @@ public class HardDisk extends PcPart {
 	public static List<HardDisk> getHardDisks(Connection conn) {
 		List<HardDisk> out = new ArrayList<HardDisk>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+typeColumn+","+socketColumn+" FROM "+hddTable);
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_HDD_TYPE+","+DBConnection.COLUMN_HDD_INTERFACE+" FROM "+DBConnection.TABLE_HDD);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	            String type = res.getString(1);

@@ -10,20 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchFilter;
 
 public class GraphicsCard extends PcPart {
 	public static final String COMPONENT = "Grafische kaarten";
-	private static final String socketTable = "aansluiting";
-	private static final String socketTypeColumn = "type";
-	private static final String socketPartColumn = "onderdeeltype";
-	private static final String part = "Grafischekaart";
-	private static final String brandTable = "merk";
-	private static final String brandNameColumn = "merk.naam";
-	private static final String brandMidColumn = "merk.mid";
-	private static final String joinTable = "tussentabel";
-	private static final String joinMidColumn = "tussentabel.merkmid";
 
 	private String socket;
 
@@ -54,8 +46,8 @@ public class GraphicsCard extends PcPart {
 	public static List<GraphicsCard> getSockets(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+socketTypeColumn+" FROM "+socketTable+" WHERE "+socketPartColumn+" = ?");
-	        s.setString(1,part);
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_SOCKET_TYPE+" FROM "+DBConnection.TABLE_SOCKET+" WHERE "+DBConnection.COLUMN_SOCKET_PART+" = ?");
+	        s.setString(1,DBConnection.PART_GPU);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	            String type = res.getString(1);
@@ -72,8 +64,8 @@ public class GraphicsCard extends PcPart {
 	public static List<GraphicsCard> getBrands(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+brandNameColumn+" FROM "+brandTable+" JOIN "+joinTable+" ON ("+joinMidColumn+" = "+brandMidColumn+") WHERE "+socketPartColumn+" = ?");
-	        s.setString(1, part);
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_BRAND_NAME+" FROM "+DBConnection.TABLE_BRAND+" JOIN "+DBConnection.TABLE_JOIN+" ON ("+DBConnection.COLUMN_JOIN_MID+" = "+DBConnection.COLUMN_BRAND_MID+") WHERE "+DBConnection.COLUMN_SOCKET_PART+" = ?");
+	        s.setString(1, DBConnection.PART_GPU);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	        	String naam = res.getString(1);

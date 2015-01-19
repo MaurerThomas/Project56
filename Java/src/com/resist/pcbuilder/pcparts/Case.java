@@ -10,13 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchFilter;
 
 public class Case extends PcPart {
 	public static final String COMPONENT = "Behuizingen";
-	private static final String formFactorTable = "formfactor";
-	private static final String formFactorColumn = "formfactor";
 
 	private String formFactor;
 
@@ -46,7 +45,7 @@ public class Case extends PcPart {
 	public static List<Case> getFormFactors(Connection conn) {
 		List<Case> out = new ArrayList<Case>();
 		try {
-	        PreparedStatement s = conn.prepareStatement("SELECT "+formFactorColumn+" FROM "+formFactorTable);
+	        PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_FORMFACTOR_FORMFACTOR+" FROM "+DBConnection.TABLE_FORMFACTOR);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	            String formfactor = res.getString(1);

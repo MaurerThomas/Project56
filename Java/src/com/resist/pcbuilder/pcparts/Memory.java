@@ -10,12 +10,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 
 public class Memory extends PcPart {
 	public static final String COMPONENT = "Geheugen";
-	private static final String memoryTable = "geheugen";
-	private static final String typeColumn = "type";
 
 	private String socket;
 
@@ -39,7 +38,7 @@ public class Memory extends PcPart {
 	public static List<Memory> getSockets(Connection conn) {
 		List<Memory> out = new ArrayList<Memory>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+typeColumn+" FROM "+memoryTable);
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_MEMORY_TYPE+" FROM "+DBConnection.TABLE_MEMORY);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	            String type = res.getString(1);

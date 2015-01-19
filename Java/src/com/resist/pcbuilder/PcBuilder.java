@@ -18,6 +18,7 @@ import com.resist.pcbuilder.admin.AdminLoginHandler;
 import com.resist.websocket.ConnectionServer;
 
 public class PcBuilder {
+	public static final String MONGO_SEARCH_INDEX = "mongoindex";
 	public static final Logger LOG = Logger.getLogger(PcBuilder.class.getName());
 	static {
 		LOG.addHandler(new LogHandler());
