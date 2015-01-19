@@ -14,6 +14,7 @@ public class DBConnection {
 	public static final String TABLE_JOIN = "tussentabel";
 	public static final String TABLE_HDD = "hardeschijf";
 	public static final String TABLE_MEMORY = "geheugen";
+	public static final String TABLE_ADMINS = "admins";
 	public static final String COLUMN_PRICE_URL = TABLE_PRICE+".url";
 	public static final String COLUMN_PRICE_EURO = TABLE_PRICE+".euro";
 	public static final String COLUMN_PRICE_CENT = TABLE_PRICE+".cent";
@@ -28,6 +29,9 @@ public class DBConnection {
 	public static final String COLUMN_HDD_TYPE = TABLE_HDD+".type";
 	public static final String COLUMN_HDD_INTERFACE = TABLE_HDD+".aansluitingtype";
 	public static final String COLUMN_MEMORY_TYPE = TABLE_MEMORY+".type";
+	public static final String COLUMN_ADMINS_AID = TABLE_ADMINS+".aid";
+	public static final String COLUMN_ADMINS_USERNAME = TABLE_ADMINS+".username";
+	public static final String COLUMN_ADMINS_PASSWORD = TABLE_ADMINS+".password";
 	public static final String PART_GPU = "Grafischekaart";
 
 	private Connection conn;

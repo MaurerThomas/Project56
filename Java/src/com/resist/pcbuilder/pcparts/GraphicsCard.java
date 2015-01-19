@@ -22,13 +22,13 @@ public class GraphicsCard extends PcPart {
 	public GraphicsCard(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		socket = (String) specs.get("Aansluiting");
-		this.specs.put("interface",socket);
+		setSpec("interface",socket);
 	}
 
 	private GraphicsCard(String brand, String socket) {
 		super(0,0,null,null);
 		this.socket = socket;
-		this.brand = brand;
+		setBrand(brand);
 	}
 
 	public String getSocket() {

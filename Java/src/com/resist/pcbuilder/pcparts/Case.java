@@ -22,7 +22,7 @@ public class Case extends PcPart {
 	public Case(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		formFactor = (String) specs.get("Bouwvorm");
-		this.specs.put("formFactor",formFactor);
+		setSpec("formFactor",formFactor);
 	}
 
 	private Case(String formFactor) {

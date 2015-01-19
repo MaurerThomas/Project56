@@ -25,15 +25,15 @@ import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchFilter;
 
 public class PcPart {
-	protected String url;
-	protected String component;
-	protected String brand;
-	protected String name;
-	protected String eun;
-	protected int euro;
-	protected int cent;
-	protected Date crawlDate;
-	protected Map<String, Object> specs;
+	private String url;
+	private String component;
+	private String brand;
+	private String name;
+	private String eun;
+	private int euro;
+	private int cent;
+	private Date crawlDate;
+	private Map<String, Object> specs;
 
 	protected PcPart(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		url = (String) specs.get("url");
@@ -45,14 +45,14 @@ public class PcPart {
 		this.cent = cent;
 		this.crawlDate = crawlDate;
 		this.specs = new HashMap<String,Object>();
-		this.specs.put("url", url);
-		this.specs.put("component", component);
-		this.specs.put("brand", brand);
-		this.specs.put("naam", name);
-		this.specs.put("eun", eun);
-		this.specs.put("euro", euro);
-		this.specs.put("cent", cent);
-		this.specs.put("crawlDate", crawlDate);
+		setSpec("url", url);
+		setSpec("component", component);
+		setSpec("brand", brand);
+		setSpec("naam", name);
+		setSpec("eun", eun);
+		setSpec("euro", euro);
+		setSpec("cent", cent);
+		setSpec("crawlDate", crawlDate);
 	}
 
 	public String getUrl() {
@@ -89,6 +89,42 @@ public class PcPart {
 
 	public Map<String, Object> getSpecs() {
 		return specs;
+	}
+
+	protected void setUrl(String url) {
+		this.url = url;
+	}
+
+	protected void setComponent(String component) {
+		this.component = component;
+	}
+
+	protected void setBrand(String brand) {
+		this.brand = brand;
+	}
+
+	protected void setName(String name) {
+		this.name = name;
+	}
+
+	protected void setEun(String eun) {
+		this.eun = eun;
+	}
+
+	protected void setEuro(int euro) {
+		this.euro = euro;
+	}
+
+	protected void setCent(int cent) {
+		this.cent = cent;
+	}
+
+	protected void setCrawlDate(Date crawlDate) {
+		this.crawlDate = crawlDate;
+	}
+
+	protected void setSpec(String key, Object value) {
+		specs.put(key, value);
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {

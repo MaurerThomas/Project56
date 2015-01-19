@@ -22,12 +22,12 @@ public class Processor extends PcPart {
 	public Processor(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		socket = (String) specs.get("Socket");
-		this.specs.put("socket",socket);
+		setSpec("socket",socket);
 	}
 
 	private Processor(String brand, String socket) {
 		super(0,0,null,null);
-		this.brand = brand;
+		setBrand(brand);
 		this.socket = socket;
 	}
 

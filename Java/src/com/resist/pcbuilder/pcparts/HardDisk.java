@@ -23,8 +23,8 @@ public class HardDisk extends PcPart {
 	public HardDisk(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		socket = (String) specs.get("Interface");
-		this.specs.put("interface",socket);
-		type = this.component;
+		setSpec("interface",socket);
+		type = getComponent();
 	}
 
 	private HardDisk(String type, String socket) {
