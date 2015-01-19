@@ -36,23 +36,25 @@ public class PcPart {
 	private Map<String, Object> specs;
 
 	protected PcPart(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
-		url = (String) specs.get("url");
-		component = (String) specs.get("component");
-		brand = (String) specs.get("merk");
-		name = (String) specs.get("naam");
-		eun = (String) specs.get("eun");
 		this.euro = euro;
 		this.cent = cent;
 		this.crawlDate = crawlDate;
 		this.specs = new HashMap<String,Object>();
-		setSpec("url", url);
-		setSpec("component", component);
-		setSpec("brand", brand);
-		setSpec("naam", name);
-		setSpec("eun", eun);
-		setSpec("euro", euro);
-		setSpec("cent", cent);
-		setSpec("crawlDate", crawlDate);
+		if(specs != null) {
+			url = (String) specs.get("url");
+			component = (String) specs.get("component");
+			brand = (String) specs.get("merk");
+			name = (String) specs.get("naam");
+			eun = (String) specs.get("eun");
+			setSpec("url", url);
+			setSpec("component", component);
+			setSpec("brand", brand);
+			setSpec("naam", name);
+			setSpec("eun", eun);
+			setSpec("euro", euro);
+			setSpec("cent", cent);
+			setSpec("crawlDate", crawlDate);
+		}
 	}
 
 	public String getUrl() {
