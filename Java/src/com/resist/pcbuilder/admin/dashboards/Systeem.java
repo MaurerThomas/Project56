@@ -29,12 +29,11 @@ public class Systeem implements Dashboard {
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
-
         PcBuilder.LOG.log(Level.INFO,"input : "+input.toString());
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
         }
-		else if(input.has("clearLog"))
+		else if(input.has("action") && input.getString("action").equals("clearLog"))
 		{
             PcBuilder.LOG.log(Level.INFO,"Clear Log initialized");
             try {
