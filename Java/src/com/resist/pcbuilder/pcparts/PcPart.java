@@ -17,7 +17,8 @@ import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.FilterBuilder;
 import org.elasticsearch.index.query.FilterBuilders;
-import org.elasticsearch.index.query.TermsFilterBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
 import com.resist.pcbuilder.DBConnection;
@@ -154,18 +155,30 @@ public class PcPart {
 
 	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxResults) {
 		List<PcPart> out = new ArrayList<PcPart>();
-		Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,buildFilters(filterList),maxResults);
-		Map<String,Integer> minMaxPrice = getMinMaxPrice(filterList);
-		addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
+		QueryBuilder query = buildFilters(filterList);
+		if(query != null) {
+			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,query,maxResults);
+			Map<String,Integer> minMaxPrice = getMinMaxPrice(filterList);
+			addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
+		}
 		return out;
 	}
 
-	private static FilterBuilder buildFilters(List<SearchFilter> filters) {
-		FilterBuilder out = null;
+	private static QueryBuilder buildFilters(List<SearchFilter> filters) {
+		List<FilterBuilder> validFilters = new ArrayList<FilterBuilder>();
+		QueryBuilder out = null;
 		for(SearchFilter filter : filters) {
 			if(isValidElasticFilter(filter)) {
-				out = addFilter(out,filter);
+				String key = filter.getKey(), value = filter.getValue();
+				if(out == null) {
+					out = QueryBuilders.termQuery(key,value);
+				} else {
+					validFilters.add(FilterBuilders.termFilter(key, value));
+				}
 			}
+		}
+		if(out != null) {
+			return QueryBuilders.filteredQuery(out, FilterBuilders.boolFilter().must(validFilters.toArray(new FilterBuilder[0])));
 		}
 		return out;
 	}
@@ -182,22 +195,11 @@ public class PcPart {
 				Processor.isValidElasticFilter(filter);
 	}
 
-	private static FilterBuilder addFilter(FilterBuilder filters, SearchFilter filter) {
-		String key = filter.getKey();
-		String value = filter.getValue();
-		if(filters == null) {
-			return FilterBuilders.termsFilter(key,value);
-		}
-		TermsFilterBuilder part = FilterBuilders.termsFilter(key,value);
-		return FilterBuilders.andFilter(filters, part);
-	}
-
-	private static Map<String, Map<String, Object>> getFilteredParts(Client client, FilterBuilder filters, int numResults) {
+	private static Map<String, Map<String, Object>> getFilteredParts(Client client, QueryBuilder query, int numResults) {
 		Map<String, Map<String, Object>> out = new HashMap<String, Map<String, Object>>();
-		PcBuilder.LOG.log(Level.INFO, filters.toString());
 		SearchResponse response = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-				.setSize(numResults).setPostFilter(filters).setExplain(false)
+				.setSize(numResults).setQuery(query).setExplain(false)
 				.execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		for (SearchHit hit : results) {
@@ -241,44 +243,46 @@ public class PcPart {
 	private static List<PcPart> addPartPrices(Connection conn, Map<String, Map<String, Object>> parts, Date date, Integer minPrice, Integer maxPrice) {
 		List<PcPart> out = new ArrayList<PcPart>();
 		Set<String> urls = parts.keySet();
-		try {
-			StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
-			sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
-					.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
-					.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
-					.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
-			int args = 1;
-			if (minPrice != null) {
-				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
-				args++;
+		if(urls.size() != 0) {
+			try {
+				StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
+				sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
+						.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
+						.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
+						.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
+				int args = 1;
+				if (minPrice != null) {
+					sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
+					args++;
+				}
+				if (maxPrice != null) {
+					sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
+					args++;
+				}
+				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
+				PreparedStatement s = conn.prepareStatement(sql.toString());
+				s.setDate(1, date);
+				if (minPrice != null) {
+					s.setInt(2, minPrice * 100);
+				}
+				if (maxPrice != null) {
+					s.setInt(args, maxPrice * 100);
+				}
+				int i = 0;
+				for(String url : urls) {
+					s.setString(i + 1 + args, url);
+					i++;
+				}
+				ResultSet res = s.executeQuery();
+				while (res.next()) {
+					String url = res.getString(1);
+					out.add(getInstance(res.getInt(2), res.getInt(3), res.getDate(4), parts.get(url)));
+				}
+				res.close();
+				s.close();
+			} catch (SQLException e) {
+				PcBuilder.LOG.log(Level.WARNING, "Failed to get prices.", e);
 			}
-			if (maxPrice != null) {
-				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
-				args++;
-			}
-			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
-			PreparedStatement s = conn.prepareStatement(sql.toString());
-			s.setDate(1, date);
-			if (minPrice != null) {
-				s.setInt(2, minPrice * 100);
-			}
-			if (maxPrice != null) {
-				s.setInt(args, maxPrice * 100);
-			}
-			int i = 0;
-			for(String url : urls) {
-				s.setString(i + 1 + args, url);
-				i++;
-			}
-			ResultSet res = s.executeQuery();
-			while (res.next()) {
-				String url = res.getString(1);
-				out.add(getInstance(res.getInt(2), res.getInt(3), res.getDate(4), parts.get(url)));
-			}
-			res.close();
-			s.close();
-		} catch (SQLException e) {
-			PcBuilder.LOG.log(Level.WARNING, "Failed to get prices.", e);
 		}
 		return out;
 	}
