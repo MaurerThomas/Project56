@@ -17,6 +17,10 @@ DOWNLOAD_DELAY = 1
 ITEM_PIPELINES = [
   'scrapy_mongodb.MongoDBPipeline',
 ]
+MYSQL_DB 		=	'pcbuilder'
+MYSQL_USER		= 	'pcbuilder'
+MYSQL_PASS		=	'project'
+MYSQL_HOST 	=	'127.0.0.1'
 
 MONGODB_URI = 'mongodb://localhost:27017'
 MONGODB_DATABASE = 'mydb'
@@ -26,4 +30,4 @@ MONGODB_BUFFER_DATA = 10
 # Timestamp
 MONGODB_ADD_TIMESTAMP = True
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'specs crawler (+145.24.222.119)'
+#USER_AGENT = 'specs crawler (+145.24.222.237)'
