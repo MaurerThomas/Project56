@@ -3,6 +3,8 @@ package com.resist.pcbuilder.admin;
 import com.resist.pcbuilder.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Thomas on 19-1-2015.
@@ -40,14 +42,15 @@ public class Analytics {
 
     }
 
-    public static void getVisitors(DBConnection dbConnection){
+    public static List<Analytics> getVisitors(DBConnection dbConnection){
         Connection conn = dbConnection.getConnection();
-
+        List<Analytics> out = new ArrayList<Analytics>();
         try {
             Statement s = conn.createStatement();
-            ResultSet res = s.executeQuery("SELECT "+DBConnection.COLUMN_ANALYTICS_HASHCODE+", "+DBConnection.COLUMN_ANALYTICS_DATUM+" FROM "+DBConnection.TABLE_ANALYTICS);
+            ResultSet res = s.executeQuery("SELECT COUNT" +"("+DBConnection.COLUMN_ANALYTICS_HASHCODE+")"+", "+DBConnection.COLUMN_ANALYTICS_DATUM+" FROM "+DBConnection.TABLE_ANALYTICS);
+
             while(res.next()) {
-                new Analytics(res.getInt(1),res.getDate(2));
+                out.add(new Analytics(res.getInt(1),res.getDate(2)));
 
             }
 
@@ -57,7 +60,7 @@ public class Analytics {
             e.printStackTrace();
         }
 
-
+    return out;
     }
 
 
