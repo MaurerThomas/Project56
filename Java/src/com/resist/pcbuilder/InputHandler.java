@@ -1,13 +1,13 @@
 package com.resist.pcbuilder;
 
-import java.util.logging.Level;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.resist.pcbuilder.admin.Analytics;
 import com.resist.websocket.Connection;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.logging.Level;
 
 public class InputHandler implements MessageHandler {
 	private PcBuilder pcbuilder;
@@ -21,10 +21,16 @@ public class InputHandler implements MessageHandler {
 		if (message.getType() == Connection.OPCODE_TEXT_FRAME) {
 			JSONObject json = parseInput(message.toString());
 			if (json != null) {
+				getVisitor(message);
 				JSONObject out = handleJSON(json);
 				sendReturn(message, out.toString());
 			}
 		}
+	}
+
+	private void getVisitor(Message message) {
+
+		Analytics.insertVisitors(message.getConnection().hashCode(), pcbuilder.getDBConnection());
 	}
 
 	private JSONObject parseInput(String message) {

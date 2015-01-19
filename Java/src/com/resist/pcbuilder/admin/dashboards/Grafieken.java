@@ -1,6 +1,7 @@
 package com.resist.pcbuilder.admin.dashboards;
 
 import com.resist.pcbuilder.admin.AdminSession;
+import com.resist.pcbuilder.admin.Analytics;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
 import org.jfree.chart.ChartFactory;
@@ -8,16 +9,11 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.Millisecond;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
 
 /**
  * Created by Thomas on 16-12-2014.
@@ -26,9 +22,9 @@ public class Grafieken implements Dashboard {
 
     public static final String IDENTIFIER = "grafieken";
     private AdminSession session;
-    Day day = new Day();
 
-    public Grafieken(AdminSession session){this.session = session;}
+    public Grafieken(AdminSession session){this.session = session; }
+
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
@@ -38,6 +34,8 @@ public class Grafieken implements Dashboard {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            makeVisitorCharts();
             return new OutputBuilder().htmlTemplate("#main","dashboard_grafieken").getOutput();
         }
 
@@ -45,13 +43,17 @@ public class Grafieken implements Dashboard {
     }
 
 
+    private void makeVisitorCharts(){
+        Analytics.getVisitors(session.getPcBuilder().getDBConnection());
 
-    public void makeChart() throws IOException {
+    }
+
+    private void makeChart() throws IOException {
         JSONArray filters = new JSONArray();
         JSONObject x = new JSONObject();
         JSONObject z = new JSONObject();
         x.put("key","component").put("value","schijven");
-        z.put("makechart",filters);
+        z.put("makechart", filters);
         filters.put(x);
         System.out.println(z);
         JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleSearch(z);
@@ -81,4 +83,6 @@ public class Grafieken implements Dashboard {
         File lineChart = new File("//var//www//html//img//LineChart.jpeg");
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
+
+
 }

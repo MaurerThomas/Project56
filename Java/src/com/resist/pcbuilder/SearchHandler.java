@@ -1,18 +1,12 @@
 package com.resist.pcbuilder;
 
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.resist.pcbuilder.pcparts.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.resist.pcbuilder.pcparts.Case;
-import com.resist.pcbuilder.pcparts.GraphicsCard;
-import com.resist.pcbuilder.pcparts.HardDisk;
-import com.resist.pcbuilder.pcparts.Memory;
-import com.resist.pcbuilder.pcparts.PcPart;
-import com.resist.pcbuilder.pcparts.Processor;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchHandler {
 	public static final long DAY_IN_MS = 24 * 60 * 60 * 1000;
