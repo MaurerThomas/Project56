@@ -20,7 +20,7 @@ $(function() {
         }
         ctx.clearRect(0, 0, 500, 300);
 
-        ctx.strokeStyle = "rgba(52,52,215,0.3)";
+        ctx.strokeStyle = "rgba(0,0,100,0.3)";
         ctx.beginPath();
         var modo = 2;
         var pos_act = 0;
@@ -38,7 +38,7 @@ $(function() {
         }
         ctx.stroke();
 
-        ctx.strokeStyle = "#ff0000";
+        ctx.strokeStyle = "#556de4";
         ctx.beginPath();
         var modo = 2;
         var pos_act = 0;
@@ -67,10 +67,10 @@ $(function() {
                     ctx.stroke();
                     ctx.beginPath();
                 }
-                verde = parseInt(Math.sin(tempo / 20) * 128 + 127, 10);
-                azul = parseInt(Math.sin(tempo / 27.3) * 128 + 127, 10);
-                rojo = parseInt(Math.sin(tempo / 38) * 128 + 127, 10);
-                ctx.strokeStyle = "rgba(" + rojo + "," + verde + "," + azul + ",1)";
+                groen = parseInt(Math.sin(tempo / 20) * 128 + 127, 10);
+                blauw = parseInt(Math.sin(tempo / 27.3) * 128 + 127, 10);
+                rood = parseInt(Math.sin(tempo / 38) * 128 + 127, 10);
+                ctx.strokeStyle = "rgba(" + rood + "," + blauw + "," + groen + ",1)";
             }
             ctx.lineTo(px + 250 - rad_act, py + 150);
         }
