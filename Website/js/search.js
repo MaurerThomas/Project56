@@ -172,6 +172,6 @@ function initSearch() {
 	}
 
 	function getItemHTML($item) {
-		return '<tr class="item"><td>'+$item.naam+'</td><td>'+$item.merk+'</td><td>&euro; '+$item.euro+','+$item.cent+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>';
+		return '<tr class="item"><td>'+$item.name+'</td><td>'+$item.brand+'</td><td>&euro; '+$item.euro+','+$item.cent+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>';
 	}
 }

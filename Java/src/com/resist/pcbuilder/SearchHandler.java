@@ -55,7 +55,7 @@ public class SearchHandler {
 		for (int i = 0; i < filters.length(); i++) {
 			JSONObject filter = filters.getJSONObject(i);
 			if(filter != null && filter.has("key") && filter.has("value")) {
-				out.add(new SearchFilter(filter.getString("key"),filter.getString("value")));
+				out.add(new SearchFilter(filter.getString("key"),String.valueOf(filter.get("value"))));
 			}
 		}
 		return out;

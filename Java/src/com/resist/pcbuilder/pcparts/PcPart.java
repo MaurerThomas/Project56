@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -50,7 +51,7 @@ public class PcPart {
 			setSpec("url", url);
 			setSpec("component", component);
 			setSpec("brand", brand);
-			setSpec("naam", name);
+			setSpec("name", name);
 			setSpec("eun", eun);
 		}
 	}
@@ -159,7 +160,7 @@ public class PcPart {
 		if(query != null) {
 			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,query,maxResults);
 			Map<String,Integer> minMaxPrice = getMinMaxPrice(filterList);
-			addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
+			out = addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
 		}
 		return out;
 	}
@@ -177,7 +178,7 @@ public class PcPart {
 				}
 			}
 		}
-		if(out != null) {
+		if(out != null && validFilters.size() > 0) {
 			return QueryBuilders.filteredQuery(out, FilterBuilders.boolFilter().must(validFilters.toArray(new FilterBuilder[0])));
 		}
 		return out;
@@ -197,10 +198,10 @@ public class PcPart {
 
 	private static Map<String, Map<String, Object>> getFilteredParts(Client client, QueryBuilder query, int numResults) {
 		Map<String, Map<String, Object>> out = new HashMap<String, Map<String, Object>>();
-		SearchResponse response = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
+		SearchRequestBuilder q = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-				.setSize(numResults).setQuery(query).setExplain(false)
-				.execute().actionGet();
+				.setSize(numResults).setQuery(query).setExplain(false);
+		SearchResponse response = q.execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		for (SearchHit hit : results) {
 			addSpecs(out,hit);
