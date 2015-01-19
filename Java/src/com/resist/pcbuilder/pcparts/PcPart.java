@@ -172,7 +172,7 @@ public class PcPart {
 			if(isValidElasticFilter(filter)) {
 				String key = filter.getKey(), value = filter.getValue();
 				if(out == null) {
-					out = QueryBuilders.termQuery(key,value);
+					out = QueryBuilders.matchQuery(key,value);
 				} else {
 					validFilters.add(FilterBuilders.termFilter(key, value));
 				}
