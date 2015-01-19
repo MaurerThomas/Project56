@@ -9,10 +9,12 @@ import MySQLdb
 import hashlib
 from scrapy.exceptions import DropItem
 from scrapy.http import Request
+from scrapy.utils.project import get_project_settings 
 
 class PrijsPipeline(object):
 	def __init__(self):
-		self.conn = MySQLdb.connect(user='pcbuilder', passwd='project', db='pcbuilder', host='127.0.0.1', charset='utf8', use_unicode=True)
+		settings = get_project_settings() 
+		self.conn = MySQLdb.connect(user= settings['MYSQL_USER'], passwd= settings['MYSQL_PASS'], db= settings['MYSQL_DB'], host= settings['MYSQL_HOST'], charset='utf8', use_unicode=True)
 		self.cursor = self.conn.cursor()
 
 	def process_item(self, item, spider):

@@ -17,3 +17,10 @@ DOWNLOADER_STATS = False
 ITEM_PIPELINES = {
 	'prijscrawler.pipelines.PrijsPipeline' : 300,
 }
+
+MYSQL_DB 		=	'pcbuilder'
+MYSQL_USER		= 	'pcbuilder'
+MYSQL_PASS		=	'project'
+MYSQL_HOST 	=	'127.0.0.1'
+# Crawl responsibly by identifying yourself (and your website) on the user-agent
+#USER_AGENT = 'prijs crawler (+145.24.222.237)'
