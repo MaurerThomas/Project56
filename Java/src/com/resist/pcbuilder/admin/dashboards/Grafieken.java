@@ -30,7 +30,7 @@ public class Grafieken implements Dashboard {
     public JSONObject handleJSON(JSONObject input) {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             try {
-                makeChart();
+                makeChartForPartsPrice();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -48,18 +48,9 @@ public class Grafieken implements Dashboard {
 
     }
 
-    private void makeChart() throws IOException {
-        JSONArray filters = new JSONArray();
-        JSONObject x = new JSONObject();
-        JSONObject z = new JSONObject();
-        x.put("key","component").put("value","schijven");
-        z.put("makechart", filters);
-        filters.put(x);
-        System.out.println(z);
-        JSONArray getPrijs = session.getPcBuilder().getSearchHandler().handleSearch(z);
-
+    private void makeChartForPartsPrice() throws IOException {
+        JSONArray getPrijs = makeFiltersForGraph();
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-        System.out.println("De resultaten: " + getPrijs);
 
        // Voor debugging
        // int[] dataset = new int[getPrijs.length()];
@@ -68,8 +59,6 @@ public class Grafieken implements Dashboard {
             JSONObject prijs = getPrijs.getJSONObject(i);
             line_chart_dataset.addValue(prijs.getInt("euro")+prijs.getInt("cent")/100.0, "Prijs", prijs.get("datum").toString());
         }
-
-
         JFreeChart lineChartObject = ChartFactory.createLineChart(
                 "Schijven", "Datum",
                 "Prijs",
@@ -84,5 +73,16 @@ public class Grafieken implements Dashboard {
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
+    private JSONArray makeFiltersForGraph(){
 
+        JSONArray filters = new JSONArray();
+        JSONObject x = new JSONObject();
+        JSONObject z = new JSONObject();
+        x.put("key","component").put("value","schijven");
+        z.put("makechart", filters);
+        filters.put(x);
+        System.out.println(z);
+
+        return session.getPcBuilder().getSearchHandler().handleSearch(z);
+    }
 }
