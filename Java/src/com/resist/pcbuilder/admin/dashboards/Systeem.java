@@ -34,6 +34,7 @@ public class Systeem implements Dashboard {
         }
 		else if(input.has("clearLog"))
 		{
+            PcBuilder.LOG.log(Level.INFO,"Clear Log initialized");
             try {
                 clearLog();
             } catch (IOException e) {
@@ -48,7 +49,7 @@ public class Systeem implements Dashboard {
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");
         String backupPath = settings.getString("logBackupDir");
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm");
         Date date = Calendar.getInstance().getTime();
 
         File outputlog = new File(outputPath+"output.log");
