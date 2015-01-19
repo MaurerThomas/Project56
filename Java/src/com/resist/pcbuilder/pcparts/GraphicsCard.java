@@ -46,7 +46,7 @@ public class GraphicsCard extends PcPart {
 	public static List<GraphicsCard> getSockets(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_SOCKET_TYPE+" FROM "+DBConnection.TABLE_SOCKET+" WHERE "+DBConnection.COLUMN_SOCKET_PART+" = ?");
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_INTERFACE_TYPE+" FROM "+DBConnection.TABLE_INTERFACE+" WHERE "+DBConnection.COLUMN_INTERFACE_PART+" = ?");
 	        s.setString(1,DBConnection.PART_GPU);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
@@ -64,7 +64,7 @@ public class GraphicsCard extends PcPart {
 	public static List<GraphicsCard> getBrands(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
-			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_BRAND_NAME+" FROM "+DBConnection.TABLE_BRAND+" JOIN "+DBConnection.TABLE_JOIN+" ON ("+DBConnection.COLUMN_JOIN_MID+" = "+DBConnection.COLUMN_BRAND_MID+") WHERE "+DBConnection.COLUMN_SOCKET_PART+" = ?");
+			PreparedStatement s = conn.prepareStatement("SELECT "+DBConnection.COLUMN_BRAND_NAME+" FROM "+DBConnection.TABLE_BRAND+" JOIN "+DBConnection.TABLE_JOIN+" ON ("+DBConnection.COLUMN_JOIN_MID+" = "+DBConnection.COLUMN_BRAND_MID+") WHERE "+DBConnection.COLUMN_JOIN_TYPE+" = ?");
 	        s.setString(1, DBConnection.PART_GPU);
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {

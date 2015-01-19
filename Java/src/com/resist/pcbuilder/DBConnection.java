@@ -9,7 +9,8 @@ import java.util.logging.Level;
 public class DBConnection {
 	public static final String TABLE_PRICE = "prijs_verloop";
 	public static final String TABLE_FORMFACTOR = "formfactor";
-	public static final String TABLE_SOCKET = "aansluiting";
+	public static final String TABLE_INTERFACE = "aansluiting";
+	public static final String TABLE_SOCKET = "socket";
 	public static final String TABLE_BRAND = "merk";
 	public static final String TABLE_JOIN = "tussentabel";
 	public static final String TABLE_HDD = "hardeschijf";
@@ -20,12 +21,14 @@ public class DBConnection {
 	public static final String COLUMN_PRICE_CENT = TABLE_PRICE+".cent";
 	public static final String COLUMN_PRICE_DATE = TABLE_PRICE+".datum";
 	public static final String COLUMN_FORMFACTOR_FORMFACTOR = TABLE_FORMFACTOR+".formfactor";
-	public static final String COLUMN_SOCKET_TYPE = TABLE_SOCKET+".type";
-	public static final String COLUMN_SOCKET_PART = TABLE_SOCKET+".onderdeeltype";
+	public static final String COLUMN_INTERFACE_TYPE = TABLE_INTERFACE+".type";
+	public static final String COLUMN_INTERFACE_PART = TABLE_INTERFACE+".onderdeeltype";
 	public static final String COLUMN_SOCKET_MID = TABLE_SOCKET+".merkmid";
+	public static final String COLUMN_SOCKET_TYPE = TABLE_SOCKET+".type";
 	public static final String COLUMN_BRAND_NAME = TABLE_BRAND+".naam";
 	public static final String COLUMN_BRAND_MID = TABLE_BRAND+".mid";
 	public static final String COLUMN_JOIN_MID = TABLE_JOIN+".merkmid";
+	public static final String COLUMN_JOIN_TYPE = TABLE_JOIN+".onderdeeltype";
 	public static final String COLUMN_HDD_TYPE = TABLE_HDD+".type";
 	public static final String COLUMN_HDD_INTERFACE = TABLE_HDD+".aansluitingtype";
 	public static final String COLUMN_MEMORY_TYPE = TABLE_MEMORY+".type";
