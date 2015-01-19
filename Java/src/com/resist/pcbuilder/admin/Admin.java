@@ -9,14 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 
 public class Admin {
-	private static final String adminTable = "admins";
-	private static final String aidColumn = "aid";
-	private static final String usernameColumn = "username";
-	private static final String passwordColumn = "password";
-
 	private int aid;
 	private String username;
 	private String password;
@@ -48,7 +44,7 @@ public class Admin {
 		List<Admin> out = new ArrayList<Admin>();
 		try {
 			Statement s = conn.createStatement();
-			ResultSet res = s.executeQuery("SELECT "+aidColumn+", "+usernameColumn+" FROM "+adminTable);
+			ResultSet res = s.executeQuery("SELECT "+DBConnection.COLUMN_ADMINS_AID+", "+DBConnection.COLUMN_ADMINS_USERNAME+" FROM "+DBConnection.TABLE_ADMINS);
 			while(res.next()) {
 				out.add(new Admin(res.getInt(1),res.getString(2)));
 			}
@@ -70,7 +66,7 @@ public class Admin {
 	 */
 	public static boolean deleteAdmin(Connection conn, int aid) {
 		try {
-			PreparedStatement s = conn.prepareStatement("DELETE FROM "+adminTable+" WHERE "+aidColumn+" = ?");
+			PreparedStatement s = conn.prepareStatement("DELETE FROM "+DBConnection.TABLE_ADMINS+" WHERE "+DBConnection.COLUMN_ADMINS_AID+" = ?");
 			s.setInt(1,aid);
 			s.executeUpdate();
 			s.close();
@@ -92,7 +88,7 @@ public class Admin {
 	public static int addAdmin(Connection conn, String username, String password) {
 		try {
 			int out = -1;
-			PreparedStatement s = conn.prepareStatement("INSERT INTO "+adminTable+" ("+usernameColumn+","+passwordColumn+") VALUES(?,?)",Statement.RETURN_GENERATED_KEYS);
+			PreparedStatement s = conn.prepareStatement("INSERT INTO "+DBConnection.TABLE_ADMINS+" ("+DBConnection.COLUMN_ADMINS_USERNAME+","+DBConnection.COLUMN_ADMINS_PASSWORD+") VALUES(?,?)",Statement.RETURN_GENERATED_KEYS);
 			s.setString(1,username);
 			s.setString(2,password);
 			s.executeUpdate();
@@ -122,15 +118,15 @@ public class Admin {
 		try {
 			PreparedStatement s;
 			if(password == null) {
-				s = conn.prepareStatement("UPDATE "+adminTable+" SET "+usernameColumn+" = ? WHERE "+aidColumn+" = ?");
+				s = conn.prepareStatement("UPDATE "+DBConnection.TABLE_ADMINS+" SET "+DBConnection.COLUMN_ADMINS_USERNAME+" = ? WHERE "+DBConnection.COLUMN_ADMINS_AID+" = ?");
 				s.setString(1,username);
 				s.setInt(2,aid);
 			} else if(username == null) {
-				s = conn.prepareStatement("UPDATE "+adminTable+" SET "+passwordColumn+" = ? WHERE "+aidColumn+" = ?");
+				s = conn.prepareStatement("UPDATE "+DBConnection.TABLE_ADMINS+" SET "+DBConnection.COLUMN_ADMINS_PASSWORD+" = ? WHERE "+DBConnection.COLUMN_ADMINS_AID+" = ?");
 				s.setString(1,password);
 				s.setInt(2,aid);
 			} else {
-				s = conn.prepareStatement("UPDATE "+adminTable+" SET "+usernameColumn+" = ?, "+passwordColumn+" = ? WHERE "+aidColumn+" = ?");
+				s = conn.prepareStatement("UPDATE "+DBConnection.TABLE_ADMINS+" SET "+DBConnection.COLUMN_ADMINS_USERNAME+" = ?, "+DBConnection.COLUMN_ADMINS_PASSWORD+" = ? WHERE "+DBConnection.COLUMN_ADMINS_AID+" = ?");
 				s.setString(1,username);
 				s.setString(2,password);
 				s.setInt(3,aid);
