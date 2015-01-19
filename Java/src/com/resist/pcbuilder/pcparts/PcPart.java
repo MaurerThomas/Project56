@@ -16,8 +16,8 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.FilterBuilder;
-import org.elasticsearch.index.query.FilterBuilders;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -166,20 +166,17 @@ public class PcPart {
 	}
 
 	private static QueryBuilder buildFilters(List<SearchFilter> filters) {
-		List<FilterBuilder> validFilters = new ArrayList<FilterBuilder>();
-		QueryBuilder out = null;
+		BoolQueryBuilder out = null;
 		for(SearchFilter filter : filters) {
 			if(isValidElasticFilter(filter)) {
 				String key = filter.getKey(), value = filter.getValue();
+				MatchQueryBuilder matchQuery = QueryBuilders.matchQuery(key,value);
 				if(out == null) {
-					out = QueryBuilders.matchQuery(key,value);
+					out = QueryBuilders.boolQuery().must(matchQuery);
 				} else {
-					validFilters.add(FilterBuilders.termFilter(key, value));
+					out.must(matchQuery);
 				}
 			}
-		}
-		if(out != null && validFilters.size() > 0) {
-			return QueryBuilders.filteredQuery(out, FilterBuilders.boolFilter().must(validFilters.toArray(new FilterBuilder[0])));
 		}
 		return out;
 	}
@@ -201,6 +198,7 @@ public class PcPart {
 		SearchRequestBuilder q = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
 				.setSize(numResults).setQuery(query).setExplain(false);
+		PcBuilder.LOG.log(Level.INFO, q.toString());
 		SearchResponse response = q.execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		for (SearchHit hit : results) {
