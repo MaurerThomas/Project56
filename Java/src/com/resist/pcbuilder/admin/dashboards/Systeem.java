@@ -47,9 +47,9 @@ public class Systeem implements Dashboard {
         JSONObject settings = session.getPcBuilder().getSettings();
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");
-        String backupPath = settings.getString("logBackupDir"); SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String backupPath = settings.getString("logBackupDir");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd_MM_yyyy");
         Date date = Calendar.getInstance().getTime();
-
 
         File outputlog = new File(outputPath+"output.log");
         File errorlog = new File(errorPath+"error.log");
@@ -57,12 +57,23 @@ public class Systeem implements Dashboard {
         String outputlogname = "output_"+simpleDateFormat.format(date);
         String errorlogname = "error_"+simpleDateFormat.format(date);
         File destination = new File(backupPath);
-        File archive = archiver.create(outputlogname, destination, outputlog);
-        archive = archiver.create(outputlogname, destination, errorlog);
-        //outputlog.delete();
-        //errorlog.delete();
-        //outputlog = new File(outputPath+"output.log");
-        //errorlog = new File(errorPath+"error.log");
+        try{
+            File archive = archiver.create(outputlogname, destination, outputlog);
+            archive = archiver.create(errorlogname, destination, errorlog);
+            outputlog.delete();
+            errorlog.delete();
+            outputlog = new File(outputPath+"output.log");
+            errorlog = new File(errorPath+"error.log");
+
+            try {
+                outputlog.createNewFile();
+                errorlog.createNewFile();
+            } catch (IOException e) {
+                PcBuilder.LOG.log(Level.WARNING, "Failed to archive files", e);
+            }
+        } catch (IOException e) {
+            PcBuilder.LOG.log(Level.WARNING, "Failed to create new file ", e);
+        }
 
     }
 
