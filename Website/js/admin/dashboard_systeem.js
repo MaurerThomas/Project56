@@ -4,6 +4,7 @@
 
  $('#clearlogs').click(function()
  {   
+	console.log("DEZE DING");
 	$webSocket.send({action: 'clearLog'});
  });
  

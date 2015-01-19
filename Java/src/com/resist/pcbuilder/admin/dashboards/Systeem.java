@@ -29,6 +29,8 @@ public class Systeem implements Dashboard {
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
+
+        PcBuilder.LOG.log(Level.INFO,"input : "+input.toString());
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
         }
