@@ -51,7 +51,7 @@ public class GraphicsCard extends PcPart {
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	            String type = res.getString(1);
-	            out.add(new GraphicsCard(type,null));
+	            out.add(new GraphicsCard(null,type));
 	        }
 	        res.close();
 	        s.close();
@@ -69,7 +69,7 @@ public class GraphicsCard extends PcPart {
 	        ResultSet res = s.executeQuery();
 	        while(res.next()) {
 	        	String naam = res.getString(1);
-	        	out.add(new GraphicsCard(null,naam));
+	        	out.add(new GraphicsCard(naam,null));
 	        }
 	        res.close();
 	        s.close();

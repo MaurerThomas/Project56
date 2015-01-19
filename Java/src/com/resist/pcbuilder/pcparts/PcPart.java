@@ -36,10 +36,10 @@ public class PcPart {
 	private Map<String, Object> specs;
 
 	protected PcPart(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
-		this.euro = euro;
-		this.cent = cent;
-		this.crawlDate = crawlDate;
 		this.specs = new HashMap<String,Object>();
+		setEuro(euro);
+		setCent(cent);
+		setCrawlDate(crawlDate);
 		if(specs != null) {
 			url = (String) specs.get("url");
 			component = (String) specs.get("component");
@@ -51,9 +51,6 @@ public class PcPart {
 			setSpec("brand", brand);
 			setSpec("naam", name);
 			setSpec("eun", eun);
-			setSpec("euro", euro);
-			setSpec("cent", cent);
-			setSpec("crawlDate", crawlDate);
 		}
 	}
 
@@ -99,30 +96,37 @@ public class PcPart {
 
 	protected void setComponent(String component) {
 		this.component = component;
+		setSpec("component", component);
 	}
 
 	protected void setBrand(String brand) {
 		this.brand = brand;
+		setSpec("brand", brand);
 	}
 
 	protected void setName(String name) {
 		this.name = name;
+		setSpec("naam", name);
 	}
 
 	protected void setEun(String eun) {
 		this.eun = eun;
+		setSpec("eun", eun);
 	}
 
 	protected void setEuro(int euro) {
 		this.euro = euro;
+		setSpec("euro", euro);
 	}
 
 	protected void setCent(int cent) {
 		this.cent = cent;
+		setSpec("cent", cent);
 	}
 
 	protected void setCrawlDate(Date crawlDate) {
 		this.crawlDate = crawlDate;
+		setSpec("crawlDate", crawlDate);
 	}
 
 	protected void setSpec(String key, Object value) {

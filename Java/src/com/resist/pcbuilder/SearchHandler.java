@@ -133,7 +133,7 @@ public class SearchHandler {
     	list = GraphicsCard.getBrands(conn);
     	JSONArray merken = new JSONArray();
     	for(GraphicsCard g : list) {
-    		merken.put(g.getSocket());
+    		merken.put(g.getBrand());
     	}
         out.put("merken",merken);
         return out;
