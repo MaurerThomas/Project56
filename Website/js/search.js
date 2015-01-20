@@ -11,6 +11,10 @@ function initSearch() {
 	$('.pcbuilder-search .tab-pane.active').submit();
 	initSearch = undefined;
 
+	function getNumber($selector) {
+		return parseInt($($selector).val(),10);
+	}
+
 	function getFilter($filters,$key,$selector) {
 		var $val = $($selector).val();
 		if($val && $val != 'none') {
@@ -19,9 +23,16 @@ function initSearch() {
 	}
 
 	function getNumFilter($filters,$key,$selector) {
-		var $val = parseInt($($selector).val(),10);
+		var $val = getNumber($selector);
 		if(!isNaN($val)) {
 			$filters[$key] = $val;
+		}
+	}
+
+	function getRangeFilter($filters,$key,$selectorMin,$selectorMax) {
+		var $min = getNum($selectorMin), $max = getNum($selectorMax);
+		if(!isNaN($min) && !isNaN($max)) {
+			$filters[$key] = [$min,$max];
 		}
 	}
 
@@ -97,8 +108,7 @@ function initSearch() {
 		var $filters = {
 			component: 'Voedingen'
 		};
-		getNumFilter($filters,'minwattage','#voeding .voeding-minwattage');
-		getNumFilter($filters,'maxwattage','#voeding .voeding-maxwattage');
+		getRangeFilter($filters,'wattage','#voeding .voeding-minwattage','#voeding .voeding-maxwattage');
 		submitPart(this,$e,'searchvoeding','voeding-minprijs','voeding-maxprijs',$filters);
 	}
 
@@ -116,8 +126,7 @@ function initSearch() {
 		if($val && $val.trim() !== '') {
 			$filters.naam = $val;
 		}
-		getNumFilter($filters,'minPrice','#'+$minId);
-		getNumFilter($filters,'maxPrice','#'+$maxId);
+		getRangeFilter($filters,'price','#'+$minId,'#'+$maxId);
 		handleSearch($form,$filters);
 	}
 
