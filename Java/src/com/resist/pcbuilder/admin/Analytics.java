@@ -47,7 +47,7 @@ public class Analytics {
         List<Analytics> out = new ArrayList<Analytics>();
         try {
             Statement s = conn.createStatement();
-            ResultSet res = s.executeQuery("SELECT COUNT" +"("+DBConnection.COLUMN_ANALYTICS_HASHCODE+")"+", "+DBConnection.COLUMN_ANALYTICS_DATUM+" FROM "+DBConnection.TABLE_ANALYTICS);
+            ResultSet res = s.executeQuery("SELECT COUNT" +"("+DBConnection.COLUMN_ANALYTICS_DATUM+")"+" , "+DBConnection.COLUMN_ANALYTICS_DATUM+" FROM "+DBConnection.TABLE_ANALYTICS+" GROUP BY "+DBConnection.COLUMN_ANALYTICS_DATUM);
 
             while(res.next()) {
                 out.add(new Analytics(res.getInt(1),res.getDate(2)));
