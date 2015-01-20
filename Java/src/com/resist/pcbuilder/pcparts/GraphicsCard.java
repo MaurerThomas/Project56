@@ -12,7 +12,6 @@ import java.util.logging.Level;
 
 import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
-import com.resist.pcbuilder.SearchFilter;
 
 public class GraphicsCard extends PcPart {
 	public static final String COMPONENT = "Grafische kaarten";
@@ -39,8 +38,8 @@ public class GraphicsCard extends PcPart {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Aansluiting");
 	}
 
-	public static boolean isValidElasticFilter(SearchFilter filter) {
-		return filter.getKey().equals("Aansluiting");
+	public static boolean isValidMatchKey(String key) {
+		return key.equals("Aansluiting");
 	}
 
 	public static List<GraphicsCard> getSockets(Connection conn) {

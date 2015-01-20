@@ -16,15 +16,14 @@ import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
 import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
-import com.resist.pcbuilder.SearchFilter;
+import com.resist.pcbuilder.filters.ElasticSearchFilter;
+import com.resist.pcbuilder.filters.MySQLPriceFilter;
+import com.resist.pcbuilder.filters.SearchFilter;
 
 public class PcPart {
 	private String url;
@@ -135,6 +134,21 @@ public class PcPart {
 		specs.put(key, value);
 	}
 
+	public static boolean isValidMatchKey(String key) {
+		return key.equals("component") ||
+				key.equals("merk") ||
+				key.equals("naam") ||
+				key.equals("eun") ||
+				Case.isValidMatchKey(key) ||
+				GraphicsCard.isValidMatchKey(key) ||
+				HardDisk.isValidMatchKey(key) ||
+				Processor.isValidMatchKey(key);
+	}
+
+	public static boolean isValidRangeKey(String key) {
+		return Voeding.isValidRangeKey(key);
+	}
+
 	public static boolean isPart(Map<String, Object> specs) {
 		return false;
 	}
@@ -156,41 +170,13 @@ public class PcPart {
 
 	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxResults) {
 		List<PcPart> out = new ArrayList<PcPart>();
-		QueryBuilder query = buildFilters(filterList);
+		QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
 		if(query != null) {
 			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,query,maxResults);
 			Map<String,Integer> minMaxPrice = getMinMaxPrice(filterList);
 			out = addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
 		}
 		return out;
-	}
-
-	private static QueryBuilder buildFilters(List<SearchFilter> filters) {
-		BoolQueryBuilder out = null;
-		for(SearchFilter filter : filters) {
-			if(isValidElasticFilter(filter)) {
-				String key = filter.getKey(), value = filter.getValue();
-				MatchQueryBuilder matchQuery = QueryBuilders.matchQuery(key,value);
-				if(out == null) {
-					out = QueryBuilders.boolQuery().must(matchQuery);
-				} else {
-					out.must(matchQuery);
-				}
-			}
-		}
-		return out;
-	}
-
-	public static boolean isValidElasticFilter(SearchFilter filter) {
-		String key = filter.getKey();
-		return key.equals("component") ||
-				key.equals("merk") ||
-				key.equals("naam") ||
-				key.equals("eun") ||
-				Case.isValidElasticFilter(filter) ||
-				GraphicsCard.isValidElasticFilter(filter) ||
-				HardDisk.isValidElasticFilter(filter) ||
-				Processor.isValidElasticFilter(filter);
 	}
 
 	private static Map<String, Map<String, Object>> getFilteredParts(Client client, QueryBuilder query, int numResults) {
@@ -221,19 +207,9 @@ public class PcPart {
 
 	private static Map<String,Integer> getMinMaxPrice(List<SearchFilter> filters) {
 		Map<String,Integer> out = new HashMap<String,Integer>();
-		int found = 0;
 		for(SearchFilter filter : filters) {
-			String key = filter.getKey();
-			if(key.equals("minPrice") || key.equals("maxPrice")) {
-				found++;
-				try {
-					out.put(key, Integer.parseInt(filter.getValue()));
-				} catch(NumberFormatException e) {
-					PcBuilder.LOG.log(Level.WARNING, key+" not an int.", e);
-				}
-			}
-			if(found == 2) {
-				break;
+			if(filter instanceof MySQLPriceFilter) {
+				out = ((MySQLPriceFilter)filter).toMap();
 			}
 		}
 		return out;

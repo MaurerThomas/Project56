@@ -1,6 +1,8 @@
 package com.resist.pcbuilder;
 
+import com.resist.pcbuilder.filters.SearchFilter;
 import com.resist.pcbuilder.pcparts.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -47,10 +49,29 @@ public class SearchHandler {
 	private List<SearchFilter> parseJSONFilters(JSONArray filters) {
 		List<SearchFilter> out = new ArrayList<SearchFilter>(filters.length());
 		for (int i = 0; i < filters.length(); i++) {
-			JSONObject filter = filters.getJSONObject(i);
-			if(filter != null && filter.has("key") && filter.has("value")) {
-				out.add(new SearchFilter(filter.getString("key"),String.valueOf(filter.get("value"))));
+			SearchFilter filter = parseFilter(filters.getJSONObject(i));
+			if(filter != null) {
+				out.add(filter);
 			}
+		}
+		return out;
+	}
+
+	private SearchFilter parseFilter(JSONObject filter) {
+		if(filter != null && filter.has("key") && filter.has("value")) {
+			Object value = filter.get("value");
+			if(value instanceof JSONArray) {
+				value = parseFilter((JSONArray)value);
+			}
+			return SearchFilter.getInstance(filter.getString("key"),value);
+		}
+		return null;
+	}
+
+	private List<Object> parseFilter(JSONArray filter) {
+		List<Object> out = new ArrayList<Object>();
+		for(int i=0;i < filter.length();i++) {
+			out.add(filter.get(i));
 		}
 		return out;
 	}

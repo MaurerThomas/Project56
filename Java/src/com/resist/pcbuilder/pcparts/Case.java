@@ -12,7 +12,6 @@ import java.util.logging.Level;
 
 import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
-import com.resist.pcbuilder.SearchFilter;
 
 public class Case extends PcPart {
 	public static final String COMPONENT = "Behuizingen";
@@ -38,8 +37,8 @@ public class Case extends PcPart {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Bouwvorm");
 	}
 
-	public static boolean isValidElasticFilter(SearchFilter filter) {
-		return filter.getKey().equals("Bouwvorm");
+	public static boolean isValidMatchKey(String key) {
+		return key.equals("Bouwvorm");
 	}
 
 	public static List<Case> getFormFactors(Connection conn) {
