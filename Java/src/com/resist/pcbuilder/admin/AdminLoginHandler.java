@@ -38,7 +38,7 @@ public class AdminLoginHandler implements MessageHandler {
 
 	public java.sql.Connection getConnection() {
 		return pcbuilder.getDBConnection().getConnection();
-	}
+}
 
 	@Override
 	public void handleMessage(Message message) {
