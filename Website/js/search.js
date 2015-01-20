@@ -30,7 +30,7 @@ function initSearch() {
 	}
 
 	function getRangeFilter($filters,$key,$selectorMin,$selectorMax) {
-		var $min = getNum($selectorMin), $max = getNum($selectorMax);
+		var $min = getNumber($selectorMin), $max = getNumber($selectorMax);
 		if(!isNaN($min) && !isNaN($max)) {
 			$filters[$key] = [$min,$max];
 		}
@@ -108,7 +108,7 @@ function initSearch() {
 		var $filters = {
 			component: 'Voedingen'
 		};
-		getRangeFilter($filters,'wattage','#voeding .voeding-minwattage','#voeding .voeding-maxwattage');
+		getRangeFilter($filters,'Vermogen','#voeding .voeding-minwattage','#voeding .voeding-maxwattage');
 		submitPart(this,$e,'searchvoeding','voeding-minprijs','voeding-maxprijs',$filters);
 	}
 

@@ -164,6 +164,8 @@ public class PcPart {
 			return new Memory(euro, cent, crawlDate, specs);
 		} else if(Processor.isPart(specs)) {
 			return new Processor(euro, cent, crawlDate, specs);
+		} else if(Voeding.isPart(specs)) {
+			return new Voeding(euro, cent, crawlDate, specs);
 		}
 		return new PcPart(euro, cent, crawlDate, specs);
 	}
@@ -209,7 +211,7 @@ public class PcPart {
 		Map<String,Integer> out = new HashMap<String,Integer>();
 		for(SearchFilter filter : filters) {
 			if(filter instanceof MySQLPriceFilter) {
-				out = ((MySQLPriceFilter)filter).toMap();
+				return ((MySQLPriceFilter)filter).toMap();
 			}
 		}
 		return out;
