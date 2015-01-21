@@ -1,17 +1,13 @@
 package com.resist.pcbuilder.pcparts;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.resist.pcbuilder.DBConnection;
+import com.resist.pcbuilder.PcBuilder;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import com.resist.pcbuilder.DBConnection;
-import com.resist.pcbuilder.PcBuilder;
 
 public class Case extends PcPart {
 	public static final String COMPONENT = "Behuizingen";

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DatePrice;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -275,5 +276,24 @@ public class PcPart {
 			}
 		}
 		return out;
+	}
+
+	public static List<DatePrice> getAvgPrice(Client client, Connection conn, String component) {
+		List<DatePrice> out = new ArrayList<>();
+		List<SearchFilter> filterList = new ArrayList<>();
+		filterList.add(SearchFilter.getInstance("component", component));
+		QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
+		if(query != null) {
+			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client, query, 10);
+			out = getAvgPrices(conn, elasticResults);
+		}
+		return out;
+	}
+
+	private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
+		Set<String> eans = parts.keySet();
+		"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=urean.url) WHERE ean IN("+doietsmet(eans)+")";
+		//doe iets thomas
+		//ongeveer dit: addPartPrices
 	}
 }

@@ -1,17 +1,15 @@
 package com.resist.pcbuilder.pcparts;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import com.resist.pcbuilder.DBConnection;
+import com.resist.pcbuilder.DatePrice;
+import com.resist.pcbuilder.PcBuilder;
+import org.elasticsearch.client.Client;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-
-import com.resist.pcbuilder.DBConnection;
-import com.resist.pcbuilder.PcBuilder;
 
 public class Processor extends PcPart {
 	public static final String COMPONENT = "Processoren";
@@ -64,5 +62,9 @@ public class Processor extends PcPart {
 			PcBuilder.LOG.log(Level.WARNING,"Failed to get processors.",e);
 		}
 		return out;
+	}
+
+	public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
+		return PcPart.getAvgPrice(client,conn,COMPONENT);
 	}
 }
