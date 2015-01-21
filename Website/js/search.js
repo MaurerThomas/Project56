@@ -8,7 +8,9 @@ function initSearch() {
 	$('#behuizing form').submit(submitCase);
 	$('#voeding form').submit(submitPSU);
 	$('#besturingssysteem form').submit(submitOS);
-	$('.pcbuilder-search .tab-pane.active form').submit();
+	setTimeout(function() {
+		$('.pcbuilder-search .tab-pane.active form').submit();
+	},200);
 	initSearch = undefined;
 
 	function getNumber($selector) {
