@@ -47,7 +47,6 @@ public class Filters implements Dashboard {
     public static boolean createFilter(Connection conn, String category, String filtername) {
         try {
             PreparedStatement s;
-            s.setString(1, filtername);
             if(category.equals("geheugen")) {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_MEMORY + "(" + DBConnection.COLUMN_MEMORY_TYPE + ")" + "VALUES(" + " ?)");
             } else if(category.equals("hardeschijven")) {
@@ -59,6 +58,7 @@ public class Filters implements Dashboard {
             } else {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_FORMFACTOR + "(" + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + ")" + "VALUES(" + " ?)");
             }
+            s.setString(1, filtername);
             s.executeUpdate();
             s.close();
             return true;
@@ -68,22 +68,21 @@ public class Filters implements Dashboard {
         }
     }
 
-
     public static boolean deleteFilter(Connection conn, String category, String filtername) {
         try {
             PreparedStatement s;
-            s.setString(1, filtername);
             if(category.equals("geheugen")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_MEMORY + " WHERE " + DBConnection.COLUMN_MEMORY_TYPE + " = ?");
             } else if(category.equals("hardeschijven")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_HDD + " WHERE " + DBConnection.COLUMN_HDD_INTERFACE + " = ?");
-            } else if(category.equals("processors") {
+            } else if(category.equals("processors")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_SOCKET + " WHERE " + DBConnection.COLUMN_SOCKET_TYPE + " = ?");
             } else if(category.equals("grafischekaarten")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_INTERFACE + " WHERE " + DBConnection.COLUMN_INTERFACE_TYPE + " = ?");
             } else {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_FORMFACTOR + " WHERE " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + " = ?");
             }
+            s.setString(1, filtername);
             s.executeUpdate();
             s.close();
             return true;
