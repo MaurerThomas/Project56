@@ -17,6 +17,7 @@ public class DBConnection {
 	public static final String TABLE_MEMORY = "geheugen";
 	public static final String TABLE_ADMINS = "admins";
 	public static final String TABLE_ANALYTICS = "bezoekers";
+	public static final String TABLE_EAN = "url_ean";
 	public static final String COLUMN_PRICE_URL = TABLE_PRICE+".url";
 	public static final String COLUMN_PRICE_EURO = TABLE_PRICE+".euro";
 	public static final String COLUMN_PRICE_CENT = TABLE_PRICE+".cent";
@@ -36,9 +37,11 @@ public class DBConnection {
 	public static final String COLUMN_ADMINS_AID = TABLE_ADMINS+".aid";
 	public static final String COLUMN_ADMINS_USERNAME = TABLE_ADMINS+".username";
 	public static final String COLUMN_ADMINS_PASSWORD = TABLE_ADMINS+".password";
-	public static final String PART_GPU = "Grafischekaart";
 	public static final String COLUMN_ANALYTICS_HASHCODE = TABLE_ANALYTICS+".hashcode";
 	public static final String COLUMN_ANALYTICS_DATUM = TABLE_ANALYTICS+".datum";
+	public static final String COLUMN_EAN_URL = TABLE_EAN+".url";
+	public static final String COLUMN_EAN_EAN = TABLE_EAN+".ean";
+	public static final String PART_GPU = "Grafischekaart";
 
 	private Connection conn;
 	private String[] args;

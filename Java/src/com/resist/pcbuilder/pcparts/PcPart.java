@@ -197,8 +197,8 @@ public class PcPart {
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> specs = (Map<String, Object>) hit.getSource().get("specs");
-			if(specs != null && specs.containsKey("url")) {
-				out.put((String)specs.get("url"), specs);
+			if(specs != null && specs.containsKey("ean")) {
+				out.put((String)specs.get("ean"), specs);
 			}
 		} catch(ClassCastException e) {
 			PcBuilder.LOG.log(Level.WARNING,"Failed to get specs.",e);
@@ -216,10 +216,11 @@ public class PcPart {
 	}
 
 	private static String getPriceSQL(Set<String> urls, Integer minPrice, Integer maxPrice) {
-		StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
+		StringBuilder sql = new StringBuilder("SELECT ");
 		sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
 				.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
-				.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
+				.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" JOIN ").append(DBConnection.TABLE_EAN).append(" ON(")
+				.append(DBConnection.COLUMN_EAN_URL).append(" = ").append(DBConnection.COLUMN_PRICE_URL).append(") WHERE ")
 				.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
 		if (minPrice != null) {
 			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
@@ -227,12 +228,12 @@ public class PcPart {
 		if (maxPrice != null) {
 			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
 		}
-		sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
+		sql.append(" AND ").append(DBConnection.COLUMN_EAN_EAN).append(DBConnection.getInQuery(urls.size()));
 		return sql.toString();
 	}
 
-	private static PreparedStatement getPriceStatement(Connection conn, Set<String> urls, Date date, Integer minPrice, Integer maxPrice) throws SQLException {
-		PreparedStatement s = conn.prepareStatement(getPriceSQL(urls,minPrice,maxPrice));
+	private static PreparedStatement getPriceStatement(Connection conn, Set<String> eans, Date date, Integer minPrice, Integer maxPrice) throws SQLException {
+		PreparedStatement s = conn.prepareStatement(getPriceSQL(eans,minPrice,maxPrice));
 		s.setDate(1, date);
 		int args = 1;
 		if (minPrice != null) {
@@ -244,8 +245,8 @@ public class PcPart {
 			s.setInt(args, maxPrice * 100);
 		}
 		int i = 1;
-		for(String url : urls) {
-			s.setString(i + args, url);
+		for(String ean : eans) {
+			s.setString(i + args, ean);
 			i++;
 		}
 		return s;
@@ -253,10 +254,10 @@ public class PcPart {
 
 	private static List<PcPart> addPartPrices(Connection conn, Map<String, Map<String, Object>> parts, Date date, Integer minPrice, Integer maxPrice) {
 		List<PcPart> out = new ArrayList<PcPart>();
-		Set<String> urls = parts.keySet();
-		if(urls.size() != 0) {
+		Set<String> eans = parts.keySet();
+		if(eans.size() != 0) {
 			try {
-				PreparedStatement s = getPriceStatement(conn, urls, date, minPrice, maxPrice);
+				PreparedStatement s = getPriceStatement(conn, eans, date, minPrice, maxPrice);
 				ResultSet res = s.executeQuery();
 				while (res.next()) {
 					String url = res.getString(1);
