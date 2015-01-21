@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -183,11 +182,10 @@ public class PcPart {
 
 	private static Map<String, Map<String, Object>> getFilteredParts(Client client, QueryBuilder query, int numResults) {
 		Map<String, Map<String, Object>> out = new HashMap<String, Map<String, Object>>();
-		SearchRequestBuilder q = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
+		SearchResponse response = client.prepareSearch(PcBuilder.MONGO_SEARCH_INDEX)
 				.setSearchType(SearchType.DFS_QUERY_THEN_FETCH)
-				.setSize(numResults).setQuery(query).setExplain(false);
-		PcBuilder.LOG.log(Level.INFO, q.toString());
-		SearchResponse response = q.execute().actionGet();
+				.setSize(numResults).setQuery(query)
+				.setExplain(false).execute().actionGet();
 		SearchHit[] results = response.getHits().getHits();
 		for (SearchHit hit : results) {
 			addSpecs(out,hit);
@@ -217,39 +215,48 @@ public class PcPart {
 		return out;
 	}
 
+	private static String getPriceSQL(Set<String> urls, Integer minPrice, Integer maxPrice) {
+		StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
+		sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
+				.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
+				.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
+				.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
+		if (minPrice != null) {
+			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
+		}
+		if (maxPrice != null) {
+			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
+		}
+		sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
+		return sql.toString();
+	}
+
+	private static PreparedStatement getPriceStatement(Connection conn, Set<String> urls, Date date, Integer minPrice, Integer maxPrice) throws SQLException {
+		PreparedStatement s = conn.prepareStatement(getPriceSQL(urls,minPrice,maxPrice));
+		s.setDate(1, date);
+		int args = 1;
+		if (minPrice != null) {
+			args++;
+			s.setInt(2, minPrice * 100);
+		}
+		if (maxPrice != null) {
+			args++;
+			s.setInt(args, maxPrice * 100);
+		}
+		int i = 1;
+		for(String url : urls) {
+			s.setString(i + args, url);
+			i++;
+		}
+		return s;
+	}
+
 	private static List<PcPart> addPartPrices(Connection conn, Map<String, Map<String, Object>> parts, Date date, Integer minPrice, Integer maxPrice) {
 		List<PcPart> out = new ArrayList<PcPart>();
 		Set<String> urls = parts.keySet();
 		if(urls.size() != 0) {
 			try {
-				StringBuilder sql = new StringBuilder("SELECT DISTINCT ");
-				sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
-						.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
-						.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" WHERE ")
-						.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
-				int args = 1;
-				if (minPrice != null) {
-					sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" >= ?");
-					args++;
-				}
-				if (maxPrice != null) {
-					sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
-					args++;
-				}
-				sql.append(" AND ").append(DBConnection.COLUMN_PRICE_URL).append(DBConnection.getInQuery(urls.size()));
-				PreparedStatement s = conn.prepareStatement(sql.toString());
-				s.setDate(1, date);
-				if (minPrice != null) {
-					s.setInt(2, minPrice * 100);
-				}
-				if (maxPrice != null) {
-					s.setInt(args, maxPrice * 100);
-				}
-				int i = 0;
-				for(String url : urls) {
-					s.setString(i + 1 + args, url);
-					i++;
-				}
+				PreparedStatement s = getPriceStatement(conn, urls, date, minPrice, maxPrice);
 				ResultSet res = s.executeQuery();
 				while (res.next()) {
 					String url = res.getString(1);
