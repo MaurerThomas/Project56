@@ -1,35 +1,19 @@
 <div>
     <h2>Grafieken</h2>
 
-    <img id ="image" src="/img/LineChart.jpeg">
+    <img id ="image" src="/img/LineChartVoedingen.jpeg">
     <select id="grafiek">
-        <option value="1" selected>ProcessorKoeler</option>
-        <option value="2">Processor</option>
-        <option value="3">Voeding</option>
-        <option value="4">Moederbord</option>
-        <option value="5">Geheugen</option>
-        <option value="6">Videokaart</option>
-        <option value="7">Behuizing</option>
-        <option value="8">Schijven</option>
+        <option value="0" selected>ProcessorKoeler</option>
+        <option value="1">Processor</option>
+        <option value="2">Voeding</option>
+        <option value="3">Moederbord</option>
+        <option value="4">Geheugen</option>
+        <option value="5">Videokaart</option>
+        <option value="6">Behuizing</option>
+        <option value="7">Schijven</option>
     </select>
 
     <img src="/img/LineChartVisitor.jpeg">
 </div>
-<script>
-    var grafiekList = [
-    "/img/LineChartProcessorenCoolers.jpeg",
-    "/img/LineChartProcessoren.jpeg",
-    "/img/LineChartVoedingen.jpeg",
-    "/img/LineChartMoederborden.jpeg",
-    "/img/LineChartGeheugen.jpeg ",
-    "/img/LineChartGrafischeKaarten.jpeg",
-    "/img/LineChartBehuizingen.jpeg",
-    "/img/LineChartSchijven.jpeg",  ];
 
-
-$('#grafiek').change(function () {
-    $webSocket.send({action: 'makeChart': 'ProcessorKoeler' });
-    var val = parseInt($('#grafiek').val());
-    $('#image').attr("src",grafiekList[val]);
-}); </script>
 <script src="/js/admin/dashboard_grafieken.js"></script>

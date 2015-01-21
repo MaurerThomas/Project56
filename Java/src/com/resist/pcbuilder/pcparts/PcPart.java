@@ -301,13 +301,17 @@ public abstract class PcPart {
 
     private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
         Set<String> eans = parts.keySet();
+        System.out.println(eans);
         List<DatePrice> out = new ArrayList<>();
         //"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=url_ean.url) WHERE ean IN("+eans+")";
         try {
-            Statement statement = conn.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
+            PreparedStatement s = conn.prepareStatement("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
                     +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.TABLE_EAN+""+"."+DBConnection.COLUMN_EAN_URL+") " +
-                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+DBConnection.getInQuery(eans.size())+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE );
+                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+DBConnection.getInQuery(eans.size())+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE);
+
+            ResultSet resultSet = s.executeQuery();
+            resultSet.close();
+            s.close();
             while (resultSet.next()){
                 DatePrice datePrice = new DatePrice(resultSet.getDate(2),resultSet.getInt(1));
                 out.add(datePrice);

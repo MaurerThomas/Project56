@@ -45,7 +45,9 @@ public class Grafieken implements Dashboard {
             return new OutputBuilder().htmlTemplate("#main","dashboard_grafieken").getOutput();
         } else if(input.has("makeChart")) {
             try {
-                handleCharts(input);
+                System.out.println("Ik ga handelen");
+                System.out.println("Input = : " + input);
+               handleCharts(input);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -57,6 +59,7 @@ public class Grafieken implements Dashboard {
 
     private void handleCharts(JSONObject input) throws IOException {
         String action = input.getString("makeChart");
+        System.out.println(action);
         if(action.equals("ProcessorKoeler")) {
             makeChartForProcessorCoolers();
         } else if (action.equals("Processor")){
