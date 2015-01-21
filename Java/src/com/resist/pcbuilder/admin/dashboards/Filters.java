@@ -1,6 +1,7 @@
 package com.resist.pcbuilder.admin.dashboards;
 
 
+import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchHandler;
 import com.resist.pcbuilder.admin.AdminSession;
@@ -13,6 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
 
 /**
  * Created by Armindo on 9-1-2015.
@@ -30,6 +32,7 @@ public class Filters implements Dashboard {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_filters").getOutput();
         }
+            //iets met return de getFilters functie hier
         return null;
     }
 
@@ -39,6 +42,63 @@ public class Filters implements Dashboard {
 
     public java.sql.Connection getConnection() {
         return pcbuilder.getDBConnection().getConnection();
+    }
+
+    public static boolean createFilter(Connection conn, String category, String filtername) {
+        try {
+            PreparedStatement s;
+            if(category == "geheugen") {
+                s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_MEMORY + "(" + DBConnection.COLUMN_MEMORY_TYPE + ")" + "VALUES(" + " ?)");
+                s.setString(1, filtername);
+            } else if(category == "hardeschijven") {
+                s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_HDD + "(" + DBConnection.COLUMN_HDD_INTERFACE + ")" + "VALUES(" + " ?)");
+                s.setString(1, filtername);
+            } else if(category == "processors") {
+                s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_SOCKET + "(" + DBConnection.COLUMN_SOCKET_TYPE + ")" + "VALUES(" + " ?)");
+                s.setString(1, filtername);
+            } else if(category == "grafischekaarten") {
+                s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_INTERFACE + "(" + DBConnection.COLUMN_INTERFACE_TYPE + ")" + "VALUES(" + " ?)");
+                s.setString(1, filtername);
+            } else {
+                s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_FORMFACTOR + "(" + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + ")" + "VALUES(" + " ?)");
+                s.setString(1, filtername);
+            }
+            s.executeUpdate();
+            s.close();
+            return true;
+        } catch (SQLException e) {
+            PcBuilder.LOG.log(Level.WARNING,"Failed to delete the filter.",e);
+            return false;
+        }
+    }
+
+
+    public static boolean deleteFilter(Connection conn, String category, String filtername) {
+        try {
+            PreparedStatement s;
+            if(category == "geheugen") {
+                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_MEMORY + " WHERE " + DBConnection.COLUMN_MEMORY_TYPE + " = ?");
+                s.setString(1, filtername);
+            } else if(category == "hardeschijven") {
+                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_HDD + " WHERE " + DBConnection.COLUMN_HDD_INTERFACE + " = ?");
+                s.setString(1, filtername);
+            } else if(category == "processors") {
+                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_SOCKET + " WHERE " + DBConnection.COLUMN_SOCKET_TYPE + " = ?");
+                s.setString(1, filtername);
+            } else if(category == "grafischekaarten") {
+                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_INTERFACE + " WHERE " + DBConnection.COLUMN_INTERFACE_TYPE + " = ?");
+                s.setString(1, filtername);
+            } else {
+                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_FORMFACTOR + " WHERE " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + " = ?");
+                s.setString(1, filtername);
+            }
+            s.executeUpdate();
+            s.close();
+            return true;
+        } catch (SQLException e) {
+            PcBuilder.LOG.log(Level.WARNING,"Failed to delete the filter.",e);
+            return false;
+        }
     }
 
 
