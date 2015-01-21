@@ -180,7 +180,36 @@ function initSearch() {
 		}
 	}
 
+	 function getComponentId($component){
+        
+        if ($component == 'Moederborden'){
+            return 'moederbordselectie';
+        } else if ($component == 'Processoren'){
+            return 'processorselectie';
+        } else if ($component == 'Koeling'){
+            return  'processorkoelerselectie';
+        } else if ($component == 'Geheugen'){
+            return 'geheugenselectie';
+        } else if ($component == 'Grafische kaarten'){
+            return 'grafischekaartselectie';
+        } else if ($component.indexOf('schijven') != -1){
+            return 'hardeschijfselectie';
+        } else if ($component == 'Behuizingen'){
+            return 'behuizingselectie';
+        } else if ($component == 'Voedingen'){
+            return 'voedingselectie';
+        } else if ($component == 'Besturingssystemen'){
+            return 'besturingssysteemselectie'
+        }
+                
+    }
+
 	function getItemHTML($item) {
-		return '<tr class="item"><td>'+$item.name+'</td><td>'+$item.brand+'</td><td>&euro; '+$item.euro+','+$item.cent+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>';
+		var $zoekResultaten = $('<tr class="item"><td>'+$item.name+'</td><td>'+$item.brand+'</td><td>&euro; '+$item.euro+','+$item.cent+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>');
+        
+        $zoekResultaten.find('.btn').click(function (){
+            $('#'+getComponentId($item.component)+' .selection-title').text($item.name);
+        });
+        return $zoekResultaten;
 	}
 }
