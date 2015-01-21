@@ -1,10 +1,6 @@
 package com.resist.pcbuilder.pcparts;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -291,23 +287,34 @@ public abstract class PcPart {
 		return out;
 	}
 
-	public static List<DatePrice> getAvgPrice(Client client, Connection conn, String component) {
-		List<DatePrice> out = new ArrayList<>();
-		List<SearchFilter> filterList = new ArrayList<>();
-		filterList.add(SearchFilter.getInstance("component", component));
-		QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
-		if(query != null) {
-			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client, query, 10);
-			out = getAvgPrices(conn, elasticResults);
-		}
-		return out;
-	}
+    public static List<DatePrice> getAvgPrice(Client client, Connection conn, String component) {
+        List<DatePrice> out = new ArrayList<>();
+        List<SearchFilter> filterList = new ArrayList<>();
+        filterList.add(SearchFilter.getInstance("component", component));
+        QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
+        if(query != null) {
+            Map<String, Map<String, Object>> elasticResults = getFilteredParts(client, query, 10);
+            out = getAvgPrices(conn, elasticResults);
+        }
+        return out;
+    }
 
-	private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
-		Set<String> eans = parts.keySet();
-		//"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=urean.url) WHERE ean IN("+doietsmet(eans)+")";
-		//doe iets thomas
-		//ongeveer dit: addPartPrices
-		return null;
-	}
+    private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
+        Set<String> eans = parts.keySet();
+        List<DatePrice> out = new ArrayList<>();
+        //"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=url_ean.url) WHERE ean IN("+eans+")";
+        try {
+            Statement statement = conn.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
+                    +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.TABLE_PRICE+ " "+"."+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.TABLE_EAN+""+"."+DBConnection.COLUMN_EAN_URL+") " +
+                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+eans );
+            while (resultSet.next()){
+             //   out.add(resultSet.getInt(1),resultSet.getDate(2)));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return out;
+    }
 }

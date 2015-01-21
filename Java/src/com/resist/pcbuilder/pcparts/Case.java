@@ -1,7 +1,9 @@
 package com.resist.pcbuilder.pcparts;
 
 import com.resist.pcbuilder.DBConnection;
+import com.resist.pcbuilder.DatePrice;
 import com.resist.pcbuilder.PcBuilder;
+import org.elasticsearch.client.Client;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -53,4 +55,8 @@ public class Case extends PcPart {
 		}
         return out;
 	}
+
+    public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
+        return PcPart.getAvgPrice(client,conn,COMPONENT);
+    }
 }

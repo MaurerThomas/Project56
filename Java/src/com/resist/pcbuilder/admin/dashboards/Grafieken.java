@@ -3,8 +3,10 @@ package com.resist.pcbuilder.admin.dashboards;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 
+import com.resist.pcbuilder.pcparts.*;
 import org.elasticsearch.client.Client;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
@@ -19,7 +21,6 @@ import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Analytics;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
-import com.resist.pcbuilder.pcparts.Processor;
 
 /**
  * Created by Thomas on 16-12-2014.
@@ -77,17 +78,17 @@ public class Grafieken implements Dashboard {
     }
 
     private void makeChartForPartsPrice() throws IOException {
-        JSONArray getPrijs = makeFiltersForGraph(null);
+       List<DatePrice> priceAndDate = getAveragePriceForComponent(null);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
        // Voor debugging
        // int[] dataset = new int[getPrijs.length()];
 
-        for (int i = 0; i < getPrijs.length(); ++i){
-            JSONObject prijs = getPrijs.getJSONObject(i);
-            line_chart_dataset.addValue(prijs.getInt("euro")+prijs.getInt("cent")/100.0, "Prijs", prijs.get("crawlDate").toString());
 
-        }
+
+         //line_chart_dataset.addValue(prijs, "Prijs", date);
+
+
         JFreeChart lineChartObject = ChartFactory.createLineChart(
                 "Schijven", "Datum",
                 "Prijs",
@@ -102,12 +103,27 @@ public class Grafieken implements Dashboard {
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
-    private JSONArray makeFiltersForGraph(String part) {
+    private List<DatePrice> getAveragePriceForComponent(String part) {
     	Client client = session.getPcBuilder().getSearchClient();
     	Connection conn = session.getConnection();
         if(part.equals(Processor.COMPONENT)) {
-            List<DatePrice> spul = Processor.getAvgPrice(client,conn);
+           return  Processor.getAvgPrice(client,conn);
+        } else if (part.equals(ProcessorCooler.COMPONENT)){
+            return ProcessorCooler.getAvgPrice(client,conn);
+        } else if (part.equals(PowerSupplyUnit.COMPONENT)){
+            return PowerSupplyUnit.getAvgPrice(client,conn);
+        } else if (part.equals(Motherboard.COMPONENT)){
+            return Motherboard.getAvgPrice(client,conn);
+        } else if (part.equals(Memory.COMPONENT)){
+            return Memory.getAvgPrice(client,conn);
+        } else if (part.equals(HardDisk.COMPONENT)){
+            return HardDisk.getAvgPrice(client,conn);
+        } else if (part.equals(GraphicsCard.COMPONENT)){
+            return GraphicsCard.getAvgPrice(client,conn);
+        } else if (part.equals(Case.COMPONENT)){
+            return Case.getAvgPrice(client,conn);
         }
-        return null;
+      return null;
     }
+
 }

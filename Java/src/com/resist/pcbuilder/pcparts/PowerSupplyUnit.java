@@ -1,10 +1,14 @@
 package com.resist.pcbuilder.pcparts;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import com.resist.pcbuilder.DatePrice;
 import com.resist.pcbuilder.PcBuilder;
+import org.elasticsearch.client.Client;
 
 public class PowerSupplyUnit extends PcPart {
 	public static final String COMPONENT = "Voedingen";
@@ -28,4 +32,7 @@ public class PowerSupplyUnit extends PcPart {
 	public static boolean isValidRangeKey(String key) {
 		return key.equals("Vermogen");
 	}
+    public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
+        return PcPart.getAvgPrice(client,conn,COMPONENT);
+    }
 }
