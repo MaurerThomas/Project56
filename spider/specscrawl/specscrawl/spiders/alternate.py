@@ -22,6 +22,7 @@ class AlternateSpider(Spider):
 	except MySQLdb.Error, e:
 		print "Error %d: %s" % (e.args[0], e.args[1])
 	
+	start_urls = ['http://www.alternate.nl/Aerocool/GT-700S-700-Watt-voeding/html/product/1016768?tk=7&lk=9533']
 	name = "alternate"
 	allowed_domains = ["alternate.nl"]
 
@@ -29,21 +30,26 @@ class AlternateSpider(Spider):
 		print "next item"
 		item = SpecscrawlItem()
 		datalist = response.xpath('//*[@class="techData"]')
-		title = datalist.xpath('//*[starts-with(@class,"breadCrumbs")]/span/a/span/text()').extract()
-		title = title[1]
-		name = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"name")]/text()').extract()
-		brand = datalist.xpath('//*[starts-with(@class,"productNameContainer")]/*[starts-with(@itemprop,"brand")]/text()').extract()
-		ean = response.xpath('//*[@id="details"]/script/text()').extract()
+		
+		ean = response.xpath('//*[@id="buyProduct"]/script[1]/text()').extract()
+		print ean
 		ean = (''.join(ean)).split("upcean")[1]
 		ean = re.findall(r'\d+', ''.join(ean))[0]
-		item['specs'] ={}
-		item['specs'] = {"component":datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0],
-							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract()[0],
-							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract()[0],
+		breadcrumbs = datalist.xpath('//*[@id="contentWrapper"]/div[1]').extract()
+		print breadcrumbs
+		component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0]
+		if "Voedingen" in "".join(breadcrumbs):
+			print "found voedingen"
+			component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[3]/a/span/text()').extract()[0]
+		item['specs'] ={}	
+		item['specs'] = {"component": component,
+							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract(),
+							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract(),
 							"url": response.url,
 							"ean":ean
 							}
 		
+		print component + "DIT IS HET COMPONENT"
 		
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')
