@@ -6,10 +6,11 @@ import java.util.logging.Level;
 
 import com.resist.pcbuilder.PcBuilder;
 
-public class Voeding extends PcPart {
+public class PowerSupplyUnit extends PcPart {
+	public static final String COMPONENT = "Voedingen";
 	private int wattage;
 
-	public Voeding(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
+	public PowerSupplyUnit(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
 		try {
 			wattage = Integer.parseInt((String) specs.get("Vermogen"));
@@ -21,7 +22,7 @@ public class Voeding extends PcPart {
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {
-		return specs.containsKey("Vermogen");
+		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Vermogen");
 	}
 
 	public static boolean isValidRangeKey(String key) {

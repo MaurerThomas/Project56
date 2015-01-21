@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
-import com.resist.pcbuilder.DatePrice;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -20,12 +19,13 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 
 import com.resist.pcbuilder.DBConnection;
+import com.resist.pcbuilder.DatePrice;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.filters.ElasticSearchFilter;
 import com.resist.pcbuilder.filters.MySQLPriceFilter;
 import com.resist.pcbuilder.filters.SearchFilter;
 
-public class PcPart {
+public abstract class PcPart {
 	private String url;
 	private String component;
 	private String brand;
@@ -146,7 +146,7 @@ public class PcPart {
 	}
 
 	public static boolean isValidRangeKey(String key) {
-		return Voeding.isValidRangeKey(key);
+		return PowerSupplyUnit.isValidRangeKey(key);
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {
@@ -154,6 +154,12 @@ public class PcPart {
 	}
 
 	public static PcPart getInstance(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
+		final String[] basics = new String[] {"url","component","merk","naam","eun"};
+		for(String field : basics) {
+			if(!specs.containsKey(field) || !(specs.get(field) instanceof String)) {
+				return null;
+			}
+		}
 		if(Case.isPart(specs)) {
 			return new Case(euro, cent, crawlDate, specs);
 		} else if(GraphicsCard.isPart(specs)) {
@@ -164,10 +170,14 @@ public class PcPart {
 			return new Memory(euro, cent, crawlDate, specs);
 		} else if(Processor.isPart(specs)) {
 			return new Processor(euro, cent, crawlDate, specs);
-		} else if(Voeding.isPart(specs)) {
-			return new Voeding(euro, cent, crawlDate, specs);
+		} else if(PowerSupplyUnit.isPart(specs)) {
+			return new PowerSupplyUnit(euro, cent, crawlDate, specs);
+		} else if(Motherboard.isPart(specs)) {
+			return new Motherboard(euro, cent, crawlDate, specs);
+		} else if(ProcessorCooler.isPart(specs)) {
+			return new ProcessorCooler(euro, cent, crawlDate, specs);
 		}
-		return new PcPart(euro, cent, crawlDate, specs);
+		return null;
 	}
 
 	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxElasticResults, int maxSQLResults) {
@@ -267,7 +277,10 @@ public class PcPart {
 				while (res.next()) {
 					Map<String,Object> specs = parts.get(res.getString(1));
 					specs.put("url", res.getString(5));
-					out.add(getInstance(res.getInt(2), res.getInt(3), res.getDate(4), specs));
+					PcPart part = getInstance(res.getInt(2), res.getInt(3), res.getDate(4), specs);
+					if(part != null) {
+						out.add(part);
+					}
 				}
 				res.close();
 				s.close();
@@ -292,8 +305,9 @@ public class PcPart {
 
 	private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
 		Set<String> eans = parts.keySet();
-		"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=urean.url) WHERE ean IN("+doietsmet(eans)+")";
+		//"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=urean.url) WHERE ean IN("+doietsmet(eans)+")";
 		//doe iets thomas
 		//ongeveer dit: addPartPrices
+		return null;
 	}
 }

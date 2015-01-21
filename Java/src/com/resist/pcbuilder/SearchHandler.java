@@ -23,9 +23,9 @@ public class SearchHandler {
 		Connection conn = pcbuilder.getDBConnection().getConnection();
 		if (json.has("filters")) {
 			return handleQuery(conn,json.getJSONArray("filters"));
-		} else if (json.has("makechart")){
+		} /*else if (json.has("makechart")){
 			return getPartsPriceForGraph(conn,json.getJSONArray("makechart"));
-		}
+		}*/
 		return null;
 	}
 

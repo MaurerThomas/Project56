@@ -1,12 +1,11 @@
 package com.resist.pcbuilder.admin.dashboards;
 
-import com.resist.pcbuilder.DatePrice;
-import com.resist.pcbuilder.admin.AdminSession;
-import com.resist.pcbuilder.admin.Analytics;
-import com.resist.pcbuilder.admin.Dashboard;
-import com.resist.pcbuilder.admin.OutputBuilder;
-import com.resist.pcbuilder.pcparts.PcPart;
-import com.resist.pcbuilder.pcparts.Processor;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.List;
+
+import org.elasticsearch.client.Client;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
@@ -15,9 +14,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import com.resist.pcbuilder.DatePrice;
+import com.resist.pcbuilder.admin.AdminSession;
+import com.resist.pcbuilder.admin.Analytics;
+import com.resist.pcbuilder.admin.Dashboard;
+import com.resist.pcbuilder.admin.OutputBuilder;
+import com.resist.pcbuilder.pcparts.Processor;
 
 /**
  * Created by Thomas on 16-12-2014.
@@ -75,7 +77,7 @@ public class Grafieken implements Dashboard {
     }
 
     private void makeChartForPartsPrice() throws IOException {
-        JSONArray getPrijs = makeFiltersForGraph();
+        JSONArray getPrijs = makeFiltersForGraph(null);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
        // Voor debugging
@@ -100,10 +102,12 @@ public class Grafieken implements Dashboard {
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
-    private JSONArray makeFiltersForGraph(String part){
+    private JSONArray makeFiltersForGraph(String part) {
+    	Client client = session.getPcBuilder().getSearchClient();
+    	Connection conn = session.getConnection();
         if(part.equals(Processor.COMPONENT)) {
-            List<DatePrice> spul = Processor.getAvgPrice();
+            List<DatePrice> spul = Processor.getAvgPrice(client,conn);
         }
-
+        return null;
     }
 }
