@@ -20,7 +20,7 @@ public abstract class SearchFilter {
 
 	public static SearchFilter getInstance(String key, Object value) {
 		SearchFilter out = MySQLFilter.getInstance(key,value);
-		if(out != null) {
+		if(out == null) {
 			return ElasticSearchFilter.getInstance(key, value);
 		}
 		return out;

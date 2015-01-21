@@ -30,17 +30,17 @@ public class SearchHandler {
 	}
 
 	private JSONArray handleQuery(Connection conn,JSONArray json) {
-		return getParts(conn,json,pcbuilder.getSettings().getInt("daysPartsRemainValid")*DAY_IN_MS,pcbuilder.getSettings().getInt("maxElasticResults"));
+		return getParts(conn,json,pcbuilder.getSettings().getInt("daysPartsRemainValid")*DAY_IN_MS,pcbuilder.getSettings().getInt("maxElasticResults"),pcbuilder.getSettings().getInt("maxMySQLResults"));
 	}
 
 	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json) {
-		return getParts(conn,json,7*DAY_IN_MS,10);
+		return getParts(conn,json,7*DAY_IN_MS,10,10);
 	}
 
-	private JSONArray getParts(Connection conn,JSONArray json,long timeAgo,int maxResults) {
+	private JSONArray getParts(Connection conn,JSONArray json,long timeAgo,int maxElasticResults,int maxSQLResults) {
 		List<SearchFilter> filters = parseJSONFilters(json);
 		if (filters.size() != 0) {
-			List<PcPart> results = PcPart.getParts(pcbuilder.getSearchClient(), conn, filters, timeAgo, maxResults);
+			List<PcPart> results = PcPart.getParts(pcbuilder.getSearchClient(), conn, filters, timeAgo, maxElasticResults, maxSQLResults);
 			return partsToJSON(results);
 		}
 		return null;

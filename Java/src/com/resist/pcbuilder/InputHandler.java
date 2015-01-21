@@ -21,16 +21,17 @@ public class InputHandler implements MessageHandler {
 		if (message.getType() == Connection.OPCODE_TEXT_FRAME) {
 			JSONObject json = parseInput(message.toString());
 			if (json != null) {
-				getVisitor(message);
+				getVisitor(message,json);
 				JSONObject out = handleJSON(json);
 				sendReturn(message, out.toString());
 			}
 		}
 	}
 
-	private void getVisitor(Message message) {
-
-		Analytics.insertVisitors(message.getConnection().hashCode(), pcbuilder.getDBConnection());
+	private void getVisitor(Message message, JSONObject json) {
+		if(json.has("action") && json.get("action").equals("init")) {
+			Analytics.insertVisitors(message.getConnection().hashCode(), pcbuilder.getDBConnection());
+		}
 	}
 
 	private JSONObject parseInput(String message) {

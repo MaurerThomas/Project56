@@ -169,13 +169,13 @@ public class PcPart {
 		return new PcPart(euro, cent, crawlDate, specs);
 	}
 
-	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxResults) {
+	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxElasticResults, int maxSQLResults) {
 		List<PcPart> out = new ArrayList<PcPart>();
 		QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
 		if(query != null) {
-			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,query,maxResults);
+			Map<String, Map<String, Object>> elasticResults = getFilteredParts(client,query,maxElasticResults);
 			Map<String,Integer> minMaxPrice = getMinMaxPrice(filterList);
-			out = addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"));
+			out = addPartPrices(conn,elasticResults,DBConnection.getPastSQLDate(timeAgo),minMaxPrice.get("minPrice"),minMaxPrice.get("maxPrice"),maxSQLResults);
 		}
 		return out;
 	}
@@ -215,10 +215,10 @@ public class PcPart {
 		return out;
 	}
 
-	private static String getPriceSQL(Set<String> urls, Integer minPrice, Integer maxPrice) {
+	private static String getPriceSQL(Set<String> urls, Integer minPrice, Integer maxPrice, Integer limit) {
 		StringBuilder sql = new StringBuilder("SELECT ");
-		sql.append(DBConnection.COLUMN_PRICE_URL).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
-				.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE)
+		sql.append(DBConnection.COLUMN_EAN_EAN).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",")
+				.append(DBConnection.COLUMN_PRICE_CENT).append(",").append(DBConnection.COLUMN_PRICE_DATE).append(",").append(DBConnection.COLUMN_EAN_URL)
 				.append(" FROM ").append(DBConnection.TABLE_PRICE).append(" JOIN ").append(DBConnection.TABLE_EAN).append(" ON(")
 				.append(DBConnection.COLUMN_EAN_URL).append(" = ").append(DBConnection.COLUMN_PRICE_URL).append(") WHERE ")
 				.append(DBConnection.COLUMN_PRICE_DATE).append(" > ?");
@@ -229,11 +229,15 @@ public class PcPart {
 			sql.append(" AND ").append(DBConnection.COLUMN_PRICE_EURO).append("*100+").append(DBConnection.COLUMN_PRICE_CENT).append(" <= ?");
 		}
 		sql.append(" AND ").append(DBConnection.COLUMN_EAN_EAN).append(DBConnection.getInQuery(urls.size()));
+		sql.append(" ORDER BY ").append(DBConnection.COLUMN_EAN_EAN).append(",").append(DBConnection.COLUMN_PRICE_EURO).append(",").append(DBConnection.COLUMN_PRICE_CENT);
+		if(limit != null) {
+			sql.append(" LIMIT "+limit);
+		}
 		return sql.toString();
 	}
 
-	private static PreparedStatement getPriceStatement(Connection conn, Set<String> eans, Date date, Integer minPrice, Integer maxPrice) throws SQLException {
-		PreparedStatement s = conn.prepareStatement(getPriceSQL(eans,minPrice,maxPrice));
+	private static PreparedStatement getPriceStatement(Connection conn, Set<String> eans, Date date, Integer minPrice, Integer maxPrice, Integer limit) throws SQLException {
+		PreparedStatement s = conn.prepareStatement(getPriceSQL(eans,minPrice,maxPrice,limit));
 		s.setDate(1, date);
 		int args = 1;
 		if (minPrice != null) {
@@ -252,16 +256,17 @@ public class PcPart {
 		return s;
 	}
 
-	private static List<PcPart> addPartPrices(Connection conn, Map<String, Map<String, Object>> parts, Date date, Integer minPrice, Integer maxPrice) {
+	private static List<PcPart> addPartPrices(Connection conn, Map<String, Map<String, Object>> parts, Date date, Integer minPrice, Integer maxPrice, Integer limit) {
 		List<PcPart> out = new ArrayList<PcPart>();
 		Set<String> eans = parts.keySet();
 		if(eans.size() != 0) {
 			try {
-				PreparedStatement s = getPriceStatement(conn, eans, date, minPrice, maxPrice);
+				PreparedStatement s = getPriceStatement(conn, eans, date, minPrice, maxPrice, limit);
 				ResultSet res = s.executeQuery();
 				while (res.next()) {
-					String url = res.getString(1);
-					out.add(getInstance(res.getInt(2), res.getInt(3), res.getDate(4), parts.get(url)));
+					Map<String,Object> specs = parts.get(res.getString(1));
+					specs.put("url", res.getString(5));
+					out.add(getInstance(res.getInt(2), res.getInt(3), res.getDate(4), specs));
 				}
 				res.close();
 				s.close();
