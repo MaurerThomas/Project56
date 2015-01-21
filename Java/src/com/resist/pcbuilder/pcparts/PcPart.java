@@ -307,7 +307,7 @@ public abstract class PcPart {
             Statement statement = conn.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
                     +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.TABLE_PRICE+ " "+"."+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.TABLE_EAN+""+"."+DBConnection.COLUMN_EAN_URL+") " +
-                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+eans+" GROUP BY "+DBConnection.COLUMN_ANALYTICS_DATUM );
+                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+eans+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE );
             while (resultSet.next()){
              //   out.add(resultSet.getInt(1),resultSet.getDate(2)));
             }
