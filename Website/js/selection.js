@@ -74,7 +74,7 @@ var $componentSelection = (function() {
 	function getPriceString($euro,$cent) {
 		var $out = $euro+',';
 		if($cent === 0) {
-			$out += '&emdash;';
+			$out += '-';
 		} else if($cent < 10) {
 			$out += '0'+$cent;
 		} else {

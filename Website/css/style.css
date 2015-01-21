@@ -242,3 +242,72 @@ footer > div {
 .search-results th.headerSortUp .glyphicon-chevron-up {
 	display: inline;
 }
+
+.loader {
+	font-size: 20px;
+	margin: 5em auto;
+	width: 1em;
+	height: 1em;
+	border-radius: 50%;
+	position: relative;
+	text-indent: -9999em;
+	-webkit-animation: load4 1.3s infinite linear;
+	animation: load4 1.3s infinite linear;
+	box-shadow: black;
+}
+
+@-webkit-keyframes load4 {
+	0%,
+	100% {
+		box-shadow: 0em -3em 0em 0.2em, 2em -2em 0 0em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 0em;
+	}
+	12.5% {
+		box-shadow: 0em -3em 0em 0em, 2em -2em 0 0.2em, 3em 0em 0 0em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	25% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 0em, 3em 0em 0 0.2em, 2em 2em 0 0em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	37.5% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 0em, 2em 2em 0 0.2em, 0em 3em 0 0em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	50% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 0em, 0em 3em 0 0.2em, -2em 2em 0 0em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	62.5% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 0em, -2em 2em 0 0.2em, -3em 0em 0 0em, -2em -2em 0 -0.5em;
+	}
+	75% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 0em, -3em 0em 0 0.2em, -2em -2em 0 0em;
+	}
+	87.5% {
+		box-shadow: 0em -3em 0em 0em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 0em, -3em 0em 0 0em, -2em -2em 0 0.2em;
+	}
+}
+
+@keyframes load4 {
+	0%,
+	100% {
+		box-shadow: 0em -3em 0em 0.2em, 2em -2em 0 0em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 0em;
+	}
+	12.5% {
+		box-shadow: 0em -3em 0em 0em, 2em -2em 0 0.2em, 3em 0em 0 0em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	25% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 0em, 3em 0em 0 0.2em, 2em 2em 0 0em, 0em 3em 0 -0.5em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	37.5% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 0em, 2em 2em 0 0.2em, 0em 3em 0 0em, -2em 2em 0 -0.5em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	50% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 0em, 0em 3em 0 0.2em, -2em 2em 0 0em, -3em 0em 0 -0.5em, -2em -2em 0 -0.5em;
+	}
+	62.5% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 0em, -2em 2em 0 0.2em, -3em 0em 0 0em, -2em -2em 0 -0.5em;
+	}
+	75% {
+		box-shadow: 0em -3em 0em -0.5em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 0em, -3em 0em 0 0.2em, -2em -2em 0 0em;
+	}
+	87.5% {
+		box-shadow: 0em -3em 0em 0em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 0em, -3em 0em 0 0em, -2em -2em 0 0.2em;
+	}
+}

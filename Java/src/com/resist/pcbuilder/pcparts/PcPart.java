@@ -30,7 +30,7 @@ public abstract class PcPart {
 	private String component;
 	private String brand;
 	private String name;
-	private String eun;
+	private String ean;
 	private int euro;
 	private int cent;
 	private Date crawlDate;
@@ -46,12 +46,12 @@ public abstract class PcPart {
 			component = (String) specs.get("component");
 			brand = (String) specs.get("merk");
 			name = (String) specs.get("naam");
-			eun = (String) specs.get("eun");
+			ean = (String) specs.get("ean");
 			setSpec("url", url);
 			setSpec("component", component);
 			setSpec("brand", brand);
 			setSpec("name", name);
-			setSpec("eun", eun);
+			setSpec("ean", ean);
 		}
 	}
 
@@ -71,8 +71,8 @@ public abstract class PcPart {
 		return name;
 	}
 
-	public String getEun() {
-		return eun;
+	public String getEan() {
+		return ean;
 	}
 
 	public int getEuro() {
@@ -110,9 +110,9 @@ public abstract class PcPart {
 		setSpec("naam", name);
 	}
 
-	protected void setEun(String eun) {
-		this.eun = eun;
-		setSpec("eun", eun);
+	protected void setEun(String ean) {
+		this.ean = ean;
+		setSpec("ean", ean);
 	}
 
 	protected void setEuro(int euro) {
@@ -154,7 +154,7 @@ public abstract class PcPart {
 	}
 
 	public static PcPart getInstance(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
-		final String[] basics = new String[] {"url","component","merk","naam","eun"};
+		final String[] basics = new String[] {"url","component","merk","naam","ean"};
 		for(String field : basics) {
 			if(!specs.containsKey(field) || !(specs.get(field) instanceof String)) {
 				return null;
