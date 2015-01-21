@@ -57,6 +57,11 @@
 		$('#besturingssysteemselectie').click(function() {
 			$('a[href="#besturingssysteem"]').click();
 		});
+
+		if($EEstore.getItem('selection',false) !== false) {
+			$componentSelection.restore();
+			setTimeout(function() {$button.click();},200);
+		}
 	});
 	$(document).tooltip({position: {my: 'left top', at: 'right top'}});
 })(jQuery);

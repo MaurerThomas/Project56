@@ -131,7 +131,7 @@
 	function editAdmin($e) {
 		var $this = $(this),
 		$div = $this.parent().parent().find('.name'),
-		$icon = $this.find('span')
+		$icon = $this.find('span'),
 		$aid = $div.parent().attr('data-aid'),
 		$name = $div.parent().attr('data-name'),
 		$newName = $div.find('[name="username"]').val(),
