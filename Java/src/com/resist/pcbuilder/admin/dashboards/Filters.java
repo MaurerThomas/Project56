@@ -47,21 +47,17 @@ public class Filters implements Dashboard {
     public static boolean createFilter(Connection conn, String category, String filtername) {
         try {
             PreparedStatement s;
-            if(category == "geheugen") {
+            s.setString(1, filtername);
+            if(category.equals("geheugen")) {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_MEMORY + "(" + DBConnection.COLUMN_MEMORY_TYPE + ")" + "VALUES(" + " ?)");
-                s.setString(1, filtername);
-            } else if(category == "hardeschijven") {
+            } else if(category.equals("hardeschijven")) {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_HDD + "(" + DBConnection.COLUMN_HDD_INTERFACE + ")" + "VALUES(" + " ?)");
-                s.setString(1, filtername);
-            } else if(category == "processors") {
+            } else if(category.equals("processors")){
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_SOCKET + "(" + DBConnection.COLUMN_SOCKET_TYPE + ")" + "VALUES(" + " ?)");
-                s.setString(1, filtername);
-            } else if(category == "grafischekaarten") {
+            } else if(category.equals("grafischekaarten")) {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_INTERFACE + "(" + DBConnection.COLUMN_INTERFACE_TYPE + ")" + "VALUES(" + " ?)");
-                s.setString(1, filtername);
             } else {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_FORMFACTOR + "(" + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + ")" + "VALUES(" + " ?)");
-                s.setString(1, filtername);
             }
             s.executeUpdate();
             s.close();
@@ -76,21 +72,17 @@ public class Filters implements Dashboard {
     public static boolean deleteFilter(Connection conn, String category, String filtername) {
         try {
             PreparedStatement s;
-            if(category == "geheugen") {
+            s.setString(1, filtername);
+            if(category.equals("geheugen")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_MEMORY + " WHERE " + DBConnection.COLUMN_MEMORY_TYPE + " = ?");
-                s.setString(1, filtername);
-            } else if(category == "hardeschijven") {
+            } else if(category.equals("hardeschijven")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_HDD + " WHERE " + DBConnection.COLUMN_HDD_INTERFACE + " = ?");
-                s.setString(1, filtername);
-            } else if(category == "processors") {
+            } else if(category.equals("processors") {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_SOCKET + " WHERE " + DBConnection.COLUMN_SOCKET_TYPE + " = ?");
-                s.setString(1, filtername);
-            } else if(category == "grafischekaarten") {
+            } else if(category.equals("grafischekaarten")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_INTERFACE + " WHERE " + DBConnection.COLUMN_INTERFACE_TYPE + " = ?");
-                s.setString(1, filtername);
             } else {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_FORMFACTOR + " WHERE " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + " = ?");
-                s.setString(1, filtername);
             }
             s.executeUpdate();
             s.close();
