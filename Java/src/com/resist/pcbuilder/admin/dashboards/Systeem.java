@@ -10,9 +10,7 @@ import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 import org.rauschig.jarchivelib.CompressionType;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -34,15 +32,23 @@ public class Systeem implements Dashboard {
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
+        if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
+            return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
+        }   else if(input.has("action")) {
+            return handleActions(input);
+        }
+
+        return null;
+    }
+    private JSONObject handleActions(JSONObject input){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm");
         Date date = Calendar.getInstance().getTime();
         String currentDate = simpleDateFormat.format(date);
-
-        if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
-            return new OutputBuilder().htmlTemplate("#main","dashboard_systeem").getOutput();
+        if(input.getString("action").equals("getLogs")){
+            return displayLog();
         }
-		else if(input.getString("action").equals("clearLog"))
-		{
+        else if(input.getString("action").equals("clearLog"))
+        {
             try {
                 clearLog(currentDate);
             } catch (IOException e) {
@@ -55,7 +61,31 @@ public class Systeem implements Dashboard {
         }
         return null;
     }
-	
+
+	private JSONObject displayLog()
+    {
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(settings.getString("errorPath")+"error.log"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            return new JSONObject().append("log",sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 	private void clearLog(String date) throws IOException {
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");
