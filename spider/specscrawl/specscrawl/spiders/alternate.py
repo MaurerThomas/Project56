@@ -22,7 +22,6 @@ class AlternateSpider(Spider):
 	except MySQLdb.Error, e:
 		print "Error %d: %s" % (e.args[0], e.args[1])
 	
-	start_urls = ['http://www.alternate.nl/Aerocool/GT-700S-700-Watt-voeding/html/product/1016768?tk=7&lk=9533']
 	name = "alternate"
 	allowed_domains = ["alternate.nl"]
 
@@ -32,14 +31,11 @@ class AlternateSpider(Spider):
 		datalist = response.xpath('//*[@class="techData"]')
 		
 		ean = response.xpath('//*[@id="buyProduct"]/script[1]/text()').extract()
-		print ean
 		ean = (''.join(ean)).split("upcean")[1]
 		ean = re.findall(r'\d+', ''.join(ean))[0]
 		breadcrumbs = datalist.xpath('//*[@id="contentWrapper"]/div[1]').extract()
-		print breadcrumbs
 		component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0]
 		if "Voedingen" in "".join(breadcrumbs):
-			print "found voedingen"
 			component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[3]/a/span/text()').extract()[0]
 		item['specs'] ={}	
 		item['specs'] = {"component": component,
@@ -48,8 +44,6 @@ class AlternateSpider(Spider):
 							"url": response.url,
 							"ean":ean
 							}
-		
-		print component + "DIT IS HET COMPONENT"
 		
 		tempkeys = datalist.xpath('//*[@class="techDataCol1"]/text()').extract()
 		tempvalue = datalist.xpath('//*[@class="techDataCol2"]')

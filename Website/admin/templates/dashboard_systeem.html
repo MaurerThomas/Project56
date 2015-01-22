@@ -9,8 +9,8 @@
 			<div id="crontime"  class="col-sm-12">
 				<form class="form">
 					<div class="col-sm-6">
-						Hour<input type="text" class="form-control" width="10" name="hour">
-						Min<input type="text" class="form-control" width="10" name="min">
+						Hour<input type="text" id="hour1" class="form-control" width="10" name="hour">
+						Min<input type="text" id="minute1" class="form-control" width="10" name="min">
 						<a href="#systeem" class="btn btn-success" id="addtime">Add time</a>
 					</div>
 				</form>
@@ -26,6 +26,9 @@
 						<label for="checkbox2">Cdromland </label>
 					</div>
 				</form>
+				<div class="col-sm-12">
+					<a href="#systeem" class="btn btn-danger" id="savesettings">Save</a>
+				</div>
 			</div>
 		</div>
 		<hr>
@@ -36,9 +39,7 @@
 			<a href="#systeem" class="btn btn-success" id="clearlogs">clear</a>
 		</div>
 		<hr>
-		<div class="col-sm-12">
-			<a href="#systeem" class="btn btn-danger" id="savesettings">Save</a>
-		</div>
+		
 	</div>
 </div>
 <script src="/js/admin/dashboard_systeem.js"></script>
