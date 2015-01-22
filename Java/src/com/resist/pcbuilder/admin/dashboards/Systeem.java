@@ -64,8 +64,8 @@ public class Systeem implements Dashboard {
         File outputlog = new File(outputPath+"output.log");
         File errorlog = new File(errorPath+"error.log");
         Archiver archiver = ArchiverFactory.createArchiver(ArchiveFormat.TAR, CompressionType.GZIP);
-        String outputlogname = "output_"+simpleDateFormat.format(date);
-        String errorlogname = "error_"+simpleDateFormat.format(date);
+        String outputlogname = "output_"+date;
+        String errorlogname = "error_"+date;
         File destination = new File(backupPath);
         try{
             File archive = archiver.create(outputlogname, destination, outputlog);
