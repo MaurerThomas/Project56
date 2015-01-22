@@ -23,22 +23,23 @@ import java.util.List;
  * Created by Thomas on 16-12-2014.
  */
 public class Grafieken implements Dashboard {
-
-    public static final String IDENTIFIER = "grafieken";
-    public static final String VISITORLOCATION = "//var//www//html//img//LineChartVisitor.jpeg";
-    public static final String PROCESSORLOCATION = "//var//www//html//img//LineChartProcessoren.jpeg";
-    public static final String PROCESSORCOOLERLOCATION = "//var//www//html//img//LineChartProcessorenCoolers.jpeg";
-    public static final String POWERSUPPLYLOCATION = "//var//www//html//img//LineChartVoedingen.jpeg";
-    public static final String MOTHERBOARDLOCATION = "//var//www//html//img//LineChartMoederborden.jpeg";
-    public static final String MEMORYLOCATION = "//var//www//html//img//LineChartGeheugen.jpeg";
-    public static final String HARDDISKLOCATION = "//var//www//html//img//LineChartSchijven.jpeg";
-    public static final String GRAPHICSCARDLOCATION = "//var//www//html//img//LineChartGrafischeKaarten.jpeg";
-    public static final String CASELOCATION = "//var//www//html//img//LineChartBehuizingen.jpeg";
     private AdminSession session;
+    JSONObject settings;
 
     public Grafieken(AdminSession session) {
         this.session = session;
+        settings = session.getPcBuilder().getSettings();
     }
+    public  final String IDENTIFIER = "grafieken";
+    public  final String VISITORLOCATION = settings.getString("visitorGraphPath") ;
+    public  final String PROCESSORLOCATION = settings.getString("processorGraphPath") ;
+    public  final String PROCESSORCOOLERLOCATION = settings.getString("processorCoolerGraphPath") ;
+    public  final String POWERSUPPLYLOCATION = settings.getString("powerSupplyGraphPath") ;
+    public  final String MOTHERBOARDLOCATION = settings.getString("motherboardGraphPath") ;
+    public  final String MEMORYLOCATION = settings.getString("memoryGraphPath");
+    public  final String HARDDISKLOCATION = settings.getString("harddiskGraphPath") ;
+    public  final String GRAPHICSCARDLOCATION = settings.getString("graphicsCardGraphPath");
+    public  final String CASELOCATION = settings.getString("caseGraphPath");
 
 
     @Override
