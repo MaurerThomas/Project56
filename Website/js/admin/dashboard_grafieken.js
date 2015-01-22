@@ -1,9 +1,7 @@
  var grafiekList = [
-    "/img/LineChartProcessorenCoolers.jpeg?",
     "/img/LineChartProcessoren.jpeg?",
     "/img/LineChartVoedingen.jpeg?",
     "/img/LineChartMoederborden.jpeg?",
-    "/img/LineChartGeheugen.jpeg?",
     "/img/LineChartGrafischeKaarten.jpeg?",
     "/img/LineChartBehuizingen.jpeg?",
     "/img/LineChartSchijven.jpeg?",  ];
