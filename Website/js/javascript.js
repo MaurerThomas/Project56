@@ -1,7 +1,8 @@
 (function($) {
 	$(function() {
 		var $button = $('#start a.btn'),
-		$compatibility = checkCompatibility($button);
+		$compatibility = checkCompatibility($button),
+		$lightBoxButton = $('#pcbuilder-lightbox button[title="Close"]');
 		$button.click(function($e) {
 			$e.preventDefault();
 			initFilters();
@@ -58,6 +59,18 @@
 			$('a[href="#besturingssysteem"]').click();
 		});
 		$('.pcbuilder-tabs li:not(.active) a').click(loadInitialItems);
+		$lightBoxButton.click(function($e) {
+			var $lightbox = $('#pcbuilder-lightbox');
+			$e.preventDefault();
+			$lightbox.fadeOut(1000,function() {
+				$lightbox.addClass('hidden');
+			});
+		});
+		$(window).keyup(function($e) {
+			if($e.key == 'Esc') {
+				$lightBoxButton.click();
+			}
+		});
 
 		if($EEstore.getItem('selection',false) !== false) {
 			$componentSelection.restore();

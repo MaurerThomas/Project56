@@ -91,8 +91,21 @@ var $componentSelection = (function() {
 		return $out;
 	}
 
+	function selectionPopUp() {
+		var $key,
+		$lightbox = $('#pcbuilder-lightbox'),
+		$content = $lightbox.find('.content-wrapper > .content');
+		$content.empty();
+		for($key in $selection) {
+			$content.append('<p>'+JSON.stringify($selection[$key])+'</p>');
+		}
+		$lightbox.removeClass('hidden').hide();
+		$lightbox.fadeIn(1000);
+	}
+
 	$(function() {
 		$('.pcbuilder-clear-selection').click(clear);
+		$('.pcbuilder-show-selection').click(selectionPopUp);
 	});
 
 	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore};
