@@ -24,13 +24,6 @@ function initSearch() {
 		}
 	}
 
-	function getNumFilter($filters,$key,$selector) {
-		var $val = getNumber($selector);
-		if(!isNaN($val)) {
-			$filters[$key] = $val;
-		}
-	}
-
 	function getRangeFilter($filters,$key,$selectorMin,$selectorMax) {
 		var $min = getNumber($selectorMin), $max = getNumber($selectorMax);
 		if(!isNaN($min) && !isNaN($max)) {
@@ -153,25 +146,39 @@ function initSearch() {
 	}
 
 	function getSearchResultReceiver($form) {
+		var $f = $($form),
+		$results = $f.parent().find('.search-results'),
+		$submit = $f.find('input[type="submit"]');
+		$results.html('<p>Onderdelen worden geladen...</p><p class="loader"></p>');
+		$submit.attr('disabled',true);
 		return function($msg) {
-			var $results,$n,$json,$table,$tbody;
+			var $json;
 			if($msg.data !== undefined) {
 				$json = getJSON($msg.data);
 				if($json !== null && $json.resultaten !== undefined) {
-					$results = $($form).parent().find('.search-results');
 					$results.empty();
-					$table = $('<table style="width:100%;"><thead><tr><th>Naam</th><th>Merk</th><th>Prijs</th><th></th></tr></thead></table>');
-					$table.find('th').append(' <span class="glyphicon glyphicon-chevron-up"></span><span class="glyphicon glyphicon-chevron-down"></span>');
-					$results.append($table);
-					$tbody = $('<tbody></tbody>');
-					$table.append($tbody);
-					for($n=0;$n < $json.resultaten.length;$n++) {
-						$tbody.append(getItemHTML($json.resultaten[$n]));
+					if(!isNaN($json.resultaten.length) && $json.resultaten.length > 0) {
+						displayResults($json.resultaten,$results);
+					} else {
+						$results.append('<p class="pcbuilder-no-results">Er zijn geen onderdelen gevonden met deze filters.</p>');
 					}
-					$table.tablesorter();
+					$submit.attr('disabled',false);
 				}
 			}
 		};
+	}
+
+	function displayResults($resultaten,$results) {
+		var $n,
+		$table = $('<table style="width:100%;"><thead><tr><th>Naam</th><th>Merk</th><th>Prijs</th><th></th></tr></thead></table>'),
+		$tbody = $('<tbody></tbody>');
+		$table.find('th').append(' <span class="glyphicon glyphicon-chevron-up"></span><span class="glyphicon glyphicon-chevron-down"></span>');
+		$results.append($table);
+		$table.append($tbody);
+		for($n=0;$n < $resultaten.length;$n++) {
+			$tbody.append(getItemHTML($resultaten[$n]));
+		}
+		$table.tablesorter();
 	}
 
 	function getJSON($string) {
