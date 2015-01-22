@@ -9,8 +9,7 @@
 		console.log("received logs")
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
-			alert($json);
-			$("#logs").html($json);
+			$("#logs").prepend($json.log);
 		}
 	};
 	 $('#clearlogs').click(function()
@@ -19,6 +18,7 @@
 		$webSocket.send({action: 'clearLog'});
 		$("#logs").html("cleared")
 	 });
+	 
 	 $('#savesettings').click(function()
 	 {
 		console.log("Save");

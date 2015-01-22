@@ -142,7 +142,7 @@ public class Systeem implements Dashboard {
         {
             line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
         }
-        File file = new File(settings.getString("cronBackupDir")+date+".backup");
+        File file = new File("cron");
         try {
             file.createNewFile();
             file.setWritable(true);
