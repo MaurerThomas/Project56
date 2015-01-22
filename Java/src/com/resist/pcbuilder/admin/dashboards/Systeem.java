@@ -45,6 +45,7 @@ public class Systeem implements Dashboard {
         Date date = Calendar.getInstance().getTime();
         String currentDate = simpleDateFormat.format(date);
         if(input.getString("action").equals("getLogs")){
+
             return displayLog();
         }
         else if(input.getString("action").equals("clearLog"))
@@ -65,6 +66,7 @@ public class Systeem implements Dashboard {
 	private JSONObject displayLog()
     {
         BufferedReader br = null;
+        JSONObject out = new JSONObject();
         try {
             br = new BufferedReader(new FileReader(settings.getString("errorPath")+"error.log"));
         } catch (FileNotFoundException e) {
@@ -76,10 +78,13 @@ public class Systeem implements Dashboard {
 
             while (line != null) {
                 sb.append(line);
-                sb.append(System.lineSeparator());
+                sb.append("<br>");
                 line = br.readLine();
             }
-            return new JSONObject().append("log",sb.toString());
+            out.put("log",sb.toString());
+            PcBuilder.LOG.log(Level.INFO,sb.toString());
+            return out;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
