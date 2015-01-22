@@ -128,18 +128,13 @@ public class Systeem implements Dashboard {
     }
     private void setCronjob(JSONObject input, String date)
     {
-        boolean alternate = input.getBoolean("alternate");
-        boolean cdromland = input.getBoolean("cdromland");
         String minute = input.getString("minute1");
         String hour = input.getString("hour1");
         String line1 = "";
         String line2 = "";
-        if(alternate && minute.length() >= 1 && hour.length() >= 1 )
+        if(minute.length() >= 1 && hour.length() >= 1 )
         {
             line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("alternateCrawl");
-        }
-        if(cdromland)
-        {
             line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
         }
         File file = new File("cron");

@@ -4,25 +4,30 @@
  
  (function() {
 	$webSocket.send({action: 'getLogs'});
-	console.log("getlogs")
 	$webSocket.receive = function($msg) {
-		console.log("received logs")
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
-			$("#logs").prepend($json.log);
+			//$("#logs").html($json.log);
 		}
 	};
 	 $('#clearlogs').click(function()
 	 {   
-		console.log("DEZE DING");
-		$webSocket.send({action: 'clearLog'});
-		$("#logs").html("cleared")
+		if (confirm('Weet je zeker dat je de logs wilt legen?')) {
+			$webSocket.send({action: 'clearLog'});
+			$("#logs").html("cleared")
+		} else {
+		}
+		
+		
 	 });
 	 
 	 $('#savesettings').click(function()
 	 {
+		if (confirm('Weet je zeker dat je deze instellingen wilt opslaan?')) {
+			$webSocket.send({action: 'cronjob',minute: $('minute1').val() , hour: $('hour1').val(), alternate: $('checkbox1').checked, cdromland: $('checkbox2').checked});
+		} else {
+		}
 		console.log("Save");
-		$webSocket.send({action: 'cronjob',minute: $('minute1').val() , hour: $('hour1').val(), alternate: $('checkbox1').checked, cdromland: $('checkbox2').checked});
 	 });
 
 	
