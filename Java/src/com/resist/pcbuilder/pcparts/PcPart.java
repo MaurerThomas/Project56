@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-
+import java.util.Map.Entry;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -301,23 +301,32 @@ public abstract class PcPart {
 
     private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
         Set<String> eans = parts.keySet();
-        System.out.println(eans);
+        int i = 1;
+
         List<DatePrice> out = new ArrayList<>();
-        //"SELECT AVG(euro*100+cent),datum FROM prijs_verloop JOIN url_ean ON(prijsverloop.url=url_ean.url) WHERE ean IN("+eans+")";
+
         try {
             PreparedStatement s = conn.prepareStatement("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
-                    +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.TABLE_EAN+""+"."+DBConnection.COLUMN_EAN_URL+") " +
-                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ "IN "+DBConnection.getInQuery(eans.size())+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE);
+                    +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+") " +
+                    "WHERE "+DBConnection.COLUMN_EAN_EAN+ " "+DBConnection.getInQuery(eans.size())+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE);
 
+            System.out.println(s.toString());
+            for (String set : eans) {
+                s.setString(i,set);
+                i++;
+
+            }
             ResultSet resultSet = s.executeQuery();
-            resultSet.close();
-            s.close();
+
             while (resultSet.next()){
                 DatePrice datePrice = new DatePrice(resultSet.getDate(2),resultSet.getInt(1));
                 out.add(datePrice);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+            resultSet.close();
+            s.close();
+        }
+        catch (SQLException e) {
+            PcBuilder.LOG.log(Level.WARNING, "Failed to get average prices.", e);
         }
 
         return out;

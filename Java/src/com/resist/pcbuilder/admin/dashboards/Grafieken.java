@@ -1,11 +1,10 @@
 package com.resist.pcbuilder.admin.dashboards;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.util.List;
-
+import com.resist.pcbuilder.DatePrice;
+import com.resist.pcbuilder.admin.AdminSession;
+import com.resist.pcbuilder.admin.Analytics;
+import com.resist.pcbuilder.admin.Dashboard;
+import com.resist.pcbuilder.admin.OutputBuilder;
 import com.resist.pcbuilder.pcparts.*;
 import org.elasticsearch.client.Client;
 import org.jfree.chart.ChartFactory;
@@ -13,14 +12,12 @@ import org.jfree.chart.ChartUtilities;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.resist.pcbuilder.DatePrice;
-import com.resist.pcbuilder.admin.AdminSession;
-import com.resist.pcbuilder.admin.Analytics;
-import com.resist.pcbuilder.admin.Dashboard;
-import com.resist.pcbuilder.admin.OutputBuilder;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.List;
 
 /**
  * Created by Thomas on 16-12-2014.
@@ -28,31 +25,38 @@ import com.resist.pcbuilder.admin.OutputBuilder;
 public class Grafieken implements Dashboard {
 
     public static final String IDENTIFIER = "grafieken";
+    public static final String VISITORLOCATION = "//var//www//html//img//LineChartVisitor.jpeg";
+    public static final String PROCESSORLOCATION = "//var//www//html//img//LineChartProcessoren.jpeg";
+    public static final String PROCESSORCOOLERLOCATION = "//var//www//html//img//LineChartProcessorenCoolers.jpeg";
+    public static final String POWERSUPPLYLOCATION = "//var//www//html//img//LineChartVoedingen.jpeg";
+    public static final String MOTHERBOARDLOCATION = "//var//www//html//img//LineChartMoederborden.jpeg";
+    public static final String MEMORYLOCATION = "//var//www//html//img//LineChartGeheugen.jpeg";
+    public static final String HARDDISKLOCATION = "//var//www//html//img//LineChartSchijven.jpeg";
+    public static final String GRAPHICSCARDLOCATION = "//var//www//html//img//LineChartGrafischeKaarten.jpeg";
+    public static final String CASELOCATION = "//var//www//html//img//LineChartBehuizingen.jpeg";
     private AdminSession session;
 
-    public Grafieken(AdminSession session){this.session = session; }
+    public Grafieken(AdminSession session) {
+        this.session = session;
+    }
 
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
-        if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
+        if (input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             try {
-               makeVisitorCharts();
+                makeVisitorCharts();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            return new OutputBuilder().htmlTemplate("#main","dashboard_grafieken").getOutput();
-        } else if(input.has("makeChart")) {
+            return new OutputBuilder().htmlTemplate("#main", "dashboard_grafieken").getOutput();
+        } else if (input.has("makeChart")) {
             try {
-                System.out.println("Ik ga handelen");
-                System.out.println("Input = : " + input);
-               handleCharts(input);
+                handleCharts(input);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
 
@@ -60,21 +64,21 @@ public class Grafieken implements Dashboard {
     private void handleCharts(JSONObject input) throws IOException {
         String action = input.getString("makeChart");
         System.out.println(action);
-        if(action.equals("ProcessorKoeler")) {
+        if (action.equals("ProcessorKoeler")) {
             makeChartForProcessorCoolers();
-        } else if (action.equals("Processor")){
+        } else if (action.equals("Processor")) {
             makeChartForProcessors();
-        } else if (action.equals("Voeding")){
+        } else if (action.equals("Voeding")) {
             makeChartForPowerSupply();
-        } else if (action.equals("Moederbord")){
+        } else if (action.equals("Moederbord")) {
             makeChartForMotherboard();
-        } else if (action.equals("Geheugen")){
+        } else if (action.equals("Geheugen")) {
             makeChartForMemory();
-        } else if (action.equals("Videokaart")){
+        } else if (action.equals("Videokaart")) {
             makeChartForGrahpicsCard();
-        } else if (action.equals("Behuizing")){
+        } else if (action.equals("Behuizing")) {
             makeChartForCase();
-        } else if (action.equals("Schijven")){
+        } else if (action.equals("Schijven")) {
             makeChartForHarddisk();
         }
 
@@ -87,8 +91,8 @@ public class Grafieken implements Dashboard {
 
         List<Analytics> analyticsList = Analytics.getVisitors(session.getPcBuilder().getDBConnection());
 
-        for(Analytics analytics : analyticsList) {
-           line_chart_dataset.addValue(Integer.valueOf(analytics.getHashcodes()),"bezoekers",String.valueOf(analytics.getDatum()));
+        for (Analytics analytics : analyticsList) {
+            line_chart_dataset.addValue(Integer.valueOf(analytics.getHashcodes()), "bezoekers", String.valueOf(analytics.getDatum()));
             System.out.println(Integer.valueOf(analytics.getHashcodes()));
 
         }
@@ -102,18 +106,18 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartVisitor.jpeg");
+        File lineChart = new File(VISITORLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
 
     }
 
     private void makeChartForProcessors() throws IOException {
-       List<DatePrice> priceAndDate = getAveragePriceForComponent(Processor.COMPONENT);
+        List<DatePrice> priceAndDate = getAveragePriceForComponent(Processor.COMPONENT);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
         for (DatePrice datePrice : priceAndDate) {
             line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-            
+
         }
 
         JFreeChart lineChartObject = ChartFactory.createLineChart(
@@ -126,7 +130,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartProcessoren.jpeg");
+        File lineChart = new File(PROCESSORLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -149,7 +153,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartProcessorenCoolers.jpeg");
+        File lineChart = new File(PROCESSORCOOLERLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -172,7 +176,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartVoedingen.jpeg");
+        File lineChart = new File(POWERSUPPLYLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -195,7 +199,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartMoederborden.jpeg");
+        File lineChart = new File(MOTHERBOARDLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -218,7 +222,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartGeheugen.jpeg");
+        File lineChart = new File(MEMORYLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -241,7 +245,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartSchijven.jpeg");
+        File lineChart = new File(HARDDISKLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -264,7 +268,7 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartGrafischeKaarten.jpeg");
+        File lineChart = new File(GRAPHICSCARDLOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
@@ -287,31 +291,31 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File("//var//www//html//img//LineChartBehuizingen.jpeg");
+        File lineChart = new File(CASELOCATION);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
     }
 
     private List<DatePrice> getAveragePriceForComponent(String part) {
-    	Client client = session.getPcBuilder().getSearchClient();
-    	Connection conn = session.getConnection();
-        if(part.equals(Processor.COMPONENT)) {
-           return  Processor.getAvgPrice(client,conn);
-        } else if (part.equals(ProcessorCooler.COMPONENT)){
-            return ProcessorCooler.getAvgPrice(client,conn);
-        } else if (part.equals(PowerSupplyUnit.COMPONENT)){
-            return PowerSupplyUnit.getAvgPrice(client,conn);
-        } else if (part.equals(Motherboard.COMPONENT)){
-            return Motherboard.getAvgPrice(client,conn);
-        } else if (part.equals(Memory.COMPONENT)){
-            return Memory.getAvgPrice(client,conn);
-        } else if (part.equals(HardDisk.COMPONENT)){
-            return HardDisk.getAvgPrice(client,conn);
-        } else if (part.equals(GraphicsCard.COMPONENT)){
-            return GraphicsCard.getAvgPrice(client,conn);
-        } else if (part.equals(Case.COMPONENT)){
-            return Case.getAvgPrice(client,conn);
+        Client client = session.getPcBuilder().getSearchClient();
+        Connection conn = session.getConnection();
+        if (part.equals(Processor.COMPONENT)) {
+            return Processor.getAvgPrice(client, conn);
+        } else if (part.equals(ProcessorCooler.COMPONENT)) {
+            return ProcessorCooler.getAvgPrice(client, conn);
+        } else if (part.equals(PowerSupplyUnit.COMPONENT)) {
+            return PowerSupplyUnit.getAvgPrice(client, conn);
+        } else if (part.equals(Motherboard.COMPONENT)) {
+            return Motherboard.getAvgPrice(client, conn);
+        } else if (part.equals(Memory.COMPONENT)) {
+            return Memory.getAvgPrice(client, conn);
+        } else if (part.equals(HardDisk.COMPONENT)) {
+            return HardDisk.getAvgPrice(client, conn);
+        } else if (part.equals(GraphicsCard.COMPONENT)) {
+            return GraphicsCard.getAvgPrice(client, conn);
+        } else if (part.equals(Case.COMPONENT)) {
+            return Case.getAvgPrice(client, conn);
         }
-      return null;
+        return null;
     }
 
 }
