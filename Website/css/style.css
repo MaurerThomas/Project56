@@ -311,3 +311,8 @@ footer > div {
 		box-shadow: 0em -3em 0em 0em, 2em -2em 0 -0.5em, 3em 0em 0 -0.5em, 2em 2em 0 -0.5em, 0em 3em 0 -0.5em, -2em 2em 0 0em, -3em 0em 0 0em, -2em -2em 0 0.2em;
 	}
 }
+
+#pcbuilder-selection .btn {
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+}

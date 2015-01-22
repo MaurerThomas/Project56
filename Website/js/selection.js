@@ -11,6 +11,7 @@ var $componentSelection = (function() {
 
 	function remove($component) {
 		delete $selection[$component];
+		$('#'+getComponentId($component)+' .selection-title').text('Geen selectie');
 		save();
 	}
 
@@ -28,24 +29,31 @@ var $componentSelection = (function() {
 		updatePrice();
 	}
 
+	function clear() {
+		for(var $key in $selection) {
+			remove($key);
+		}
+		updatePrice();
+	}
+
 	function getComponentId($component) {
-		if ($component == 'Moederborden') {
+		if($component == 'Moederborden') {
 			return 'moederbordselectie';
-		} else if ($component == 'Processoren') {
+		} else if($component == 'Processoren') {
 			return 'processorselectie';
-		} else if ($component == 'Koeling') {
+		} else if($component == 'Koeling') {
 			return  'processorkoelerselectie';
-		} else if ($component == 'Geheugen') {
+		} else if($component == 'Geheugen') {
 			return 'geheugenselectie';
-		} else if ($component == 'Grafische kaarten') {
+		} else if($component == 'Grafische kaarten') {
 			return 'grafischekaartselectie';
-		} else if ($component.indexOf('schijven') != -1) {
+		} else if($component.indexOf('schijven') != -1) {
 			return 'hardeschijfselectie';
-		} else if ($component == 'Behuizingen') {
+		} else if($component == 'Behuizingen') {
 			return 'behuizingselectie';
-		} else if ($component == 'Voedingen') {
+		} else if($component == 'Voedingen') {
 			return 'voedingselectie';
-		} else if ($component == 'Besturingssystemen') {
+		} else if($component == 'Besturingssystemen') {
 			return 'besturingssysteemselectie';
 		}
 	}
@@ -82,6 +90,10 @@ var $componentSelection = (function() {
 		}
 		return $out;
 	}
+
+	$(function() {
+		$('.pcbuilder-clear-selection').click(clear);
+	});
 
 	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore};
 })();
