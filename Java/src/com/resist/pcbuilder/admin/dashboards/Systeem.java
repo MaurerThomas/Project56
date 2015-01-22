@@ -68,7 +68,7 @@ public class Systeem implements Dashboard {
         BufferedReader br = null;
         JSONObject out = new JSONObject();
         try {
-            br = new BufferedReader(new FileReader(settings.getString("errorPath")+"error.log"));
+            br = new BufferedReader(new FileReader(settings.getString("errorLogPath")+"error.log"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
