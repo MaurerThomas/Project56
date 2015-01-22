@@ -57,11 +57,19 @@
 		$('#besturingssysteemselectie').click(function() {
 			$('a[href="#besturingssysteem"]').click();
 		});
+		$('.pcbuilder-tabs li:not(.active) a').click(loadInitialItems);
 
 		if($EEstore.getItem('selection',false) !== false) {
 			$componentSelection.restore();
 			setTimeout(function() {$button.click();},200);
 		}
 	});
+
+	function loadInitialItems() {
+		var $this = $(this);
+		$($this.attr('href')+' form').submit();
+		$this.unbind('click',loadInitialItems);
+	}
+
 	$(document).tooltip({position: {my: 'left top', at: 'right top'}});
 })(jQuery);
