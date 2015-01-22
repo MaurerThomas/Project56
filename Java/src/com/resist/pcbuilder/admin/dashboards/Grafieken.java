@@ -24,23 +24,14 @@ import java.util.List;
  */
 public class Grafieken implements Dashboard {
     private AdminSession session;
-    JSONObject settings;
+    private JSONObject settings;
 
     public Grafieken(AdminSession session) {
         this.session = session;
         settings = session.getPcBuilder().getSettings();
     }
-    public  final String IDENTIFIER = "grafieken";
-    public  final String VISITORLOCATION = settings.getString("visitorGraphPath") ;
-    public  final String PROCESSORLOCATION = settings.getString("processorGraphPath") ;
-    public  final String PROCESSORCOOLERLOCATION = settings.getString("processorCoolerGraphPath") ;
-    public  final String POWERSUPPLYLOCATION = settings.getString("powerSupplyGraphPath") ;
-    public  final String MOTHERBOARDLOCATION = settings.getString("motherboardGraphPath") ;
-    public  final String MEMORYLOCATION = settings.getString("memoryGraphPath");
-    public  final String HARDDISKLOCATION = settings.getString("harddiskGraphPath") ;
-    public  final String GRAPHICSCARDLOCATION = settings.getString("graphicsCardGraphPath");
-    public  final String CASELOCATION = settings.getString("caseGraphPath");
 
+    public  static final String IDENTIFIER = "grafieken";
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
@@ -50,7 +41,9 @@ public class Grafieken implements Dashboard {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
             return new OutputBuilder().htmlTemplate("#main", "dashboard_grafieken").getOutput();
+
         } else if (input.has("makeChart")) {
             try {
                 handleCharts(input);
@@ -65,24 +58,33 @@ public class Grafieken implements Dashboard {
     private void handleCharts(JSONObject input) throws IOException {
         String action = input.getString("makeChart");
         System.out.println(action);
-        if (action.equals("ProcessorKoeler")) {
-            makeChartForProcessorCoolers();
-        } else if (action.equals("Processor")) {
-            makeChartForProcessors();
-        } else if (action.equals("Voeding")) {
-            makeChartForPowerSupply();
-        } else if (action.equals("Moederbord")) {
-            makeChartForMotherboard();
-        } else if (action.equals("Geheugen")) {
-            makeChartForMemory();
-        } else if (action.equals("Videokaart")) {
-            makeChartForGrahpicsCard();
-        } else if (action.equals("Behuizing")) {
-            makeChartForCase();
-        } else if (action.equals("Schijven")) {
-            makeChartForHarddisk();
-        }
+        switch (action) {
+            case "ProcessorKoeler":
 
+                makeTheChartForComponents("Processor Koeler", ProcessorCooler.COMPONENT, settings.getString("processorCoolerGraphPath"));
+                break;
+            case "Processor":
+                makeTheChartForComponents("Processor", Processor.COMPONENT, settings.getString("processorGraphPath"));
+                break;
+            case "Voeding":
+                makeTheChartForComponents("Voeding", PowerSupplyUnit.COMPONENT, settings.getString("powerSupplyGraphPath"));
+                break;
+            case "Moederbord":
+                makeTheChartForComponents("Moederbord", Motherboard.COMPONENT, settings.getString("motherboardGraphPath"));
+                break;
+            case "Geheugen":
+                makeTheChartForComponents("Geheugen", Memory.COMPONENT, settings.getString("memoryGraphPath"));
+                break;
+            case "Videokaart":
+                makeTheChartForComponents("Videokaart", GraphicsCard.COMPONENT, settings.getString("graphicsCardGraphPath"));
+                break;
+            case "Behuizing":
+                makeTheChartForComponents("Behuizing", Case.COMPONENT, settings.getString("caseGraphPath"));
+                break;
+            case "Schijven":
+                makeTheChartForComponents("Schijven", HardDisk.COMPONENT, settings.getString("harddiskGraphPath"));
+                break;
+        }
     }
 
 
@@ -107,13 +109,13 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File(VISITORLOCATION);
+        File lineChart = new File(settings.getString("visitorGraphPath"));
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
 
     }
 
-    private void makeChartForProcessors() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(Processor.COMPONENT);
+    private void makeTheChartForComponents(String titel, String onderdeel, String locatie) throws IOException {
+        List<DatePrice> priceAndDate = getAveragePriceForComponent(onderdeel);
         DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
 
         for (DatePrice datePrice : priceAndDate) {
@@ -122,7 +124,7 @@ public class Grafieken implements Dashboard {
         }
 
         JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Processoren", "Datum",
+                titel, "Datum",
                 "Prijs",
                 line_chart_dataset, PlotOrientation.VERTICAL,
                 true, true, false);
@@ -131,190 +133,32 @@ public class Grafieken implements Dashboard {
         int height = 240; /* Height of the image */
 
         // Voor linux
-        File lineChart = new File(PROCESSORLOCATION);
+        File lineChart = new File(locatie);
         ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
+
     }
 
-    private void makeChartForProcessorCoolers() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(ProcessorCooler.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Processor Coolers", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(PROCESSORCOOLERLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForPowerSupply() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(PowerSupplyUnit.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Voedingen", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(POWERSUPPLYLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForMotherboard() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(Motherboard.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Moederborden", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(MOTHERBOARDLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForMemory() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(Memory.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Geheugen", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(MEMORYLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForHarddisk() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(HardDisk.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Schijven", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(HARDDISKLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForGrahpicsCard() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(GraphicsCard.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Grafische kaarten", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(GRAPHICSCARDLOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
-
-    private void makeChartForCase() throws IOException {
-        List<DatePrice> priceAndDate = getAveragePriceForComponent(Case.COMPONENT);
-        DefaultCategoryDataset line_chart_dataset = new DefaultCategoryDataset();
-
-        for (DatePrice datePrice : priceAndDate) {
-            line_chart_dataset.addValue(datePrice.getPrice(), "Prijs", datePrice.getDate());
-
-        }
-
-        JFreeChart lineChartObject = ChartFactory.createLineChart(
-                "Behuizingen", "Datum",
-                "Prijs",
-                line_chart_dataset, PlotOrientation.VERTICAL,
-                true, true, false);
-
-        int width = 1024; /* Width of the image */
-        int height = 240; /* Height of the image */
-
-        // Voor linux
-        File lineChart = new File(CASELOCATION);
-        ChartUtilities.saveChartAsJPEG(lineChart, lineChartObject, width, height);
-    }
 
     private List<DatePrice> getAveragePriceForComponent(String part) {
         Client client = session.getPcBuilder().getSearchClient();
         Connection conn = session.getConnection();
-        if (part.equals(Processor.COMPONENT)) {
-            return Processor.getAvgPrice(client, conn);
-        } else if (part.equals(ProcessorCooler.COMPONENT)) {
-            return ProcessorCooler.getAvgPrice(client, conn);
-        } else if (part.equals(PowerSupplyUnit.COMPONENT)) {
-            return PowerSupplyUnit.getAvgPrice(client, conn);
-        } else if (part.equals(Motherboard.COMPONENT)) {
-            return Motherboard.getAvgPrice(client, conn);
-        } else if (part.equals(Memory.COMPONENT)) {
-            return Memory.getAvgPrice(client, conn);
-        } else if (part.equals(HardDisk.COMPONENT)) {
-            return HardDisk.getAvgPrice(client, conn);
-        } else if (part.equals(GraphicsCard.COMPONENT)) {
-            return GraphicsCard.getAvgPrice(client, conn);
-        } else if (part.equals(Case.COMPONENT)) {
-            return Case.getAvgPrice(client, conn);
+        switch (part) {
+            case Processor.COMPONENT:
+                return Processor.getAvgPrice(client, conn);
+            case ProcessorCooler.COMPONENT:
+                return ProcessorCooler.getAvgPrice(client, conn);
+            case PowerSupplyUnit.COMPONENT:
+                return PowerSupplyUnit.getAvgPrice(client, conn);
+            case Motherboard.COMPONENT:
+                return Motherboard.getAvgPrice(client, conn);
+            case Memory.COMPONENT:
+                return Memory.getAvgPrice(client, conn);
+            case HardDisk.COMPONENT:
+                return HardDisk.getAvgPrice(client, conn);
+            case GraphicsCard.COMPONENT:
+                return GraphicsCard.getAvgPrice(client, conn);
+            case Case.COMPONENT:
+                return Case.getAvgPrice(client, conn);
         }
         return null;
     }
