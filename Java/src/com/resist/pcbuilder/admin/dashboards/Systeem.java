@@ -112,7 +112,11 @@ public class Systeem implements Dashboard {
 
             try {
                 outputlog.createNewFile();
+                outputlog.canWrite();
+                outputlog.canRead();
                 errorlog.createNewFile();
+                errorlog.canRead();
+                errorlog.canWrite();
             } catch (IOException e) {
                 PcBuilder.LOG.log(Level.WARNING, "Failed to archive files", e);
             }
