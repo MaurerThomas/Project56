@@ -9,6 +9,7 @@
  });
  $('#savesettings').click(function()
  {
-	$webSocket.send({action: 'cronjob',minute: $('minute1').val() , hour: $('hour1').val(), alternate : $('checkbox1').checked, cdromland : $('checkbox2').checked});
- }
+	console.log("Save");
+	$webSocket.send({action: 'cronjob',minute: $('minute1').val() , hour: $('hour1').val(), alternate: $('checkbox1').checked, cdromland: $('checkbox2').checked});
+ });
 

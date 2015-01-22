@@ -70,7 +70,7 @@ public class Systeem implements Dashboard {
         try{
             File archive = archiver.create(outputlogname, destination, outputlog);
             archive = archiver.create(errorlogname, destination, errorlog);
-            /*outputlog.delete();
+            outputlog.delete();
             errorlog.delete();
             outputlog = new File(outputPath+"output.log");
             errorlog = new File(errorPath+"error.log");
@@ -81,12 +81,7 @@ public class Systeem implements Dashboard {
             } catch (IOException e) {
                 PcBuilder.LOG.log(Level.WARNING, "Failed to archive files", e);
             }
-            */
 
-            Process p = Runtime.getRuntime().exec("rm -r"+outputlog.getAbsolutePath());
-            p = Runtime.getRuntime().exec("rm -r"+errorlog.getAbsolutePath());
-            p = Runtime.getRuntime().exec("touch "+errorlog.getAbsolutePath());
-            p = Runtime.getRuntime().exec("touch "+outputlog.getAbsolutePath());
         } catch (IOException e) {
             PcBuilder.LOG.log(Level.WARNING, "Failed to create new file ", e);
         }
