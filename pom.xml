@@ -63,7 +63,7 @@
         </plugins>
     </reporting>
     <build>
-        <sourceDirectory>Java/src/com/resist/websocket</sourceDirectory>
+        <sourceDirectory>Java/src/com/resist/</sourceDirectory>
         <testSourceDirectory>Java/src/test/com/resist/websocket</testSourceDirectory>
         <resources>
             <resource>
