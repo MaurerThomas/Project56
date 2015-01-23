@@ -95,8 +95,9 @@ var $componentSelection = (function() {
 		var $key,
 		$lightbox = $('#pcbuilder-lightbox'),
 		$content = $lightbox.find('.content-wrapper > .content'),
-		$table = $('<table><thead><tr><th>Naam</th><th>Component</th><th>Prijs</th><th>Website</th></tr></thead><tbody></tbody></table>'),
+		$table = $('<table class="search-results"><thead><tr><th>Naam</th><th>Component</th><th>Prijs</th><th>Website</th></tr></thead><tbody></tbody></table>'),
 		$tbody = $table.find('tbody');
+		$table.find('th').append(' <span class="glyphicon glyphicon-chevron-up"></span><span class="glyphicon glyphicon-chevron-down"></span>');
 		$content.empty();
 		$content.append($table);
 		for($key in $selection) {

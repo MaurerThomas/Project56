@@ -141,7 +141,6 @@ function initSearch() {
 				value: $filters[$key]
 			});
 		}
-		console.log($out);
 		return $out;
 	}
 
