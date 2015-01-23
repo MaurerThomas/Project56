@@ -194,6 +194,9 @@ function initSearch() {
 		$zoekResultaten.find('.btn').click(function() {
 			$componentSelection.add($item);
 		});
+		$zoekResultaten.find('td:first').click(function() {
+			$componentSelection.showSpecs($item);
+		);
 		return $zoekResultaten;
 	}
 }

@@ -99,8 +99,21 @@ var $componentSelection = (function() {
 		for($key in $selection) {
 			$content.append('<p>'+JSON.stringify($selection[$key])+'</p>');
 		}
-		$lightbox.removeClass('hidden').hide();
-		$lightbox.fadeIn(1000);
+		$lightbox.removeClass('hidden').hide().fadeIn(1000);
+	}
+
+	function showSpecs($item) {
+		var $key,
+		$lightbox = $('#pcbuilder-lightbox'),
+		$content = $lightbox.find('.content-wrapper > .content');
+		$content.empty();
+		$content.append('<h1>'+$item.naam+'</h1><h2 class="pull-right">'+getPriceString($item.euro,$item.price)+'</h2>');
+		for($key in $item) {
+			if($key != 'naam' && $key != 'euro' && $key != 'cent') {
+				$content.append('<dl><dt>'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
+			}
+		}
+		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}
 
 	$(function() {
@@ -108,5 +121,5 @@ var $componentSelection = (function() {
 		$('.pcbuilder-show-selection').click(selectionPopUp);
 	});
 
-	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore};
+	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore, showSpecs: showSpecs};
 })();
