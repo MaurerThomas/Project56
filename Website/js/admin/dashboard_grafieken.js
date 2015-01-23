@@ -1,3 +1,4 @@
+ $(function(){
  var grafiekList = [
     "/img/LineChartProcessoren.jpeg?",
     "/img/LineChartVoedingen.jpeg?",
@@ -6,12 +7,15 @@
     "/img/LineChartBehuizingen.jpeg?",
     "/img/LineChartSchijven.jpeg?",  ];
 
+$("#grafiek option").each(function() {
+    var select = $(this).text();
+  $webSocket.send({action:'makeChart','makeChart': select});
+});
 
 $('#grafiek').change(function () {
-    d = new Date();
-    var select = $('#grafiek option:selected').text();
-    $webSocket.send({action:'makeChart','makeChart': select});
+     d = new Date();
     var val = parseInt($('#grafiek').val());
-    alert("Grafiek wordt geladen..");
     $('#image').attr("src",grafiekList[val]+d.getTime());
-});
+
+ });
+  }) ();
