@@ -22,7 +22,6 @@ import java.util.logging.Level;
 public class Filters implements Dashboard {
     public static final String IDENTIFIER = "filters";
     private AdminSession session;
-    private SearchHandler initParts;
     private PcBuilder pcbuilder;
 
     public Filters(AdminSession session) {this.session = session;}
@@ -32,12 +31,7 @@ public class Filters implements Dashboard {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_filters").getOutput();
         }
-            //iets met return de getFilters functie hier
         return null;
-    }
-
-    public JSONObject getFilters() {
-       return initParts.getInit();
     }
 
     public java.sql.Connection getConnection() {
@@ -48,17 +42,15 @@ public class Filters implements Dashboard {
         try {
             PreparedStatement s;
             if(category.equals("geheugen")) {
-                s = conn.prepareStatement("UPDATE  "+ DBConnection.TABLE_MEMORY +" SET" + DBConnection.COLUMN_MEMORY_TYPE + "=" + " ? " + " WHERE"+ DBConnection.COLUMN_MEMORY_TYPE + "= \'?\'");
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_MEMORY +" SET " + DBConnection.COLUMN_MEMORY_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_MEMORY_TYPE + "= \'?\'");
             } else if(category.equals("hardeschijven")) {
-                //   update deze
-                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_HDD + " WHERE " + DBConnection.COLUMN_HDD_INTERFACE + " = ?");
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_HDD +" SET " + DBConnection.COLUMN_HDD_INTERFACE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_HDD_INTERFACE + "= \'?\'");
             } else if(category.equals("processors")) {
-                s = conn.prepareStatement("UPDATE  "+ DBConnection.TABLE_SOCKET +" SET" + DBConnection.COLUMN_SOCKET_TYPE + "=" + " ? " + " WHERE"+ DBConnection.COLUMN_SOCKET_TYPE + "= \'?\'");
+                s = conn.prepareStatement("UPDATE  "+ DBConnection.TABLE_SOCKET +" SET " + DBConnection.COLUMN_SOCKET_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_SOCKET_TYPE + "= \'?\'");
             } else if(category.equals("grafischekaarten")) {
-                //   update deze
-                s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_INTERFACE + " WHERE " + DBConnection.COLUMN_INTERFACE_TYPE + " = ?");
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_INTERFACE +" SET " + DBConnection.COLUMN_INTERFACE_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_INTERFACE_TYPE + "= \'?\'");
             } else {
-                s = conn.prepareStatement("UPDATE  "+ DBConnection.TABLE_FORMFACTOR +" SET" + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "=" + " ? " + " WHERE"+ DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "= \'?\'");
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_FORMFACTOR +" SET " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "= \'?\'");
             }
             s.setString(1, newFiltername);
             s.setString(2, filtername);
@@ -77,12 +69,10 @@ public class Filters implements Dashboard {
             if(category.equals("geheugen")) {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_MEMORY + "(" + DBConnection.COLUMN_MEMORY_TYPE + ")" + "VALUES(" + " ?)");
             } else if(category.equals("hardeschijven")) {
-                //   update deze
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_HDD + "(" + DBConnection.COLUMN_HDD_INTERFACE + ")" + "VALUES(" + " ?)");
             } else if(category.equals("processors")){
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_SOCKET + "(" + DBConnection.COLUMN_SOCKET_TYPE + ")" + "VALUES(" + " ?)");
             } else if(category.equals("grafischekaarten")) {
-                //   update deze
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_INTERFACE + "(" + DBConnection.COLUMN_INTERFACE_TYPE + ")" + "VALUES(" + " ?)");
             } else {
                 s = conn.prepareStatement("INSERT INTO " + DBConnection.TABLE_FORMFACTOR + "(" + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + ")" + "VALUES(" + " ?)");
@@ -103,12 +93,10 @@ public class Filters implements Dashboard {
             if(category.equals("geheugen")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_MEMORY + " WHERE " + DBConnection.COLUMN_MEMORY_TYPE + " = ?");
             } else if(category.equals("hardeschijven")) {
-             //   update deze
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_HDD + " WHERE " + DBConnection.COLUMN_HDD_INTERFACE + " = ?");
             } else if(category.equals("processors")) {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_SOCKET + " WHERE " + DBConnection.COLUMN_SOCKET_TYPE + " = ?");
             } else if(category.equals("grafischekaarten")) {
-                //   update deze
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_INTERFACE + " WHERE " + DBConnection.COLUMN_INTERFACE_TYPE + " = ?");
             } else {
                 s = conn.prepareStatement("DELETE FROM " + DBConnection.TABLE_FORMFACTOR + " WHERE " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + " = ?");
