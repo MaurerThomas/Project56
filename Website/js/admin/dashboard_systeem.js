@@ -7,9 +7,16 @@
 	$webSocket.receive = function($msg) {
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
-			$("#logs").html($json.log);
+			if($json.log)
+			{
+				$("#logs").html($json.log);
+			} else{
+				htmlHandler($msg);
+			}
 		}
+		
 	};
+	
 	 $('#clearlogs').click(function()
 	 {   
 		if (confirm('Weet je zeker dat je de logs wilt legen?')) {
