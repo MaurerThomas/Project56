@@ -94,12 +94,22 @@ var $componentSelection = (function() {
 	function selectionPopUp() {
 		var $key,
 		$lightbox = $('#pcbuilder-lightbox'),
-		$content = $lightbox.find('.content-wrapper > .content');
+		$content = $lightbox.find('.content-wrapper > .content'),
+		$table = $('<table><thead><tr><th>Naam</th><th>Component</th><th>Prijs</th><th>Website</th></tr></thead><tbody></tbody></table>'),
+		$tbody = $table.find('tbody');
 		$content.empty();
+		$content.append($table);
 		for($key in $selection) {
-			$content.append('<p>'+JSON.stringify($selection[$key])+'</p>');
+			$tbody.append(getPopUpItem($selection[$key]));
 		}
-		$lightbox.removeClass('hidden').hide().fadeIn(1000);
+		$table.tablesorter();
+		if($key !== undefined) {
+			$lightbox.removeClass('hidden').hide().fadeIn(1000);
+		}
+	}
+
+	function getPopUpItem($item) {
+		return '<tr><td>'+$item.name+'</td><td>'+$item.component+'</td><td>&euro; '+getPriceString($item.euro,$item.cent)+'</td><td><a href="'+$item.url+'">'+getSite($item.url)+'</a></td></tr>';
 	}
 
 	function getSite($url) {

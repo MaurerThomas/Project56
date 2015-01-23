@@ -348,3 +348,7 @@ footer > div {
 #pcbuilder-lightbox .content-wrapper > .content {
 	padding: 0.5em;
 }
+
+.item:first-child {
+	cursor: pointer;
+}
