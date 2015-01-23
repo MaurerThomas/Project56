@@ -141,7 +141,6 @@ function initSearch() {
 				value: $filters[$key]
 			});
 		}
-		console.log($out);
 		return $out;
 	}
 
@@ -193,6 +192,9 @@ function initSearch() {
 		var $zoekResultaten = $('<tr class="item"><td>'+$item.name+'</td><td>'+$item.brand+'</td><td>&euro; '+$componentSelection.getPriceString($item.euro,$item.cent)+'</td><td class="text-right"><button class="btn btn-default" title="Voeg toe aan systeem"><span class="glyphicon glyphicon-shopping-cart" style="vertical-align:middle"></span></button></td></tr>');
 		$zoekResultaten.find('.btn').click(function() {
 			$componentSelection.add($item);
+		});
+		$zoekResultaten.find('td:first').click(function() {
+			$componentSelection.showSpecs($item);
 		});
 		return $zoekResultaten;
 	}

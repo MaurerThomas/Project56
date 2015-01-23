@@ -22,7 +22,6 @@ import java.util.logging.Level;
 public class Filters implements Dashboard {
     public static final String IDENTIFIER = "filters";
     private AdminSession session;
-    private SearchHandler initParts;
     private PcBuilder pcbuilder;
 
     public Filters(AdminSession session) {this.session = session;}
@@ -32,16 +31,36 @@ public class Filters implements Dashboard {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_filters").getOutput();
         }
-            //iets met return de getFilters functie hier
         return null;
-    }
-
-    public JSONObject getFilters() {
-       return initParts.getInit();
     }
 
     public java.sql.Connection getConnection() {
         return pcbuilder.getDBConnection().getConnection();
+    }
+
+    public static boolean updateFilter(Connection conn, String category, String filtername, String newFiltername) {
+        try {
+            PreparedStatement s;
+            if(category.equals("geheugen")) {
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_MEMORY +" SET " + DBConnection.COLUMN_MEMORY_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_MEMORY_TYPE + "= \'?\'");
+            } else if(category.equals("hardeschijven")) {
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_HDD +" SET " + DBConnection.COLUMN_HDD_INTERFACE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_HDD_INTERFACE + "= \'?\'");
+            } else if(category.equals("processors")) {
+                s = conn.prepareStatement("UPDATE  "+ DBConnection.TABLE_SOCKET +" SET " + DBConnection.COLUMN_SOCKET_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_SOCKET_TYPE + "= \'?\'");
+            } else if(category.equals("grafischekaarten")) {
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_INTERFACE +" SET " + DBConnection.COLUMN_INTERFACE_TYPE + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_INTERFACE_TYPE + "= \'?\'");
+            } else {
+                s = conn.prepareStatement("UPDATE "+ DBConnection.TABLE_FORMFACTOR +" SET " + DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "=" + " ? " + " WHERE "+ DBConnection.COLUMN_FORMFACTOR_FORMFACTOR + "= \'?\'");
+            }
+            s.setString(1, newFiltername);
+            s.setString(2, filtername);
+            s.executeUpdate();
+            s.close();
+            return true;
+        } catch (SQLException e) {
+            PcBuilder.LOG.log(Level.WARNING,"Failed to update the filter:" + newFiltername,e);
+            return false;
+        }
     }
 
     public static boolean createFilter(Connection conn, String category, String filtername) {
@@ -63,7 +82,7 @@ public class Filters implements Dashboard {
             s.close();
             return true;
         } catch (SQLException e) {
-            PcBuilder.LOG.log(Level.WARNING,"Failed to delete the filter.",e);
+            PcBuilder.LOG.log(Level.WARNING,"Failed to create the filter:" + filtername,e);
             return false;
         }
     }
@@ -87,7 +106,7 @@ public class Filters implements Dashboard {
             s.close();
             return true;
         } catch (SQLException e) {
-            PcBuilder.LOG.log(Level.WARNING,"Failed to delete the filter.",e);
+            PcBuilder.LOG.log(Level.WARNING,"Failed to delete the filter:" + filtername,e);
             return false;
         }
     }

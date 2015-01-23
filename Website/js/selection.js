@@ -94,13 +94,48 @@ var $componentSelection = (function() {
 	function selectionPopUp() {
 		var $key,
 		$lightbox = $('#pcbuilder-lightbox'),
+		$content = $lightbox.find('.content-wrapper > .content'),
+		$table = $('<table class="search-results"><thead><tr><th>Naam</th><th>Component</th><th>Prijs</th><th>Website</th></tr></thead><tbody></tbody></table>'),
+		$tbody = $table.find('tbody');
+		$table.find('th').append(' <span class="glyphicon glyphicon-chevron-up"></span><span class="glyphicon glyphicon-chevron-down"></span>');
+		$content.empty();
+		$content.append($table);
+		for($key in $selection) {
+			$tbody.append(getPopUpItem($selection[$key]));
+		}
+		$table.tablesorter();
+		if($key !== undefined) {
+			$lightbox.removeClass('hidden').hide().fadeIn(1000);
+		}
+	}
+
+	function getPopUpItem($item) {
+		return '<tr><td>'+$item.name+'</td><td>'+$item.component+'</td><td>&euro; '+getPriceString($item.euro,$item.cent)+'</td><td><a href="'+$item.url+'">'+getSite($item.url)+'</a></td></tr>';
+	}
+
+	function getSite($url) {
+		if($url.indexOf('alternate.nl') != -1) {
+			return 'Alternate';
+		} else if($url.indexOf('cdromland.nl') != 1) {
+			return 'CD-ROM-LAND';
+		} else {
+			return 'de website';
+		}
+	}
+
+	function showSpecs($item) {
+		var $key,
+		$lightbox = $('#pcbuilder-lightbox'),
 		$content = $lightbox.find('.content-wrapper > .content');
 		$content.empty();
-		for($key in $selection) {
-			$content.append('<p>'+JSON.stringify($selection[$key])+'</p>');
+		$content.append('<h1>'+$item.name+'</h1>');
+		for($key in $item) {
+			if($key != 'name' && $key != 'euro' && $key != 'cent' && $key != 'crawlDate' && $key != 'url') {
+				$content.append('<dl><dt class="text-capitalize">'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
+			}
 		}
-		$lightbox.removeClass('hidden').hide();
-		$lightbox.fadeIn(1000);
+		$content.append('<div class="row"><div class="col-sm-10"><a href="'+$item.url+'">Bekijk dit product op '+getSite($item.url)+'.</a></div><div class="col-sm-2 text-right"><strong>&euro; '+getPriceString($item.euro,$item.cent)+'</strong></div></div>');
+		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}
 
 	$(function() {
@@ -108,5 +143,5 @@ var $componentSelection = (function() {
 		$('.pcbuilder-show-selection').click(selectionPopUp);
 	});
 
-	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore};
+	return {add: add, remove: remove, getPriceString: getPriceString, restore: restore, showSpecs: showSpecs};
 })();

@@ -199,16 +199,17 @@ footer > div {
 }
 
 .search-results {
-	margin:0px;padding:0px;
-	width:100%;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
 }
 
 .search-results table{
 	border-collapse: collapse;
-	width:100%;
-	height:100%;
-	margin:0px;
-	padding:0px;
+	width: 100%;
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
 }
 
 .search-results th {
@@ -216,10 +217,10 @@ footer > div {
 }
 
 .search-results tr:nth-child(odd){
-	background-color:transparent;
+	background-color: transparent;
 }
 .search-results tr:nth-child(even) {
-	background-color:#ffffff;
+	background-color: #ffffff;
 }
 
 .search-results td:nth-child(3n){
@@ -227,8 +228,8 @@ footer > div {
 }
 
 #infinito {
-  width:500px;
-  height:300px;
+  width: 500px;
+  height: 300px;
 }
 
 .search-results th .glyphicon {
@@ -347,4 +348,8 @@ footer > div {
 
 #pcbuilder-lightbox .content-wrapper > .content {
 	padding: 0.5em;
+}
+
+.item:first-child {
+	cursor: pointer;
 }

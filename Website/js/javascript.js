@@ -67,7 +67,7 @@
 			});
 		});
 		$(window).keyup(function($e) {
-			if($e.key == 'Esc') {
+			if($e.key == 'Esc' || $e.keyCode == 27 || $e.which == 27) {
 				$lightBoxButton.click();
 			}
 		});
