@@ -58,7 +58,7 @@ public class Systeem implements Dashboard {
         }
         else if(input.getString("action").equals("cronjob"))
         {
-            setCronjob(input, currentDate);
+            setCronjob(input);
         }
         return null;
     }
@@ -125,7 +125,7 @@ public class Systeem implements Dashboard {
         }
 
     }
-    private void setCronjob(JSONObject input, String date)
+    private void setCronjob(JSONObject input)
     {
         String minute = input.getString("minute1");
         String hour = input.getString("hour1");
