@@ -102,17 +102,28 @@ var $componentSelection = (function() {
 		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}
 
+	function getSite($url) {
+		if($url.indexOf('alternate.nl') != -1) {
+			return 'Alternate';
+		} else if($url.indexOf('cdromland.nl') != 1) {
+			return 'CD-ROM-LAND';
+		} else {
+			return 'de website';
+		}
+	}
+
 	function showSpecs($item) {
 		var $key,
 		$lightbox = $('#pcbuilder-lightbox'),
 		$content = $lightbox.find('.content-wrapper > .content');
 		$content.empty();
-		$content.append('<h1>'+$item.naam+'</h1><h2 class="pull-right">'+getPriceString($item.euro,$item.price)+'</h2>');
+		$content.append('<h1>'+$item.name+'</h1>');
 		for($key in $item) {
-			if($key != 'naam' && $key != 'euro' && $key != 'cent') {
-				$content.append('<dl><dt>'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
+			if($key != 'name' && $key != 'euro' && $key != 'cent' && $key != 'crawlDate' && $key != 'url') {
+				$content.append('<dl><dt class="text-capitalize">'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
 			}
 		}
+		$content.append('<div class="row"><div class="col-sm-10"><a href="'+$item.url+'">Bekijk dit product op '+getSite($item.url)+'.</a></div><div class="col-sm-2 text-right"><strong>&euro; '+getPriceString($item.euro,$item.cent)+'</strong></div></div>');
 		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}
 

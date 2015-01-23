@@ -196,7 +196,7 @@ function initSearch() {
 		});
 		$zoekResultaten.find('td:first').click(function() {
 			$componentSelection.showSpecs($item);
-		);
+		});
 		return $zoekResultaten;
 	}
 }
