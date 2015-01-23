@@ -84,7 +84,6 @@ public class Systeem implements Dashboard {
             out.put("log",sb.toString());
             PcBuilder.LOG.log(Level.INFO,sb.toString());
             return out;
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +136,8 @@ public class Systeem implements Dashboard {
             line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("alternateCrawl");
             line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
         }
-        File file = new File("cron");
+        File file = new File(settings.getString("cronDir")+"cron.x");
+        System.out.println(settings.getString("cronDir")+"cron.x");
         try {
             file.createNewFile();
             file.setWritable(true);

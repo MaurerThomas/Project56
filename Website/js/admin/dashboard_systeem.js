@@ -7,7 +7,7 @@
 	$webSocket.receive = function($msg) {
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
-			//$("#logs").html($json.log);
+			$("#logs").html($json.log);
 		}
 	};
 	 $('#clearlogs').click(function()
@@ -24,7 +24,7 @@
 	 $('#savesettings').click(function()
 	 {
 		if (confirm('Weet je zeker dat je deze instellingen wilt opslaan?')) {
-			$webSocket.send({action: 'cronjob',minute: $('minute1').val() , hour: $('hour1').val(), alternate: $('checkbox1').checked, cdromland: $('checkbox2').checked});
+			$webSocket.send({action: 'cronjob',minute1: $('minute1').val()+"" , hour1: $('hour1').val()+"" , alternate: $('checkbox1').checked, cdromland: $('checkbox2').checked});
 		} else {
 		}
 		console.log("Save");
