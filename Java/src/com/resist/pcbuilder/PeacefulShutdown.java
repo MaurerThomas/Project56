@@ -2,6 +2,9 @@ package com.resist.pcbuilder;
 
 import java.util.logging.Level;
 
+/**
+ * This class tries to stop the program when it receives a shutdown signal.
+ */
 public class PeacefulShutdown implements Runnable {
 	private PcBuilder pcbuilder;
 

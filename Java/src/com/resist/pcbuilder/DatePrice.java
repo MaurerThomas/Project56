@@ -3,7 +3,8 @@ package com.resist.pcbuilder;
 import java.sql.Date;
 
 /**
- * Created by Thomas on 21-1-2015.
+ * A wrapper that combines dates and prices.
+ * @author Thomas
  */
 public class DatePrice {
     private Date date;

@@ -19,22 +19,21 @@ public class SearchHandler {
 		this.pcbuilder = pcbuilder;
 	}
 
+	/**
+	 * Handles a search request from the website.
+	 * 
+	 * @param json The request sent by the website
+	 * @return A list of results to display
+	 */
 	public JSONArray handleSearch(JSONObject json) {
-		Connection conn = pcbuilder.getDBConnection().getConnection();
 		if (json.has("filters")) {
-			return handleQuery(conn,json.getJSONArray("filters"));
-		} /*else if (json.has("makechart")){
-			return getPartsPriceForGraph(conn,json.getJSONArray("makechart"));
-		}*/
+			return handleQuery(pcbuilder.getDBConnection().getConnection(),json.getJSONArray("filters"));
+		}
 		return null;
 	}
 
 	private JSONArray handleQuery(Connection conn,JSONArray json) {
 		return getParts(conn,json,pcbuilder.getSettings().getInt("daysPartsRemainValid")*DAY_IN_MS,pcbuilder.getSettings().getInt("maxElasticResults"),pcbuilder.getSettings().getInt("maxMySQLResults"));
-	}
-
-	private JSONArray getPartsPriceForGraph(Connection conn,JSONArray json) {
-		return getParts(conn,json,7*DAY_IN_MS,10,10);
 	}
 
 	private JSONArray getParts(Connection conn,JSONArray json,long timeAgo,int maxElasticResults,int maxSQLResults) {
@@ -84,6 +83,11 @@ public class SearchHandler {
 		return out;
 	}
 
+	/**
+	 * Retrieves part filter options from the database.
+	 * 
+	 * @return Filter options from the database
+	 */
 	public JSONObject getInit() {
 		JSONObject out = new JSONObject();
 		Connection conn = pcbuilder.getDBConnection().getConnection();

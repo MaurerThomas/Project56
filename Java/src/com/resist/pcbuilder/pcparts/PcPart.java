@@ -1,13 +1,17 @@
 package com.resist.pcbuilder.pcparts;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.Map.Entry;
+
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
@@ -130,6 +134,12 @@ public abstract class PcPart {
 		specs.put(key, value);
 	}
 
+	/**
+	 * Checks if a filter is a match filter.
+	 * 
+	 * @param key The key of the filter
+	 * @return True if the filter is a match filter
+	 */
 	public static boolean isValidMatchKey(String key) {
 		return key.equals("component") ||
 				key.equals("merk") ||
@@ -141,14 +151,35 @@ public abstract class PcPart {
 				Processor.isValidMatchKey(key);
 	}
 
+	/**
+	 * Checks if a filter is a range filter.
+	 * 
+	 * @param key The key of the filter
+	 * @return True if the filter is a range filter
+	 */
 	public static boolean isValidRangeKey(String key) {
 		return PowerSupplyUnit.isValidRangeKey(key);
 	}
 
+	/**
+	 * Checks whether a set of specifications form a part.
+	 * 
+	 * @param specs The specifications of the part
+	 * @return True if the given specifications form a part
+	 */
 	public static boolean isPart(Map<String, Object> specs) {
 		return false;
 	}
 
+	/**
+	 * Attempts to create a part from the specified settings.
+	 * 
+	 * @param euro The price without cents
+	 * @param cent The price without Euros
+	 * @param crawlDate The date the part was crawled
+	 * @param specs The specifications of the part
+	 * @return A valid part or null if no valid part could be constructed
+	 */
 	public static PcPart getInstance(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		final String[] basics = new String[] {"url","component","merk","naam","ean"};
 		for(String field : basics) {
@@ -176,6 +207,17 @@ public abstract class PcPart {
 		return null;
 	}
 
+	/**
+	 * Retrieves a list of parts given a set of filters.
+	 * 
+	 * @param client The client to get part specifications from
+	 * @param conn The database connection to get parts from
+	 * @param filterList A list of filters to filter parts on
+	 * @param timeAgo The maximum number of milliseconds ago a part was crawled
+	 * @param maxElasticResults The maximum number of specifications to retrieve
+	 * @param maxSQLResults The maximum number of parts to return
+	 * @return A list of parts found using the supplied filters
+	 */
 	public static List<PcPart> getParts(Client client, Connection conn, List<SearchFilter> filterList, long timeAgo, int maxElasticResults, int maxSQLResults) {
 		List<PcPart> out = new ArrayList<PcPart>();
 		QueryBuilder query = ElasticSearchFilter.buildFilters(filterList);
@@ -287,6 +329,14 @@ public abstract class PcPart {
 		return out;
 	}
 
+	/**
+	 * Retrieves the average price of a component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @param component The desired component
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn, String component) {
         List<DatePrice> out = new ArrayList<>();
         List<SearchFilter> filterList = new ArrayList<>();
@@ -301,34 +351,26 @@ public abstract class PcPart {
 
     private static List<DatePrice> getAvgPrices(Connection conn, Map<String, Map<String, Object>> parts) {
         Set<String> eans = parts.keySet();
-        int i = 1;
-
         List<DatePrice> out = new ArrayList<>();
-
         try {
             PreparedStatement s = conn.prepareStatement("SELECT AVG " +"("+DBConnection.COLUMN_PRICE_EURO+")"+","+DBConnection.COLUMN_PRICE_DATE+" FROM "
                     +DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+") " +
                     "WHERE "+DBConnection.COLUMN_EAN_EAN+ " "+DBConnection.getInQuery(eans.size())+" GROUP BY "+DBConnection.COLUMN_PRICE_DATE);
-
-            System.out.println(s.toString());
+            int i = 1;
             for (String set : eans) {
                 s.setString(i,set);
                 i++;
-
             }
             ResultSet resultSet = s.executeQuery();
-
             while (resultSet.next()){
                 DatePrice datePrice = new DatePrice(resultSet.getDate(2),resultSet.getInt(1));
                 out.add(datePrice);
             }
             resultSet.close();
             s.close();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             PcBuilder.LOG.log(Level.WARNING, "Failed to get average prices.", e);
         }
-
         return out;
     }
 }

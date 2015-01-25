@@ -15,6 +15,9 @@ import com.resist.websocket.Connection;
 import com.resist.websocket.Message;
 import com.resist.websocket.MessageHandler;
 
+/**
+ * A MessageHandler that handles incoming WebSocket messages from logged in admins.
+ */
 public class AdminSession implements MessageHandler {
 	private AdminLoginHandler loginHandler;
 	private String username;

@@ -5,6 +5,9 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.SimpleFormatter;
 
+/**
+ * An implementation of a log handling class that writes to the system's standard error and output streams based on the level of the error.
+ */
 public class LogHandler extends Handler {
 	@Override
 	public void close() throws SecurityException {}

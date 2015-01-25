@@ -18,7 +18,13 @@ import com.resist.pcbuilder.admin.AdminLoginHandler;
 import com.resist.websocket.ConnectionServer;
 
 public class PcBuilder {
+	/**
+	 * The search index used by ElasticSearch.
+	 */
 	public static final String MONGO_SEARCH_INDEX = "mongoindex";
+	/**
+	 * The logger to use throughout the program.
+	 */
 	public static final Logger LOG = Logger.getLogger(PcBuilder.class.getName());
 	static {
 		LOG.addHandler(new LogHandler());
@@ -33,6 +39,11 @@ public class PcBuilder {
 	private ConnectionServer adminServer;
 	private ConnectionServer builderServer;
 
+	/**
+	 * The program's entry point.
+	 * 
+	 * @param args An array of arguments; the first argument must contain a path to the settings file to use
+	 */
 	public static void main(String[] args) {
 		if (args.length > 0) {
 			try {
@@ -43,7 +54,8 @@ public class PcBuilder {
 				LOG.log(Level.SEVERE, "Invalid settings file.", e);
 			}
 		} else {
-			fatalError("No settings path specified.");
+			LOG.log(Level.SEVERE,"No settings path specified.");
+			System.exit(1);
 		}
 	}
 
@@ -58,14 +70,10 @@ public class PcBuilder {
 		return new JSONObject(settings.toString());
 	}
 
-	public static void fatalError(String error) {
-		LOG.log(Level.SEVERE,error);
-		System.exit(1);
-	}
-
 	public PcBuilder(JSONObject settings) {
 		if (!settingsArePresent(settings)) {
-			fatalError("Invalid settings file.");
+			LOG.log(Level.SEVERE,"Invalid settings file.");
+			System.exit(1);
 		}
 		this.settings = settings;
 		initSearch(settings.getString("address"),settings.getInt("elasticPort"),settings.getString("elasticCluster"));
@@ -123,39 +131,41 @@ public class PcBuilder {
 	}
 
 	private void listenForAdminConnections() {
-		final ConnectionServer admin = new ConnectionServer(
+		ConnectionServer admin = new ConnectionServer(
 				settings.getString("address"), settings.getInt("adminPort"),
-				settings.getString("adminPath"),
-				LOG)
+				settings.getString("adminPath"), LOG)
 				.setMessageHandler(new AdminLoginHandler(this));
 		if (settings.has("adminTimeout")) {
 			admin.setTimeout(settings.getInt("adminTimeout"));
 		}
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				admin.manageConnections();
-			}
-		}).start();
+		startOnNewThread(adminServer);
 		adminServer = admin;
 	}
 
 	private void listenForConnections() {
-		final ConnectionServer user = new ConnectionServer(
+		ConnectionServer user = new ConnectionServer(
 				settings.getString("address"), settings.getInt("port"),
-				settings.getString("path"), LOG).setMessageHandler(new InputHandler(this));
+				settings.getString("path"), LOG)
+				.setMessageHandler(new InputHandler(this));
 		if (settings.has("timeout")) {
 			user.setTimeout(settings.getInt("timeout"));
 		}
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				user.manageConnections();
-			}
-		}).start();
+		startOnNewThread(user);
 		builderServer = user;
 	}
 
+	private void startOnNewThread(final ConnectionServer cs) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				cs.manageConnections();
+			}
+		}).start();
+	}
+
+	/**
+	 * Attempts to stop the various parts of the program in a sensible order.
+	 */
 	public void stop() {
 		builderServer.stop();
 		adminServer.stop();

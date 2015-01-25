@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 import java.util.logging.Level;
 
+/**
+ * A MessageHandler for incoming WebSocket messages from the website.
+ */
 public class InputHandler implements MessageHandler {
 	private PcBuilder pcbuilder;
 
