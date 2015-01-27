@@ -4,12 +4,17 @@
  
  (function() {
 	$webSocket.send({action: 'getLogs'});
+	$webSocket.send({action: 'getCron'});
 	$webSocket.receive = function($msg) {
 		var $json = parseJSON($msg.data);
 		if($json !== null) {
 			if($json.log)
 			{
 				$("#logs").html($json.log);
+				$("#minute1").val($json.cron.minute);
+				$("#hour1").val($json.cron.hour);
+				$("#checkbox1").prop("checked", $json.cron.alternate);
+				$("#checkbox2").prop("checked", $json.cron.cdromland);
 			} else{
 				htmlHandler($msg);
 			}
@@ -31,7 +36,7 @@
 	 $('#savesettings').click(function()
 	 {
 		if (confirm('Weet je zeker dat je deze instellingen wilt opslaan?')) {
-			$webSocket.send({action: 'cronjob',minute1: $('#minute1').val()+"" , hour1: $('#hour1').val()+"" , alternate: $('#checkbox1').checked, cdromland: $('#checkbox2').checked});
+			$webSocket.send({action: 'cronjob',minute1: $('#minute1').val()+"" , hour1: $('#hour1').val()+"" , alternate: $('#checkbox1').prop("checked"), cdromland: $('#checkbox2').prop("checked")});
 		} else {
 		}
 		console.log("Save");
