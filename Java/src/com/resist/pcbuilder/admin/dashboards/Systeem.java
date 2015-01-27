@@ -78,7 +78,7 @@ public class Systeem implements Dashboard {
 
             while (line != null) {
                 sb.append(line);
-                sb.append("<br>");
+                sb.append("\n");
                 line = br.readLine();
             }
             out.put("log",sb.toString());

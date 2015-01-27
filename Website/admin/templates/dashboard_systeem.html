@@ -3,30 +3,32 @@
 	<div class="row">
 		<div id="crawlercontainer" style="margin:10px; padding:10px; border:solid 1px;"  class="col-sm-12">
 			<h3>Crawler started</h3>
-			<a href="#systeem" class="btn btn-success" id="startcrawler">start</a>
-			<a href="#systeem" class="btn btn-danger" id="stopcrawler">stop</a>
 			<p>Run at:</p>
-			<div id="crontime"  class="col-sm-12">
+			<div id="crontime"  class="col-sm-11">
 				<form class="form">
 					<div class="col-sm-6">
 						Hour<input type="text" id="hour1" class="form-control" width="10" name="hour">
 						Min<input type="text" id="minute1" class="form-control" width="10" name="min">
-						<a href="#systeem" class="btn btn-success" id="addtime">Add time</a>
 					</div>
 				</form>
 			</div>
-			<div id="crawlsites" class="col-sm-12">
+			<div id="crawlsites" class="col-sm-6">
 				<form class="form">
-					<div class="checkbox" >
-						<input type="checkbox"  name="site" value="Alternate" id="checkbox1">
-						<label for="checkbox1">Alternate </label>
+				
+					<div class="checkbox">
+						<label>
+							<input type="checkbox"  name="site" value="Alternate" id="checkbox1">
+							Alternate 
+						</label>
 					</div>	
 					<div class="checkbox">
-						<input type="checkbox" name="site" value="Cdromland" id="checkbox2">
-						<label for="checkbox2">Cdromland </label>
+						<label>
+							<input type="checkbox" name="site" value="Cdromland" id="checkbox2">
+							Cdromland
+						</label>
 					</div>
 				</form>
-				<div class="col-sm-12">
+				<div class="col-sm-11">
 					<a href="#systeem" class="btn btn-danger" id="savesettings">Save</a>
 				</div>
 			</div>
@@ -34,8 +36,8 @@
 		<hr>
 		<div id="logscontainer"  style="margin:10px; padding:10px; border:solid 1px" class="col-sm-12">
 			<h3>Logs</h3>
-			<p id="logs" style="padding:10px; border:solid 1px; " rows="40" cols="40">
-			</p>
+			<textarea id="logs" class="form-control" rows= "10" disabled>
+			</textarea>
 			<a href="#systeem" class="btn btn-success" id="clearlogs">clear</a>
 		</div>
 		<hr>
