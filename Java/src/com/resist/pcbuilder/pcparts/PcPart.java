@@ -373,4 +373,23 @@ public abstract class PcPart {
         }
         return out;
     }
+
+    public static List<DatePrice> getAvgPriceForComponent(Connection conn, String ean) {
+    	List<DatePrice> out = new ArrayList<>();
+    	try {
+    		PreparedStatement s = conn.prepareStatement("SELECT AVG("+DBConnection.COLUMN_PRICE_EURO+"+"+DBConnection.COLUMN_PRICE_CENT+"/100),"+DBConnection.COLUMN_PRICE_DATE+
+    				" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+
+    				") WHERE "+DBConnection.COLUMN_EAN_EAN+" = ?");
+    		s.setString(1,ean);
+    		ResultSet r = s.executeQuery();
+    		while(r.next()) {
+    			out.add(new DatePrice(r.getDate(2),r.getDouble(1)));
+    		}
+    		r.close();
+    		s.close();
+    	} catch(SQLException e) {
+    		PcBuilder.LOG.log(Level.WARNING, "Failed to get average price.", e);
+    	}
+    	return out;
+    }
 }

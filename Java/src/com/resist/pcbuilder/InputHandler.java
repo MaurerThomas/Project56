@@ -1,13 +1,16 @@
 package com.resist.pcbuilder;
 
-import com.resist.pcbuilder.admin.Analytics;
-import com.resist.websocket.Connection;
-import com.resist.websocket.Message;
-import com.resist.websocket.MessageHandler;
+import java.util.List;
+import java.util.logging.Level;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.logging.Level;
+import com.resist.pcbuilder.admin.Analytics;
+import com.resist.pcbuilder.pcparts.PcPart;
+import com.resist.websocket.Connection;
+import com.resist.websocket.Message;
+import com.resist.websocket.MessageHandler;
 
 /**
  * A MessageHandler for incoming WebSocket messages from the website.
@@ -54,7 +57,18 @@ public class InputHandler implements MessageHandler {
 				out.put("resultaten", pcbuilder.getSearchHandler().handleSearch(json));
 			} else if (action.equals("init")) {
 				out.put("init", pcbuilder.getSearchHandler().getInit());
+			} else if(action.equals("getPricesForComp") && json.has("ean")) {
+				out.put("pricesForComp", getPricesForComponent(json.getString("ean"))).put("pricesForEAN", json.getString("ean"));
 			}
+		}
+		return out;
+	}
+
+	private JSONObject getPricesForComponent(String ean) {
+		JSONObject out = new JSONObject();
+		List<DatePrice> prices = PcPart.getAvgPriceForComponent(pcbuilder.getDBConnection().getConnection(), ean);
+		for(DatePrice dp : prices) {
+			out.put(dp.getDate().toString(),dp.getPrice());
 		}
 		return out;
 	}
