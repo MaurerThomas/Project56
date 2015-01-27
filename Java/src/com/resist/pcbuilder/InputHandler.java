@@ -44,7 +44,7 @@ public class InputHandler implements MessageHandler {
 			PcBuilder.LOG.log(Level.INFO, "Invalid JSON string.", e);
 			return null;
 		}
-	}
+	}`
 
 	private JSONObject handleJSON(JSONObject json) {
 		JSONObject out = new JSONObject();

@@ -33,14 +33,18 @@ class AlternateSpider(Spider):
 		ean = response.xpath('//*[@id="buyProduct"]/script[1]/text()').extract()
 		ean = (''.join(ean)).split("upcean")[1]
 		ean = re.findall(r'\d+', ''.join(ean))[0]
+		if(len(ean) < 5):
+			ean = ""
+		
 		breadcrumbs = datalist.xpath('//*[@id="contentWrapper"]/div[1]').extract()
 		component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0]
 		if "Voedingen" in "".join(breadcrumbs):
 			component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[3]/a/span/text()').extract()[0]
+		naam = datalist.xpath('//*[@id="buyProduct"]/div[1]/h1/span[2]/text()').extract()[0]
 		item['specs'] ={}	
 		item['specs'] = {"component": component,
-							"merk":datalist.xpath('//*[@id="buyProduct"]/div[2]/h1/span[1]/text()').extract(),
-							"naam":datalist.xpath('//*[@id="buyProduct"]/div[2]/meta[2]/@content').extract(),
+							"merk":datalist.xpath('//*[@id="buyProduct"]/div[1]/h1/span[1]/text()').extract()[0],
+							"naam":naam,
 							"url": response.url,
 							"ean":ean
 							}
