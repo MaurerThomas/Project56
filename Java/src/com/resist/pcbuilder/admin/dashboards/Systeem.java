@@ -77,11 +77,10 @@ public class Systeem implements Dashboard {
             br = new BufferedReader(new FileReader(settings.getString("cronDir")+"cron.x"));
             String line = br.readLine();
             while(line != null){
-                alternate = line.contains("alternate");
-                cdromland = line.contains("cdromland");
-                String[] splitted = line.split(" ");
-                minute = splitted[0];
-                hour = splitted[1];
+                if(line.contains("alternate"))
+                    alternate = true;
+                if(line.contains("cdromland"))
+                    cdromland = true;
                 line = br.readLine();
             }
             JSONObject cron = new JSONObject();

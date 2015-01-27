@@ -17,7 +17,7 @@ public class PowerSupplyUnit extends PcPart {
 	public PowerSupplyUnit(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
 		try {
-			wattage = Integer.parseInt((String) specs.get("Vermogen"));
+			wattage = Integer.parseInt(((String) specs.get("Vermogen")).replaceAll("[^0-9]", ""));
 		} catch(NumberFormatException e) {
 			PcBuilder.LOG.log(Level.WARNING,"Vermogen is geen int",e);
 			wattage = 0;
