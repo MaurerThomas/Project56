@@ -11,8 +11,7 @@
  	$("#grafiek option").each(function() {
  		var select = $(this).text();
  		$webSocket.send({
- 			action: 'makeChart',
- 			'makeChart': select
+ 			action: 'makeChart','makeChart': select
  		});
  	});
 
