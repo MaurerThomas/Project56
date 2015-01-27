@@ -138,7 +138,7 @@ public class PcBuilder {
 		if (settings.has("adminTimeout")) {
 			admin.setTimeout(settings.getInt("adminTimeout"));
 		}
-		startOnNewThread(adminServer);
+		startOnNewThread(admin);
 		adminServer = admin;
 	}
 
