@@ -1,42 +1,49 @@
 <div>
 	<h2>Systeem</h2>
 	<div class="row">
-		<div id="crawlercontainer" style="margin:10px; padding:10px; border:solid 1px;"  class="col-sm-12">
+		<div id="crawlercontainer"  class="col-sm-12">
 			<h3>Crawler started</h3>
 			<p>Run at:</p>
 			<div id="crontime"  class="col-sm-11">
-				<form class="form">
-					<div class="col-sm-6">
-						Hour<input type="text" id="hour1" class="form-control" width="10" name="hour">
-						Min<input type="text" id="minute1" class="form-control" width="10" name="min">
+				<div class="col-sm-6">
+					<div class="input-group">
+						<div class="input-group-addon">
+							<span class="glyphicon glyphicon-time"></span>
+						</div>
+						<label class="sr-only" for="hour1">Uur</label>
+						<input class="form-control" id="hour1" type="number" min="0" max="23" placeholder="Uur" />
 					</div>
-				</form>
+					<div class="input-group">
+						<div class="input-group-addon">
+							<span class="glyphicon glyphicon-time"></span>
+						</div>
+						<label class="sr-only" for="minute1">Minuut</label>
+						<input class="form-control" id="minute1" type="number" min="0" max="59" placeholder="Minuut" />
+					</div>
+				</div>
 			</div>
 			<div id="crawlsites" class="col-sm-6">
-				<form class="form">
-				
-					<div class="checkbox">
-						<label>
-							<input type="checkbox"  name="site" value="Alternate" id="checkbox1">
-							Alternate 
-						</label>
-					</div>	
-					<div class="checkbox">
-						<label>
-							<input type="checkbox" name="site" value="Cdromland" id="checkbox2">
-							Cdromland
-						</label>
-					</div>
-				</form>
+				<div class="checkbox col-sm-11">
+					<label>
+						<input type="checkbox"  name="site" value="Alternate" id="checkbox1">
+						Alternate 
+					</label>
+				</div>	
+				<div class="checkbox col-sm-11">
+					<label>
+						<input type="checkbox" name="site" value="Cdromland" id="checkbox2">
+						Cdromland
+					</label>
+				</div>
 				<div class="col-sm-11">
 					<a href="#systeem" class="btn btn-danger" id="savesettings">Save</a>
 				</div>
 			</div>
 		</div>
 		<hr>
-		<div id="logscontainer"  style="margin:10px; padding:10px; border:solid 1px" class="col-sm-12">
+		<div id="logscontainer" class="col-sm-12">
 			<h3>Logs</h3>
-			<textarea id="logs" class="form-control" rows= "10" disabled>
+			<textarea id="logs" class="form-control" rows= "20" disabled>
 			</textarea>
 			<a href="#systeem" class="btn btn-success" id="clearlogs">clear</a>
 		</div>
