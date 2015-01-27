@@ -48,6 +48,9 @@ public class Systeem implements Dashboard {
 
             return displayLog();
         }
+        else if(input.getString("action").equals("getCron")){
+            return displayCron();
+        }
         else if(input.getString("action").equals("clearLog"))
         {
             try {
@@ -63,16 +66,42 @@ public class Systeem implements Dashboard {
         return null;
     }
 
+    private JSONObject displayCron(){
+        String minute = "";
+        String hour = "";
+        boolean alternate = false;
+        boolean cdromland = false;
+        BufferedReader br = null;
+        JSONObject out = new JSONObject();
+        try {
+            br = new BufferedReader(new FileReader(settings.getString("cronDir")+"cron.x"));
+            String line = br.readLine();
+            while(line != null){
+                alternate = line.contains("alternate");
+                cdromland = line.contains("cdromland");
+                String[] splitted = line.split(" ");
+                minute = splitted[0];
+                hour = splitted[1];
+                line = br.readLine();
+            }
+            JSONObject cron = new JSONObject();
+            cron.put("alternate", alternate);
+            cron.put("cdromland", cdromland);
+            cron.put("minute",minute);
+            cron.put("hour",hour);
+            out.put("cron",cron);
+            return out;
+        }catch(Exception e){
+
+        }
+        return null;
+    }
 	private JSONObject displayLog()
     {
         BufferedReader br = null;
         JSONObject out = new JSONObject();
         try {
             br = new BufferedReader(new FileReader(settings.getString("errorLogPath")+"error.log"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -89,7 +118,6 @@ public class Systeem implements Dashboard {
         }
         return null;
     }
-
 	private void clearLog(String date) throws IOException {
         String errorPath = settings.getString("errorLogPath");
         String outputPath = settings.getString("outputLogPath");
@@ -127,18 +155,18 @@ public class Systeem implements Dashboard {
     }
     private void setCronjob(JSONObject input)
     {
-        String minute = input.getString("minute1");
-        String hour = input.getString("hour1");
+        int minute = input.getInt("minute1");
+        int hour = input.getInt("hour1");
         boolean alternate = input.getBoolean("alternate");
         boolean cdromland = input.getBoolean("cdromland");
         String line1 = "";
         String line2 = "";
-        if(minute.length() >= 1 && hour.length() >= 1 )
+        if(minute >= 0 && minute <= 59 && hour >= 0  && hour <=23)
         {
             if(alternate)
-                line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("alternateCrawl");
+                line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+" "+settings.getString("alternateCrawl");
             if(cdromland)
-                line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
+                line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+" "+settings.getString("cdromlandCrawl");
         }
         File file = new File(settings.getString("cronDir")+"cron.x");
         System.out.println(settings.getString("cronDir")+"cron.x");

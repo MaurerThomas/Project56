@@ -11,11 +11,13 @@
 			if($json.log)
 			{
 				$("#logs").html($json.log);
+			}else if($json.cron){
 				$("#minute1").val($json.cron.minute);
 				$("#hour1").val($json.cron.hour);
 				$("#checkbox1").prop("checked", $json.cron.alternate);
 				$("#checkbox2").prop("checked", $json.cron.cdromland);
-			} else{
+			}
+			else{
 				htmlHandler($msg);
 			}
 		}
@@ -27,12 +29,12 @@
 		if (confirm('Weet je zeker dat je de logs wilt legen?')) {
 			$webSocket.send({action: 'clearLog'});
 			$("#logs").html("cleared")
-		} else {
 		}
-		
-		
 	 });
-	 
+	 $('#refreshlogs').click(function()
+	 {   
+		$webSocket.send({action: 'getLogs'});
+	 });
 	 $('#savesettings').click(function()
 	 {
 		if (confirm('Weet je zeker dat je deze instellingen wilt opslaan?')) {
