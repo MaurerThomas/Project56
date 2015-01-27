@@ -41,7 +41,7 @@ public class Grafieken implements Dashboard {
 	@Override
 	public JSONObject handleJSON(JSONObject input) {
 		if (input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
-			makeVisitorCharts();
+            makeVisitorCharts();
 			return new OutputBuilder().htmlTemplate("#main", "dashboard_grafieken").getOutput();
 		} else if (input.has("makeChart")) {
 			handleCharts(input);
