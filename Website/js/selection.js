@@ -124,17 +124,28 @@ var $componentSelection = (function() {
 	}
 
 	function showSpecs($item) {
-		var $key,
+		var $key,$comp,$prices,$tabs,
 		$lightbox = $('#pcbuilder-lightbox'),
 		$content = $lightbox.find('.content-wrapper > .content');
 		$content.empty();
-		$content.append('<h1>'+$item.name+'</h1>');
+		$content.append('<ul class="nav nav-tabs"><li class="active"><a href="#pcbuilder-item-specs">Component</a></li><li><a href="#pcbuilder-item-prices">Prijsverloop</a></li></ul>');
+		$tabs = $('<div class="tab-content"></div>');
+		$comp = $('<div id="pcbuilder-item-specs" class="tab-pane active"></div>');
+		$comp.append('<h1>'+$item.name+'</h1>');
 		for($key in $item) {
 			if($key != 'name' && $key != 'euro' && $key != 'cent' && $key != 'crawlDate' && $key != 'url') {
-				$content.append('<dl><dt class="text-capitalize">'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
+				$comp.append('<dl><dt class="text-capitalize">'+$key+'</dt><dd>'+$item[$key]+'</dd></dl>');
 			}
 		}
-		$content.append('<div class="row"><div class="col-sm-10"><a href="'+$item.url+'">Bekijk dit product op '+getSite($item.url)+'.</a></div><div class="col-sm-2 text-right"><strong>&euro; '+getPriceString($item.euro,$item.cent)+'</strong></div></div>');
+		$comp.append('<div class="row"><div class="col-sm-10"><a href="'+$item.url+'">Bekijk dit product op '+getSite($item.url)+'.</a></div><div class="col-sm-2 text-right"><strong>&euro; '+getPriceString($item.euro,$item.cent)+'</strong></div></div>');
+		$prices = $('<div id="pcbuilder-item-prices" class="tab-pane" data-ean="'+$item.ean+'"><p>Prijzen worden geladen...</p><p class="loader"></p></div>');
+		$tabs.append($comp);
+		$tabs.append($prices);
+		$content.append($tabs);
+		$content.find('.nav-tabs a').click(function($e) {
+			$e.preventDefault();
+			$(this).tab('show');
+		});
 		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}
 

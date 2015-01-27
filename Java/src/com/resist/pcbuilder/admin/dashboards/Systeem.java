@@ -129,16 +129,12 @@ public class Systeem implements Dashboard {
     {
         String minute = input.getString("minute1");
         String hour = input.getString("hour1");
-        boolean alternate = input.getBoolean("alternate");
-        boolean cdromland = input.getBoolean("cdromland");
         String line1 = "";
         String line2 = "";
         if(minute.length() >= 1 && hour.length() >= 1 )
         {
-            if(alternate)
-                line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("alternateCrawl");
-            if(cdromland)
-                line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
+            line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("alternateCrawl");
+            line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+settings.getString("cdromlandCrawl");
         }
         File file = new File(settings.getString("cronDir")+"cron.x");
         System.out.println(settings.getString("cronDir")+"cron.x");
