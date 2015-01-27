@@ -87,7 +87,7 @@ public class Grafieken implements Dashboard {
 		for (Analytics analytics : analyticsList) {
 			line_chart_dataset.addValue(Integer.valueOf(analytics.getHashcodes()), "bezoekers", String.valueOf(analytics.getDatum()));
 		}
-		makeChart("Aantal Bezoekers","Datum","Bezoekers",line_chart_dataset,"visitorGraphPath");
+		makeChart("Aantal Bezoekers","Datum","Bezoekers",line_chart_dataset,settings.getString("visitorGraphPath"));
 	}
 
 	private void makeTheChartForComponents(String titel, List<DatePrice> priceAndDate, String locatie) {
