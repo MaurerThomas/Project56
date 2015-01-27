@@ -8,5 +8,18 @@
 			}
 		}
 	};
+	function handleJSON($json) {
+			return getProcessors($json);
+	}
 	
+	function getProcessors($json) {
+		console.log($json.processors);
+	}
+	
+	function parseJSON($str) {
+		try {
+			return JSON.parse($str);
+		} catch($e) {}
+		return null;
+	}
 })();

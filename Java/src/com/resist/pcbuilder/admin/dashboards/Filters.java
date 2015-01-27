@@ -4,6 +4,7 @@ package com.resist.pcbuilder.admin.dashboards;
 import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
 import com.resist.pcbuilder.SearchHandler;
+import com.resist.pcbuilder.admin.Admin;
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
@@ -25,11 +26,22 @@ public class Filters implements Dashboard {
     private PcBuilder pcbuilder;
 
     public Filters(AdminSession session) {this.session = session;}
+    private SearchHandler searchHandler;
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
         if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
             return new OutputBuilder().htmlTemplate("#main","dashboard_filters").getOutput();
+        } else if(input.has("init")) {
+            return handleActions(input);
+        }
+        return null;
+    }
+    private JSONObject handleActions(JSONObject input) {
+        String action = input.getString("action");
+        if(action.equals("init")) {
+            System.out.println(searchHandler.getInit());
+            return searchHandler.getInit();
         }
         return null;
     }
