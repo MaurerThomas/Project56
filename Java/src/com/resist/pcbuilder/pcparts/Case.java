@@ -18,7 +18,7 @@ public class Case extends PcPart {
 
 	public Case(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
-		formFactor = (String) specs.get("Bouwvorm");
+		formFactor = (String) specs.get("Formaat");
 		setSpec("formFactor",formFactor);
 	}
 
@@ -32,11 +32,11 @@ public class Case extends PcPart {
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {
-		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Bouwvorm");
+		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Formaat");
 	}
 
 	public static boolean isValidMatchKey(String key) {
-		return key.equals("Bouwvorm");
+		return key.equals("Formaat");
 	}
 
 	public static List<Case> getFormFactors(Connection conn) {
