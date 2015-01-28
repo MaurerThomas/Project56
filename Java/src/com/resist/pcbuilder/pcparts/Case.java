@@ -14,12 +14,14 @@ import java.util.logging.Level;
 public class Case extends PcPart {
 	public static final String COMPONENT = "Behuizingen";
 
-	private String formFactor;
+	private String formFactor,afmetingen;
 
 	public Case(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		formFactor = (String) specs.get("Formaat");
+		afmetingen = (String) specs.get("Afmetingen (BxHxD)");
 		setSpec("formFactor",formFactor);
+		setSpec("afmetingen",afmetingen);
 	}
 
 	private Case(String formFactor) {
@@ -30,6 +32,7 @@ public class Case extends PcPart {
 	public String getFormFactor() {
 		return formFactor;
 	}
+	public String getAfmetingen() { return  afmetingen;}
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Formaat");

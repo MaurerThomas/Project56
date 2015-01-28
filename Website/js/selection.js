@@ -12,6 +12,7 @@ var $componentSelection = (function() {
 	function remove($component) {
 		delete $selection[$component];
 		$('#'+getComponentId($component)+' .selection-title').text('Geen selectie');
+		$('#'+getComponentId($component)+' .selection-title').parent().toggleClass("selected");
 		save();
 	}
 
@@ -60,6 +61,7 @@ var $componentSelection = (function() {
 
 	function updateSelection($item) {
 		$('#'+getComponentId($item.component)+' .selection-title').text($item.name);
+		$('#'+getComponentId($item.component)+' .selection-title').parent().toggleClass("selected");
 	}
 
 	function updatePrice() {

@@ -353,3 +353,6 @@ footer > div {
 .item:first-child {
 	cursor: pointer;
 }
+.selected {
+	background-color : #96A6B0 !important;
+}
