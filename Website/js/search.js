@@ -147,24 +147,34 @@ function initSearch() {
 	function getSearchResultReceiver($form) {
 		var $f = $($form),
 		$results = $f.parent().find('.search-results'),
-		$submit = $f.find('input[type="submit"]');
+		$submit = $('input[type="submit"]');
 		$results.html('<p>Onderdelen worden geladen...</p><p class="loader"></p>');
 		$submit.attr('disabled',true);
 		return function($msg) {
 			var $json;
 			if($msg.data !== undefined) {
 				$json = getJSON($msg.data);
-				if($json !== null && $json.resultaten !== undefined) {
-					$results.empty();
-					if(!isNaN($json.resultaten.length) && $json.resultaten.length > 0) {
-						displayResults($json.resultaten,$results);
+				if($json !== null) {
+					if($json.resultaten !== undefined) {
+						$results.empty();
+						if(!isNaN($json.resultaten.length) && $json.resultaten.length > 0) {
+							displayResults($json.resultaten,$results);
+						} else {
+							$results.append('<p class="pcbuilder-no-results">Er zijn geen onderdelen gevonden met deze filters.</p>');
+						}
+						$submit.attr('disabled',false);
 					} else {
-						$results.append('<p class="pcbuilder-no-results">Er zijn geen onderdelen gevonden met deze filters.</p>');
+						handleReceive($json);
 					}
-					$submit.attr('disabled',false);
 				}
 			}
 		};
+	}
+
+	function handleReceive($json) {
+		if($json.pricesForComp !== undefined && $json.pricesForEAN !== undefined) {
+			$('#pcbuilder-item-prices[data-ean="'+$json.pricesForEAN+'"]').html('<p>'+JSON.stringify($json.pricesForComp)+'</p>');
+		}
 	}
 
 	function displayResults($resultaten,$results) {

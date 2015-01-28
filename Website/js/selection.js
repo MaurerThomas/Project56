@@ -145,8 +145,12 @@ var $componentSelection = (function() {
 		$tabs.append($prices);
 		$content.append($tabs);
 		$content.find('.nav-tabs a').click(function($e) {
+			var $this = $(this);
 			$e.preventDefault();
-			$(this).tab('show');
+			$this.tab('show');
+			if($this.attr('href') == '#pcbuilder-item-prices') {
+				$webSocket.send({action: 'getPricesForComp', ean: $item.ean});
+			}
 		});
 		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}

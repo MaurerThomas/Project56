@@ -378,7 +378,7 @@ public abstract class PcPart {
     	List<DatePrice> out = new ArrayList<>();
     	try {
     		PreparedStatement s = conn.prepareStatement("SELECT AVG("+DBConnection.COLUMN_PRICE_EURO+"+"+DBConnection.COLUMN_PRICE_CENT+"/100),"+DBConnection.COLUMN_PRICE_DATE+
-    				" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+
+    				" FROM "+DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+
     				") WHERE "+DBConnection.COLUMN_EAN_EAN+" = ?");
     		s.setString(1,ean);
     		ResultSet r = s.executeQuery();
