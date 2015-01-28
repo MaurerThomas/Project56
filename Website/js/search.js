@@ -199,7 +199,7 @@ function initSearch() {
 					return $a.date.localeCompare($b.date);
 				});
 				$low = getMin($low);
-				$high = getMax($high);
+				$high = $low+getMax($high-$low);
 				$step = $high-$low;
 				if($step === 0) {
 					$step = 1;
@@ -215,17 +215,17 @@ function initSearch() {
 		}
 
 		function getMin($value) {
-			var $mult = getFLogMult($value);
+			var $mult = getLogMult($value);
 			return Math.floor($value/$mult)*$mult;
 		}
 
 		function getMax($value) {
-			var $mult = getFLogMult($value);
+			var $mult = getLogMult($value);
 			return Math.ceil($value/$mult)*$mult;
 		}
 
-		function getFLogMult($value) {
-			return Math.pow(10,Math.floor(Math.log($value)/Math.log(10)));
+		function getLogMult($value) {
+			return Math.pow(10,Math.ceil(Math.log($value)/Math.log(10)));
 		}
 	}
 

@@ -350,7 +350,7 @@ footer > div {
 	padding: 0.5em;
 }
 
-.search-results .item:first-child {
+.search-results .item td:first-child {
 	cursor: pointer;
 }
 
