@@ -91,6 +91,7 @@ public class Systeem implements Dashboard {
             out.put("cron",cron);
             return out;
         }catch(Exception e){
+            e.printStackTrace();
 
         }
         return null;
