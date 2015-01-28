@@ -350,9 +350,10 @@ footer > div {
 	padding: 0.5em;
 }
 
-.item:first-child {
+.search-results .item:first-child {
 	cursor: pointer;
 }
-.selected {
-	background-color : #96A6B0 !important;
+
+#pcbuilder-selection > .row div.selected {
+	background-color : #96A6B0;
 }
