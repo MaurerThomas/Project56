@@ -173,7 +173,59 @@ function initSearch() {
 
 	function handleReceive($json) {
 		if($json.pricesForComp !== undefined && $json.pricesForEAN !== undefined) {
-			$('#pcbuilder-item-prices[data-ean="'+$json.pricesForEAN+'"]').html('<p>'+JSON.stringify($json.pricesForComp)+'</p>');
+			handlePricesForComp($json.pricesForComp,$json.pricesForEAN);
+		}
+	}
+
+	function handlePricesForComp($prices,$ean) {
+		var $graph,$date,$step,$height,$n,
+		$sortedPrices = [],
+		$high = -Infinity,
+		$low = Infinity,
+		$tab = $('#pcbuilder-item-prices[data-ean="'+$ean+'"]');
+		if($tab.length !== 0) {
+			for($date in $prices) {
+				$prices[$date] = Math.round($prices[$date]*100)/100;
+				if($prices[$date] < $low) {
+					$low = $prices[$date];
+				}
+				if($prices[$date] > $high) {
+					$high = $prices[$date];
+				}
+				$sortedPrices.push({price: $prices[$date], date: $date});
+			}
+			if($high !== -Infinity && $low !== Infinity) {
+				$sortedPrices.sort(function($a,$b) {
+					return $a.date.localeCompare($b.date);
+				});
+				$low = getMin($low);
+				$high = getMax($high);
+				$step = $high-$low;
+				if($step === 0) {
+					$step = 1;
+				}
+				$graph = $('<div class="pcbuilder-graph"></div>');
+				for($n=0;$n < $sortedPrices.length;$n++) {
+					$height = ($sortedPrices[$n].price-$low)/$step*100;
+					$graph.append('<div class="data"><div class="bar"><div style="height: '+$height+'%" title="&euro; '+$componentSelection.getPriceString($sortedPrices[$n].price)+'"></div></div><div class="legend">'+$sortedPrices[$n].date+'</div></div>');
+				}
+				$tab.empty();
+				$tab.append($graph);
+			}
+		}
+
+		function getMin($value) {
+			var $mult = getFLogMult($value);
+			return Math.floor($value/$mult)*$mult;
+		}
+
+		function getMax($value) {
+			var $mult = getFLogMult($value);
+			return Math.ceil($value/$mult)*$mult;
+		}
+
+		function getFLogMult($value) {
+			return Math.pow(10,Math.floor(Math.log($value)/Math.log(10)));
 		}
 	}
 

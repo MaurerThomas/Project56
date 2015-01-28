@@ -357,3 +357,28 @@ footer > div {
 #pcbuilder-selection > .row div.selected {
 	background-color : #96A6B0;
 }
+
+.pcbuilder-graph {
+	width: 100%;
+	overflow: auto;
+	white-space: nowrap;
+}
+
+.pcbuilder-graph .data {
+	display: inline-block;
+	margin: 0.25em;
+}
+
+.pcbuilder-graph .data .bar {
+	height: 200px;
+	background-color: #eee;
+	position: relative;
+}
+
+.pcbuilder-graph .data .bar > div {
+	background-color: red;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	position: absolute;
+}

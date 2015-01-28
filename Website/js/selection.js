@@ -82,6 +82,17 @@ var $componentSelection = (function() {
 	}
 
 	function getPriceString($euro,$cent) {
+		if($cent !== undefined) {
+			return getPriceStringEC($euro,$cent);
+		} else {
+			$cent = $euro;
+			$euro = Math.floor($euro);
+			$cent = Math.round(($cent-$euro)*100);
+			return getPriceStringEC($euro,$cent);
+		}
+	}
+
+	function getPriceStringEC($euro,$cent) {
 		var $out = $euro+',';
 		if($cent === 0) {
 			$out += '-';
@@ -148,7 +159,7 @@ var $componentSelection = (function() {
 			var $this = $(this);
 			$e.preventDefault();
 			$this.tab('show');
-			if($this.attr('href') == '#pcbuilder-item-prices') {
+			if($this.attr('href') == '#pcbuilder-item-prices' && $content.find('.loader').length !== 0) {
 				$webSocket.send({action: 'getPricesForComp', ean: $item.ean});
 			}
 		});
