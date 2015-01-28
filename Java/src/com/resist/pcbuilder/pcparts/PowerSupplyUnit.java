@@ -13,6 +13,7 @@ import org.elasticsearch.client.Client;
 public class PowerSupplyUnit extends PcPart {
 	public static final String COMPONENT = "Voedingen";
 	private int wattage;
+	private String formFactor;
 
 	public PowerSupplyUnit(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
@@ -23,6 +24,9 @@ public class PowerSupplyUnit extends PcPart {
 			wattage = 0;
 		}
 		setSpec("wattage", wattage);
+		formFactor = (String) specs.get("Bouwvorm");
+		setSpec("formFactor",formFactor);
+
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {

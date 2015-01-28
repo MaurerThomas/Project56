@@ -163,9 +163,9 @@ public class Systeem implements Dashboard {
         if(minute >= 0 && minute <= 59 && hour >= 0  && hour <=23)
         {
             if(alternate)
-                line1 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+" "+settings.getString("alternateCrawl");
+                line1 += minute+" "+hour+" * * * "+settings.getString("alternateCrawl");
             if(cdromland)
-                line2 += minute+" "+hour+" * * * "+settings.getString("crawlerPath")+" "+settings.getString("cdromlandCrawl");
+                line2 += minute+" "+hour+" * * * "+settings.getString("cdromlandCrawl");
         }
         File file = new File(settings.getString("cronDir")+"cron.x");
         System.out.println(settings.getString("cronDir")+"cron.x");
