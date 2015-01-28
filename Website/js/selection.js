@@ -12,7 +12,7 @@ var $componentSelection = (function() {
 	function remove($component) {
 		delete $selection[$component];
 		$('#'+getComponentId($component)+' .selection-title').text('Geen selectie');
-		$('#'+getComponentId($component)+' .selection-title').parent().toggleClass("selected");
+		$('#'+getComponentId($component)).removeClass('selected');
 		save();
 	}
 
@@ -61,7 +61,7 @@ var $componentSelection = (function() {
 
 	function updateSelection($item) {
 		$('#'+getComponentId($item.component)+' .selection-title').text($item.name);
-		$('#'+getComponentId($item.component)+' .selection-title').parent().toggleClass("selected");
+		$('#'+getComponentId($item.component)).addClass('selected');
 	}
 
 	function updatePrice() {
@@ -82,6 +82,17 @@ var $componentSelection = (function() {
 	}
 
 	function getPriceString($euro,$cent) {
+		if($cent !== undefined) {
+			return getPriceStringEC($euro,$cent);
+		} else {
+			$cent = $euro;
+			$euro = Math.floor($euro);
+			$cent = Math.round(($cent-$euro)*100);
+			return getPriceStringEC($euro,$cent);
+		}
+	}
+
+	function getPriceStringEC($euro,$cent) {
 		var $out = $euro+',';
 		if($cent === 0) {
 			$out += '-';
@@ -145,8 +156,12 @@ var $componentSelection = (function() {
 		$tabs.append($prices);
 		$content.append($tabs);
 		$content.find('.nav-tabs a').click(function($e) {
+			var $this = $(this);
 			$e.preventDefault();
-			$(this).tab('show');
+			$this.tab('show');
+			if($this.attr('href') == '#pcbuilder-item-prices' && $content.find('.loader').length !== 0) {
+				$webSocket.send({action: 'getPricesForComp', ean: $item.ean});
+			}
 		});
 		$lightbox.removeClass('hidden').hide().fadeIn(1000);
 	}

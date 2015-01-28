@@ -147,24 +147,86 @@ function initSearch() {
 	function getSearchResultReceiver($form) {
 		var $f = $($form),
 		$results = $f.parent().find('.search-results'),
-		$submit = $f.find('input[type="submit"]');
+		$submit = $('input[type="submit"]');
 		$results.html('<p>Onderdelen worden geladen...</p><p class="loader"></p>');
 		$submit.attr('disabled',true);
 		return function($msg) {
 			var $json;
 			if($msg.data !== undefined) {
 				$json = getJSON($msg.data);
-				if($json !== null && $json.resultaten !== undefined) {
-					$results.empty();
-					if(!isNaN($json.resultaten.length) && $json.resultaten.length > 0) {
-						displayResults($json.resultaten,$results);
+				if($json !== null) {
+					if($json.resultaten !== undefined) {
+						$results.empty();
+						if(!isNaN($json.resultaten.length) && $json.resultaten.length > 0) {
+							displayResults($json.resultaten,$results);
+						} else {
+							$results.append('<p class="pcbuilder-no-results">Er zijn geen onderdelen gevonden met deze filters.</p>');
+						}
+						$submit.attr('disabled',false);
 					} else {
-						$results.append('<p class="pcbuilder-no-results">Er zijn geen onderdelen gevonden met deze filters.</p>');
+						handleReceive($json);
 					}
-					$submit.attr('disabled',false);
 				}
 			}
 		};
+	}
+
+	function handleReceive($json) {
+		if($json.pricesForComp !== undefined && $json.pricesForEAN !== undefined) {
+			handlePricesForComp($json.pricesForComp,$json.pricesForEAN);
+		}
+	}
+
+	function handlePricesForComp($prices,$ean) {
+		var $graph,$date,$step,$height,$n,
+		$sortedPrices = [],
+		$high = -Infinity,
+		$low = Infinity,
+		$tab = $('#pcbuilder-item-prices[data-ean="'+$ean+'"]');
+		if($tab.length !== 0) {
+			for($date in $prices) {
+				$prices[$date] = Math.round($prices[$date]*100)/100;
+				if($prices[$date] < $low) {
+					$low = $prices[$date];
+				}
+				if($prices[$date] > $high) {
+					$high = $prices[$date];
+				}
+				$sortedPrices.push({price: $prices[$date], date: $date});
+			}
+			if($high !== -Infinity && $low !== Infinity) {
+				$sortedPrices.sort(function($a,$b) {
+					return $a.date.localeCompare($b.date);
+				});
+				$low = getMin($low);
+				$high = getMax($high);
+				$step = $high-$low;
+				if($step === 0) {
+					$step = 1;
+				}
+				$graph = $('<div class="pcbuilder-graph"></div>');
+				for($n=0;$n < $sortedPrices.length;$n++) {
+					$height = ($sortedPrices[$n].price-$low)/$step*100;
+					$graph.append('<div class="data"><div class="bar"><div style="height: '+$height+'%" title="&euro; '+$componentSelection.getPriceString($sortedPrices[$n].price)+'"></div></div><div class="legend">'+$sortedPrices[$n].date+'</div></div>');
+				}
+				$tab.empty();
+				$tab.append($graph);
+			}
+		}
+
+		function getMin($value) {
+			var $mult = getFLogMult($value);
+			return Math.floor($value/$mult)*$mult;
+		}
+
+		function getMax($value) {
+			var $mult = getFLogMult($value);
+			return Math.ceil($value/$mult)*$mult;
+		}
+
+		function getFLogMult($value) {
+			return Math.pow(10,Math.floor(Math.log($value)/Math.log(10)));
+		}
 	}
 
 	function displayResults($resultaten,$results) {

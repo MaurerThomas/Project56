@@ -377,9 +377,10 @@ public abstract class PcPart {
     public static List<DatePrice> getAvgPriceForComponent(Connection conn, String ean) {
     	List<DatePrice> out = new ArrayList<>();
     	try {
-    		PreparedStatement s = conn.prepareStatement("SELECT AVG("+DBConnection.COLUMN_PRICE_EURO+"+"+DBConnection.COLUMN_PRICE_CENT+"/100),"+DBConnection.COLUMN_PRICE_DATE+
-    				" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+
-    				") WHERE "+DBConnection.COLUMN_EAN_EAN+" = ?");
+    		PreparedStatement s = conn.prepareStatement("SELECT AVG("+DBConnection.COLUMN_PRICE_EURO+"+"+DBConnection.COLUMN_PRICE_CENT+"/100),DATE("+DBConnection.COLUMN_PRICE_DATE+
+    				") FROM "+DBConnection.TABLE_PRICE+" JOIN "+DBConnection.TABLE_EAN+" ON " +"("+DBConnection.COLUMN_PRICE_URL+" = "+DBConnection.COLUMN_EAN_URL+
+    				") WHERE "+DBConnection.COLUMN_EAN_EAN+" = ?"
+					+ " GROUP BY DATE("+DBConnection.COLUMN_PRICE_DATE+")");
     		s.setString(1,ean);
     		ResultSet r = s.executeQuery();
     		while(r.next()) {
