@@ -91,6 +91,7 @@ public class Systeem implements Dashboard {
             out.put("cron",cron);
             return out;
         }catch(Exception e){
+            PcBuilder.LOG.log(Level.WARNING, "Failed to display cron", e);
 
         }
         return null;
@@ -113,7 +114,7 @@ public class Systeem implements Dashboard {
             PcBuilder.LOG.log(Level.INFO,sb.toString());
             return out;
         } catch (IOException e) {
-            e.printStackTrace();
+            PcBuilder.LOG.log(Level.WARNING, "Failed to display log", e);
         }
         return null;
     }

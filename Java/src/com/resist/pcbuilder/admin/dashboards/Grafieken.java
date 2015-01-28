@@ -22,9 +22,6 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.logging.Level;
 
-/**
- * Created by Thomas on 16-12-2014.
- */
 public class Grafieken implements Dashboard {
 	public static final String IDENTIFIER = "grafieken";
 	private final static int width = 1024;
@@ -32,6 +29,12 @@ public class Grafieken implements Dashboard {
 
 	private AdminSession session;
 	private JSONObject settings;
+
+    /**
+     * Creates a new Grafieken dashboard.
+     *
+     * @param session The admin session spawned this dashboard
+     */
 
 	public Grafieken(AdminSession session) {
 		this.session = session;
