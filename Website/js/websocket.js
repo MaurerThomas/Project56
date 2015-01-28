@@ -12,9 +12,7 @@ var $webSocket = (function() {
 			$ws.onmessage = function($msg) {
 				$webSocket.receive($msg);
 			};
-			$ws.onclose = function($msg) {
-				$webSocket.receiveClose($msg);
-			};
+			$ws.onclose = receiveClose;
 			$initialised = true;
 		}
 	}
@@ -23,10 +21,18 @@ var $webSocket = (function() {
 		$ws.send(JSON.stringify($json));
 	}
 
+	function receiveClose($msg) {
+		$initialised = false;
+		$webSocket.receiveClose($msg);
+	}
+
 	return {
 		send: send,
 		receive: function() {},
 		receiveClose: function() {},
-		init: init
+		init: init,
+		getReadyState: function() {
+			return $ws.readyState;
+		}
 	};
 })();
