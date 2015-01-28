@@ -13,7 +13,7 @@ class AlternateSpider(Spider):
 	conn = MySQLdb.connect(user= settings['MYSQL_USER'], passwd= settings['MYSQL_PASS'], db= settings['MYSQL_DB'], host= settings['MYSQL_HOST'], charset='utf8', use_unicode=True)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""SELECT url FROM url_ean WHERE url LIKE '%alternate%' """)
+		cursor.execute("""SELECT url FROM url_ean WHERE ean = "" url LIKE '%alternate%' """)
 		data = cursor.fetchall()
 		start_urls = []
 		for row in data:
