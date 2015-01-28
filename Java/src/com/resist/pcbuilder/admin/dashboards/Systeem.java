@@ -166,7 +166,7 @@ public class Systeem implements Dashboard {
             if(alternate)
                 line1 += minute+" "+hour+" * * * "+settings.getString("alternateCrawl");
             if(cdromland)
-                line2 += minute+" "+hour+" * * * "+settings.getString("cdromlandCrawl");
+                line2 += (minute+10)+" "+hour+" * * * "+settings.getString("cdromlandCrawl");
         }
         File file = new File(settings.getString("cronDir")+"cron.x");
         System.out.println(settings.getString("cronDir")+"cron.x");

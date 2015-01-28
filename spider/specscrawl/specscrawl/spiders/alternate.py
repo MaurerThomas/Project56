@@ -13,7 +13,7 @@ class AlternateSpider(Spider):
 	conn = MySQLdb.connect(user= settings['MYSQL_USER'], passwd= settings['MYSQL_PASS'], db= settings['MYSQL_DB'], host= settings['MYSQL_HOST'], charset='utf8', use_unicode=True)
 	cursor = conn.cursor()
 	try:
-		cursor.execute("""SELECT url FROM url_ean WHERE ean = "" AND url LIKE '%alternate%' """)
+		cursor.execute("""SELECT url FROM url_ean WHERE url LIKE '%alternate%' """)
 		data = cursor.fetchall()
 		start_urls = []
 		for row in data:
@@ -29,18 +29,23 @@ class AlternateSpider(Spider):
 		print "next item"
 		item = SpecscrawlItem()
 		datalist = response.xpath('//*[@class="techData"]')
-		
-		ean = response.xpath('//*[@id="buyProduct"]/script[1]/text()').extract()
-		ean = (''.join(ean)).split("upcean")[1]
-		ean = re.findall(r'\d+', ''.join(ean))[0]
-		if(len(ean) < 5):
-			ean = ""
+		ean = ""
+		scriptlist = response.xpath('//*[@id="buyProduct"]/script/text()').extract()
+		for script in scriptlist:
+			if "ccs_cc_args" in "".join(script):
+				ean = (''.join(script)).split("upcean")[1]
+				ean = re.findall(r'\d+', ''.join(ean))[0]
+				if(len(ean) < 5):
+					ean = ""
 		
 		breadcrumbs = datalist.xpath('//*[@id="contentWrapper"]/div[1]').extract()
 		component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[2]/a/span/text()').extract()[0]
 		if "Voedingen" in "".join(breadcrumbs):
 			component = datalist.xpath('//*[@id="contentWrapper"]/div[1]/span[3]/a/span/text()').extract()[0]
 		naam = datalist.xpath('//*[@id="buyProduct"]/div[1]/h1/span[2]/text()').extract()[0]
+		naam = re.sub('(?i)' + re.escape(component), '', naam) 
+		naam = re.sub('(?i)' + re.escape(component.rstrip()[:-2]), '', naam) 
+		naam = re.sub(',', '', naam) 
 		item['specs'] ={}	
 		item['specs'] = {"component": component,
 							"merk":datalist.xpath('//*[@id="buyProduct"]/div[1]/h1/span[1]/text()').extract()[0],
@@ -78,6 +83,10 @@ class AlternateSpider(Spider):
 					item['specs'].update({tempkeys[i]:result})
 				else:
 					item['specs'].update({tempkeys[i]:result[0]})
+					
+				if "Vermogen" in item["specs"]:
+					item['specs']['Vermogen'] = re.findall(r'\d+', ''.join(item['specs']['Vermogen']))[0]
+					
 		
 		cursor = self.conn.cursor()
 		try:
