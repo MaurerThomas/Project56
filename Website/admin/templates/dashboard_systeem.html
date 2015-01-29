@@ -1,55 +1,52 @@
 <div>
 	<h2>Systeem</h2>
-	<div class="row">
-		<div id="crawlercontainer"  class="col-sm-12">
-			<h3>Crawler started</h3>
-			<p>Run at:</p>
-			<div id="crontime"  class="col-sm-11">
-				<div class="col-sm-6">
-					<div class="input-group">
-						<div class="input-group-addon">
-							<span class="glyphicon glyphicon-time"></span>
-						</div>
-						<label class="sr-only" for="hour1">Uur</label>
-						<input class="form-control" id="hour1" type="number" min="0" max="23" placeholder="Uur" />
+	<div id="crawlercontainer">
+		<h3>Crawler cron</h3>
+		<p>Draai de crawler om deze tijd:</p>
+		<div id="crontime" class="row">
+			<div class="col-sm-6">
+				<div class="input-group">
+					<div class="input-group-addon">
+						<span class="glyphicon glyphicon-time"></span>
 					</div>
-					<div class="input-group">
-						<div class="input-group-addon">
-							<span class="glyphicon glyphicon-time"></span>
-						</div>
-						<label class="sr-only" for="minute1">Minuut</label>
-						<input class="form-control" id="minute1" type="number" min="0" max="59" placeholder="Minuut" />
-					</div>
+					<label class="sr-only" for="hour1">Uur</label>
+					<input class="form-control" id="hour1" type="number" min="0" max="23" placeholder="Uur" />
 				</div>
 			</div>
-			<div id="crawlsites" class="col-sm-6">
-				<div class="checkbox col-sm-11">
-					<label>
-						<input type="checkbox"  name="site" value="Alternate" id="checkbox1">
-						Alternate 
-					</label>
-				</div>	
-				<div class="checkbox col-sm-11">
-					<label>
-						<input type="checkbox" name="site" value="Cdromland" id="checkbox2">
-						Cdromland
-					</label>
-				</div>
-				<div class="col-sm-11">
-					<a href="#systeem" class="btn btn-danger" id="savesettings">Save</a>
+			<div class="col-sm-6">
+				<div class="input-group">
+					<div class="input-group-addon">
+						<span class="glyphicon glyphicon-time"></span>
+					</div>
+					<label class="sr-only" for="minute1">Minuut</label>
+					<input class="form-control" id="minute1" type="number" min="0" max="59" placeholder="Minuut" />
 				</div>
 			</div>
 		</div>
-		<hr>
-		<div id="logscontainer" class="col-sm-12">
-			<h3>Logs</h3>
-			<textarea id="logs" class="form-control" rows= "20" disabled>
-			</textarea>
-			<a href="#systeem" class="btn btn-success" id="clearlogs">clear</a>
-			<a href="#systeem" class="btn btn-success" id="refreshlogs">refresh</a>
+		<div id="crawlsites">
+			<div class="checkbox col-sm-11">
+				<label>
+					<input type="checkbox" value="Alternate" id="checkbox1" />
+					Alternate 
+				</label>
+			</div>	
+			<div class="checkbox col-sm-11">
+				<label>
+					<input type="checkbox" value="Cdromland" id="checkbox2" />
+					CD-ROM-LAND
+				</label>
+			</div>
+			<div class="col-sm-11">
+				<a href="#systeem" class="btn btn-danger" id="savesettings">Opslaan</a>
+			</div>
 		</div>
-		<hr>
-		
+	</div>
+	<div id="logscontainer" class="col-sm-12">
+		<h3>Logs</h3>
+		<textarea id="logs" class="form-control" rows= "20" disabled>
+		</textarea>
+		<a href="#systeem" class="btn btn-success" id="clearlogs">Leeg het log</a>
+		<a href="#systeem" class="btn btn-success" id="refreshlogs">Herlaad het log</a>
 	</div>
 </div>
 <script src="/js/admin/dashboard_systeem.js"></script>
