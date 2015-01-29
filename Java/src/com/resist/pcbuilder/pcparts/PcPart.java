@@ -203,6 +203,8 @@ public abstract class PcPart {
 			return new Motherboard(euro, cent, crawlDate, specs);
 		} else if(ProcessorCooler.isPart(specs)) {
 			return new ProcessorCooler(euro, cent, crawlDate, specs);
+		} else if(SSD.isPart(specs)) {
+			return new SSD(euro, cent, crawlDate, specs);
 		}
 		return null;
 	}

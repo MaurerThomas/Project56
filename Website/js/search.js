@@ -94,7 +94,7 @@ function initSearch() {
 			component: 'schijven'
 		};
 		getFilter($filters,'component','#hardeschijf .pcbuilder-hdd-type');
-		getFilter($filters,'socket','#hardeschijf .pcbuilder-hdd-interface');
+		getFilter($filters,'Interface','#hardeschijf .pcbuilder-hdd-interface');
 		submitPart(this,$e,'searchhardeschijf','hardeschijf-minprijs','hardeschijf-maxprijs',$filters);
 	}
 

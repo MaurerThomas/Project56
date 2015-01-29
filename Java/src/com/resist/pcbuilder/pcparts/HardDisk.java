@@ -16,16 +16,20 @@ import com.resist.pcbuilder.PcBuilder;
 import org.elasticsearch.client.Client;
 
 public class HardDisk extends PcPart {
-	public static final String COMPONENT = "schijven";
+	public static final String COMPONENT = "Harde schijven intern";
 
 	private String type;
 	private String socket;
 
 	public HardDisk(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
-		socket = (String) specs.get("Interface");
+		socket = cleanInterfaceString((String) specs.get("Interface"));
 		setSpec("interface",socket);
 		type = getComponent();
+	}
+
+	private String cleanInterfaceString(String socket) {
+		return socket.replaceAll("u'"," ").replace(')',' ').replace('(',' ').replace('\'',' ').replace("Intern ,  ","");
 	}
 
 	private HardDisk(String type, String socket) {
@@ -43,7 +47,7 @@ public class HardDisk extends PcPart {
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {
-		return ((String)specs.get("component")).contains(COMPONENT) && specs.containsKey("Interface");
+		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Interface");
 	}
 
 	public static boolean isValidMatchKey(String key) {
