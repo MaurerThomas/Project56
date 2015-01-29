@@ -131,7 +131,9 @@ public abstract class PcPart {
 	}
 
 	protected void setSpec(String key, Object value) {
-		specs.put(key, value);
+		if(value != null) {
+			specs.put(key, value);
+		}
 	}
 
 	/**

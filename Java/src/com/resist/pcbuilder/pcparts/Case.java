@@ -14,14 +14,30 @@ import java.util.logging.Level;
 public class Case extends PcPart {
 	public static final String COMPONENT = "Behuizingen";
 
-	private String formFactor,afmetingen;
+	private String formFactor;
+	private String afmetingen;
+	private String psuHeight;
+	private String psuWidth;
+	private String gpuHeight;
+	private String gpuWidth;
+	private String coolerHeight;
 
 	public Case(int euro, int cent, Date crawlDate, Map<String,Object> specs) {
 		super(euro,cent,crawlDate,specs);
 		formFactor = (String) specs.get("Formaat");
 		afmetingen = (String) specs.get("Afmetingen (BxHxD)");
+		psuWidth = (String) specs.get("max, lengte voeding");
+		psuHeight = (String) specs.get("max, hoogte voeding");
+		gpuWidth = (String) specs.get("max, lengte grafische kaart");
+		gpuHeight = (String) specs.get("max, hoogte grafische kaart");
+		coolerHeight = (String) specs.get("max, hoogte CPU koeler");
 		setSpec("formFactor",formFactor);
 		setSpec("afmetingen",afmetingen);
+		setSpec("max. voeding lengte",psuWidth);
+		setSpec("max. voeding hoogte",psuHeight);
+		setSpec("max. videokaart lengte",gpuHeight);
+		setSpec("max. videokaart hoogte",gpuWidth);
+		setSpec("max. processorkoeler hoogte",coolerHeight);
 	}
 
 	private Case(String formFactor) {
@@ -32,7 +48,10 @@ public class Case extends PcPart {
 	public String getFormFactor() {
 		return formFactor;
 	}
-	public String getAfmetingen() { return  afmetingen;}
+
+	public String getAfmetingen() {
+		return  afmetingen;
+	}
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Formaat");
