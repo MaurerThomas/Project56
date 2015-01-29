@@ -79,6 +79,7 @@ var $componentSelection = (function() {
 		$price = getPriceString($euro,$cent).split(',');
 		$('.totaal-prijs .euro').text($price[0]);
 		$('.totaal-prijs .cent').text($price[1]);
+		checkCompatibility();
 	}
 
 	function getPriceString($euro,$cent) {
@@ -102,6 +103,20 @@ var $componentSelection = (function() {
 			$out += $cent;
 		}
 		return $out;
+	}
+
+	function checkCompatibility() {
+		var $n,$incompatible = [];
+		if($selection.Koeling !== undefined && $selection.Processoren !== undefined) {
+			if($selection.Koeling.socket.indexOf($selection.Processoren.socket) == -1) {
+				$incompatible.push('Koeling');
+				$incompatible.push('Processoren');
+			}
+		}
+		$('#pcbuilder-selection .row > div > div').removeClass('warning');
+		for($n=0;$n < $incompatible.length;$n++) {
+			$('#'+getComponentId($incompatible[$n])).addClass('warning');
+		}
 	}
 
 	function selectionPopUp() {

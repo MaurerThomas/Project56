@@ -355,7 +355,11 @@ footer > div {
 }
 
 #pcbuilder-selection > .row div.selected {
-	background-color : #96A6B0;
+	background-color: #ccffcc;
+}
+
+#pcbuilder-selection > .row div.selected.warning {
+	background-color: #ffddbb;
 }
 
 .pcbuilder-graph {
