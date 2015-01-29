@@ -11,12 +11,16 @@ import java.util.Map;
 
 public class ProcessorCooler extends PcPart {
 	public static final String COMPONENT = "Koeling";
+
 	private String socket;
+	private String rpm;
 
 	public ProcessorCooler(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
 		socket = cleanSocketString((String) specs.get("Socket"));
+		rpm = (String) specs.get("Toerental");
 		setSpec("socket",socket);
+		setSpec("toerental",rpm);
 	}
 
 	private String cleanSocketString(String socket) {
@@ -24,7 +28,7 @@ public class ProcessorCooler extends PcPart {
 	}
 
 	public static boolean isPart(Map<String, Object> specs) {
-		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Socket");
+		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Socket") && specs.containsKey("Toerental");
 	}
 
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
