@@ -1,21 +1,18 @@
 package com.resist.pcbuilder.admin.dashboards;
 
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.logging.Level;
+
+import org.json.JSONObject;
+
 import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
-import com.resist.pcbuilder.SearchHandler;
-import com.resist.pcbuilder.admin.Admin;
 import com.resist.pcbuilder.admin.AdminSession;
 import com.resist.pcbuilder.admin.Dashboard;
 import com.resist.pcbuilder.admin.OutputBuilder;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.logging.Level;
 
 /**
  * Created by Armindo on 9-1-2015.

@@ -61,7 +61,14 @@ function initSearch() {
 		getFilter($filters,'merk','#processorkoeler .pcbuilder-processor-brand');
 		if($filters.merk !== undefined) {
 			getFilter($filters,'Socket','#processorkoeler .pcbuilder-processor-socket');
+			if($filters.Socket === undefined) {
+				$filters.Socket = '';
+				$('#processorkoeler .pcbuilder-processor-socket [data-parent="'+$filters.merk+'"]').each(function() {
+					$filters.Socket += ' '+$(this).val();
+				});
+			}
 		}
+		delete $filters.merk;
 		submitPart(this,$e,'searchprocessorkoeler','processorkoeler-minprijs','processorkoeler-maxprijs',$filters);
 	}
 
