@@ -11,13 +11,26 @@ import java.util.Map;
 public class Motherboard extends PcPart {
 	public static final String COMPONENT = "Moederborden";
 
+    private String socket;
+    private String formFactor;
+
 	public Motherboard(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
+        socket = (String) specs.get("Socket");
+        formFactor = (String) specs.get("Formaat");
+        setSpec("socket",socket);
+        setSpec("formFactor",formFactor);
+
 	}
+    public String getSocket() {
+        return socket;
+    }
+
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return COMPONENT.equals(specs.get("component"));
 	}
+
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

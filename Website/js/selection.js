@@ -112,7 +112,18 @@ var $componentSelection = (function() {
 				$incompatible.push('Koeling');
 				$incompatible.push('Processoren');
 			}
-		}
+		}else if($selection.Moederborden !== undefined && $selection.Processoren !== undefined){
+		    if ($selection.Moederborden.socket.indexOf($selection.Processoren.socket) == -1){
+		        $incompatible.push('Moederborden');
+		        $incompatible.push('Processoren');
+		    }
+		}else if($selection.Moederborden !== undefined && $selection.Behuizingen !== undefined){
+         	if ($selection.Moederborden.bouwvorm.indexOf($selection.Behuizingen.bouwvorm) == -1){
+         	    $incompatible.push('Moederborden');
+         		$incompatible.push('Behuizingen');
+         	}
+        }
+
 		$('#pcbuilder-selection .row > div > div').removeClass('warning');
 		for($n=0;$n < $incompatible.length;$n++) {
 			$('#'+getComponentId($incompatible[$n])).addClass('warning');
