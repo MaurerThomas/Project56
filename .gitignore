@@ -8,3 +8,4 @@ Thumbs.db
 target/
 out/
 *.jar
+*.properties

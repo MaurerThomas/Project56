@@ -103,7 +103,7 @@ function initSearch() {
 		var $filters = {
 			component: 'Voedingen'
 		};
-		getRangeFilter($filters,'Vermogen','#voeding .voeding-minwattage','#voeding .voeding-maxwattage');
+		getRangeFilter($filters,'Vermogen','#voeding-minwattage','#voeding-maxwattage');
 		submitPart(this,$e,'searchvoeding','voeding-minprijs','voeding-maxprijs',$filters);
 	}
 
