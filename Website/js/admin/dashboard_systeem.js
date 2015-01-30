@@ -6,7 +6,7 @@
 		if($json !== null) {
 			if($json.log)
 			{
-				$("#logs").html($json.log);
+				$("#logs").val($json.log);
 			}else if($json.cron){
 				$("#minute1").val($json.cron.minute);
 				$("#hour1").val($json.cron.hour);
