@@ -14,13 +14,16 @@ public class ProcessorCooler extends PcPart {
 
 	private String socket;
 	private String rpm;
+    private String coolerHeight;
 
 	public ProcessorCooler(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
 		socket = cleanSocketString((String) specs.get("Socket"));
 		rpm = (String) specs.get("Toerental");
+        coolerHeight = (String) specs.get("max, hoogte CPU koeler");
 		setSpec("socket",socket);
 		setSpec("toerental",rpm);
+        setSpec("max. processorkoeler hoogte",coolerHeight);
 	}
 
 	private String cleanSocketString(String socket) {

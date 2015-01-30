@@ -59,6 +59,7 @@ function initSearch() {
 			component: 'Koeling'
 		};
 		getFilter($filters,'merk','#processorkoeler .pcbuilder-processor-brand');
+		getFilter($filters,'max, hoogte CPU koeler');
 		if($filters.merk !== undefined) {
 			getFilter($filters,'Socket','#processorkoeler .pcbuilder-processor-socket');
 			if($filters.Socket === undefined) {
@@ -103,6 +104,7 @@ function initSearch() {
 			component: 'Behuizingen'
 		};
 		getFilter($filters,'Bouwvorm','#behuizing .pcbuilder-case');
+		getFilter($filters,'max, hoogte CPU koeler');
 		submitPart(this,$e,'searchbehuizing','behuizing-minprijs','behuizing-maxprijs',$filters);
 	}
 
