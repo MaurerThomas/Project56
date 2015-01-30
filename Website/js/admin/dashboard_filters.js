@@ -36,12 +36,15 @@
     }
 
     function handleJSON($json) {
-        return initProcessors($json.processors);
-        return initMemory($json.geheugen);
-        return initHDD($json.hardeschijven);
-        return initCases($json.behuizing);
-        return initGPU($json.grafischekaarten);
+		if ($json.processors !== undefined && $json.hardeschijven !== undefined && $json.processors !== undefined && $json.geheugen !== undefined && $json.behuizing !== undefined && $json.grafischekaarten !== undefined) {
+			initProcessors($json.processors);
+			initMemory($json.geheugen);
+			initHDD($json.hardeschijven);
+			initCases($json.behuizing);
+			initGPU($json.grafischekaarten);
+		}
     }
+	
 
     function initFilterCategory() {
         var $case = "Behuizing",
