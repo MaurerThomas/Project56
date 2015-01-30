@@ -23,7 +23,7 @@
 	{   
 		if (confirm('Weet u zeker dat u de logs wilt legen?')) {
 			$webSocket.send({action: 'clearLog'});
-			$("#logs").html("Het log is geleegd.");
+			$("#logs").html("De log is geleegd.");
 		}
 	});
 	$('#refreshlogs').click(function()

@@ -43,6 +43,12 @@ public class Filters implements Dashboard {
         System.out.println(action);
         if(action.equals("init")) {
             return session.getPcBuilder().getSearchHandler().getInit();
+        } else if (action.equals("updatefilter")) {
+            return updateFilter(getConnection(), input.getString("cat"), input.getString("sub"), input.getString("newname"));
+        } else if (action.equals("deletefilter")) {
+            return deleteFilter(getConnection(), input.getString("sub"), input.getString("newname"));
+        }else if (action.equals("createfilter")) {
+            return createFilter(getConnection(), input.getString("cat"), input.getString("newname"));
         }
         return null;
     }

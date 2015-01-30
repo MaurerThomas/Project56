@@ -42,17 +42,18 @@ public class Systeem implements Dashboard {
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm");
 		Date date = Calendar.getInstance().getTime();
 		String currentDate = simpleDateFormat.format(date);
-		if (input.getString("action").equals("getLogs")) {
+        String action = input.getString("action");
+		if (action.equals("getLogs")) {
 			return displayLog();
-		} else if (input.getString("action").equals("getCron")) {
+		} else if (action.equals("getCron")) {
 			return displayCron();
-		} else if (input.getString("action").equals("clearLog")) {
+		} else if (action.equals("clearLog")) {
 			try {
 				clearLog(currentDate);
 			} catch (IOException e) {
 				PcBuilder.LOG.log(Level.WARNING, "Failed to clear log.", e);
 			}
-		} else if (input.getString("action").equals("cronjob")) {
+		} else if (action.equals("cronjob")) {
 			setCronjob(input);
 		}
 		return null;
