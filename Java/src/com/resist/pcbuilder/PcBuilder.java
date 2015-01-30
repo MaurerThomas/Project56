@@ -85,18 +85,38 @@ public class PcBuilder {
 		LOG.log(Level.INFO,"Started...");
 	}
 
+	/**
+	 * Retrieves the object that handles calls to ElasticSearch.
+	 * 
+	 * @return The search handler
+	 */
 	public SearchHandler getSearchHandler() {
 		return searchHandler;
 	}
 
+	/**
+	 * Retrieves the object that handles calls to MySQL.
+	 * 
+	 * @return The database connection
+	 */
 	public DBConnection getDBConnection() {
 		return conn;
 	}
 
+	/**
+	 * Retrieves the settings parsed from the file path the program was started with.
+	 * 
+	 * @return The PC Builder's settings
+	 */
 	public JSONObject getSettings() {
 		return settings;
 	}
 
+	/**
+	 * Retrieves the connection to ElasticSearch.
+	 * 
+	 * @return The search client
+	 */
 	public Client getSearchClient() {
 		return searchClient;
 	}

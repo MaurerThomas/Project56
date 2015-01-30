@@ -22,14 +22,29 @@ public class Admin {
 		this.username = username;
 	}
 
+	/**
+	 * Gives the ID of this admin.
+	 * 
+	 * @return The ID of this admin
+	 */
 	public int getAid() {
 		return aid;
 	}
 
+	/**
+	 * Retrieves this admin's username.
+	 * 
+	 * @return The name of this admin
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * Retrieves this admin's hashed password.
+	 * 
+	 * @return The password for this admin
+	 */
 	public String getPassword() {
 		return password;
 	}

@@ -31,23 +31,44 @@ public class AdminSession implements MessageHandler {
 		initSession(message.getConnection());
 	}
 
+	/**
+	 * Provides the username of the logged in admin.
+	 * 
+	 * @return The username of the admin
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * Returns the connection to MySQL.
+	 * 
+	 * @return The database connection
+	 */
 	public java.sql.Connection getConnection() {
 		return loginHandler.getConnection();
 	}
 
+	/**
+	 * Retrieves the PC Builder.
+	 * 
+	 * @return The PC Builder running this session
+	 */
+	public PcBuilder getPcBuilder() {
+		return loginHandler.getPcBuilder();
+	}
+
+	/**
+	 * Hashes a password.
+	 * 
+	 * @param password The password to hash
+	 * @return The hashed password
+	 */
 	public String getPasswordHash(String password) {
 		if(password == null) {
 			return null;
 		}
 		return loginHandler.getPasswordHash(password);
-	}
-
-	public PcBuilder getPcBuilder() {
-		return loginHandler.getPcBuilder();
 	}
 
 	private void initDashboards() {
