@@ -1,4 +1,5 @@
 (function() {
+	var $categorie = $('.categorie');
     $webSocket.send({
         action: 'init'
     });
@@ -37,11 +38,24 @@
 
     function handleJSON($json) {
 		if ($json.processors !== undefined && $json.hardeschijven !== undefined && $json.processors !== undefined && $json.geheugen !== undefined && $json.behuizing !== undefined && $json.grafischekaarten !== undefined) {
-			initProcessors($json.processors);
-			initMemory($json.geheugen);
-			initHDD($json.hardeschijven);
-			initCases($json.behuizing);
-			initGPU($json.grafischekaarten);
+			
+			initFilterCategory();
+			
+			$($categorie).change(function() {
+				if($('.categorie :selected').val() == "Processor") {
+					initProcessors($json.processors);
+				} else if($('.categorie :selected').val() == "Geheugen") {
+					initMemory($json.geheugen);
+				} else if($('.categorie :selected').val() == "Grafischekaart") {
+					initGPU($json.grafischekaarten);
+				} else if($('.categorie :selected').val() == "Hardeschijf"){
+					initHDD($json.hardeschijven);
+				} else if($('.categorie :selected').val() == "Behuizing") {
+					initCases($json.behuizing);
+				} else {
+					
+				}
+			});
 		}
     }
 	
@@ -54,9 +68,9 @@
             $mobo = "Moederbord",
 			$cpu = "Processor",
             $cpucooler = "Processorkoeler",
-            $psu = "Voeding",
-            $categorie = $('.categorie');
-
+            $psu = "Voeding";
+			
+        $categorie.append('<option value="Maak een keuze">Maak een keuze</option>');
         $categorie.append('<option value="' + $case + '">' + $case + '</option>');
         $categorie.append('<option value="' + $ram + '">' + $ram + '</option>');
         $categorie.append('<option value="' + $gpu + '">' + $gpu + '</option>');
@@ -68,7 +82,6 @@
     }
 
     function initProcessors($processors) {
-        console.log("in de init processor");
         var $merk, $n,
             $brand = $('.hoofdfilter'),
             $socket = $('.subfilter');
@@ -79,7 +92,6 @@
             }
         }
         setupDependantSelect($brand, $socket);
-		initFilterCategory();
     }
 
     function initMemory($geheugen) {
@@ -87,7 +99,6 @@
         for ($n = 0; $n < $geheugen.length; $n++) {
             $types.append('<option value="' + $geheugen[$n] + '">' + $geheugen[$n] + '</option>');
         }
-		initFilterCategory();
     }
 
     function initHDD($hardeschijven) {
@@ -99,7 +110,6 @@
             }
         }
         setupDependantSelect($types, $interface);
-		initFilterCategory();
     }
 
     function initCases($behuizing) {
@@ -107,7 +117,6 @@
         for ($n = 0; $n < $behuizing.length; $n++) {
             $types.append('<option value="' + $behuizing[$n] + '">' + $behuizing[$n] + '</option>');
         }
-		initFilterCategory();
     }
 
     function initGPU($grafischekaarten) {
@@ -119,6 +128,5 @@
             $brands.append('<option value="' + $grafischekaarten.merken[$n] + '">' + $grafischekaarten.merken[$n] + '</option>');
         }
     }
-	initFilterCategory();
 
 })();
