@@ -37,6 +37,12 @@ public class Memory extends PcPart {
 		return COMPONENT.equals(specs.get("component"));
 	}
 
+	/**
+	 * Returns a list of sockets from the database.
+	 * 
+	 * @param conn The database connection to use
+	 * @return A list of sockets
+	 */
 	public static List<Memory> getSockets(Connection conn) {
 		List<Memory> out = new ArrayList<Memory>();
 		try {
@@ -54,6 +60,13 @@ public class Memory extends PcPart {
 		return out;
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

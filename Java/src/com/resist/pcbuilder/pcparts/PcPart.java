@@ -42,16 +42,11 @@ public abstract class PcPart {
 		setCent(cent);
 		setCrawlDate(crawlDate);
 		if(specs != null) {
-			url = (String) specs.get("url");
-			component = (String) specs.get("component");
-			brand = (String) specs.get("merk");
-			name = (String) specs.get("naam");
-			ean = (String) specs.get("ean");
-			setSpec("url", url);
-			setSpec("component", component);
-			setSpec("brand", brand);
-			setSpec("name", name);
-			setSpec("ean", ean);
+			setUrl((String) specs.get("url"));
+			setComponent((String) specs.get("component"));
+			setBrand((String) specs.get("merk"));
+			setName((String) specs.get("naam"));
+			setEun((String) specs.get("ean"));
 		}
 	}
 
@@ -93,6 +88,7 @@ public abstract class PcPart {
 
 	protected void setUrl(String url) {
 		this.url = url;
+		setSpec("url", url);
 	}
 
 	protected void setComponent(String component) {
@@ -378,6 +374,13 @@ public abstract class PcPart {
         return out;
     }
 
+    /**
+     * Retrieves the average price of a part over time.
+     * 
+	 * @param conn The database connection to get prices from
+     * @param ean The EAN of the part to get prices for
+	 * @return A list of prices and dates
+     */
     public static List<DatePrice> getAvgPriceForComponent(Connection conn, String ean) {
     	List<DatePrice> out = new ArrayList<>();
     	try {

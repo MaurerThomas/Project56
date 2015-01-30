@@ -61,6 +61,12 @@ public class Case extends PcPart {
 		return key.equals("Formaat");
 	}
 
+	/**
+	 * Returns a list of form factors from the database.
+	 * 
+	 * @param conn The database connection to use
+	 * @return A list of form factors
+	 */
 	public static List<Case> getFormFactors(Connection conn) {
 		List<Case> out = new ArrayList<Case>();
 		try {
@@ -78,6 +84,13 @@ public class Case extends PcPart {
         return out;
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

@@ -64,6 +64,13 @@ public class Processor extends PcPart {
 		return out;
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
 	public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
 		return PcPart.getAvgPrice(client,conn,COMPONENT);
 	}

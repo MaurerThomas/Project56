@@ -34,6 +34,13 @@ public class ProcessorCooler extends PcPart {
 		return COMPONENT.equals(specs.get("component")) && specs.containsKey("Socket") && specs.containsKey("Toerental");
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

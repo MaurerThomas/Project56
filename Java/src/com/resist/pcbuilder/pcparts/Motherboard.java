@@ -20,17 +20,23 @@ public class Motherboard extends PcPart {
         formFactor = (String) specs.get("Formaat");
         setSpec("socket",socket);
         setSpec("formFactor",formFactor);
-
 	}
+
     public String getSocket() {
         return socket;
     }
-
 
 	public static boolean isPart(Map<String, Object> specs) {
 		return COMPONENT.equals(specs.get("component"));
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

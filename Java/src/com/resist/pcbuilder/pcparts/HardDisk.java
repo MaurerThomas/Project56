@@ -54,6 +54,12 @@ public class HardDisk extends PcPart {
 		return key.equals("Interface");
 	}
 
+	/**
+	 * Returns a list of HDD types and interfaces from the database.
+	 * 
+	 * @param conn The database connection to use
+	 * @return A list of types and interfaces
+	 */
 	public static List<HardDisk> getHardDisks(Connection conn) {
 		List<HardDisk> out = new ArrayList<HardDisk>();
 		try {
@@ -72,6 +78,13 @@ public class HardDisk extends PcPart {
 		return out;
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }

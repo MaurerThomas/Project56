@@ -44,6 +44,12 @@ public class GraphicsCard extends PcPart {
 		return key.equals("Aansluiting");
 	}
 
+	/**
+	 * Returns a list of sockets from the database.
+	 * 
+	 * @param conn The database connection to use
+	 * @return A list of sockets
+	 */
 	public static List<GraphicsCard> getSockets(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
@@ -62,6 +68,12 @@ public class GraphicsCard extends PcPart {
 		return out;
 	}
 
+	/**
+	 * Returns a list of brands from the database.
+	 * 
+	 * @param conn The database connection to use
+	 * @return A list of brands
+	 */
 	public static List<GraphicsCard> getBrands(Connection conn) {
 		List<GraphicsCard> out = new ArrayList<GraphicsCard>();
 		try {
@@ -80,6 +92,13 @@ public class GraphicsCard extends PcPart {
 		return out;
 	}
 
+	/**
+	 * Retrieves the average price of this component over time.
+	 * 
+	 * @param client The client to find parts on
+	 * @param conn The database connection to get prices from
+	 * @return A list of prices and dates
+	 */
     public static List<DatePrice> getAvgPrice(Client client, Connection conn) {
         return PcPart.getAvgPrice(client,conn,COMPONENT);
     }
