@@ -4,6 +4,7 @@ import java.sql.Date;
 
 /**
  * A wrapper that combines dates and prices.
+ *
  * @author Thomas
  */
 public class DatePrice {

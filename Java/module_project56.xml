@@ -1,104 +1,109 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="module_project56" default="compile.module.project56">
-  <dirname property="module.project56.basedir" file="${ant.file.module_project56}"/>
-  
-  <property name="module.jdk.home.project56" value="${project.jdk.home}"/>
-  <property name="module.jdk.bin.project56" value="${project.jdk.bin}"/>
-  <property name="module.jdk.classpath.project56" value="${project.jdk.classpath}"/>
-  
-  <property name="compiler.args.project56" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
-  
-  <property name="project56.output.dir" value="${module.project56.basedir}/target/classes"/>
-  <property name="project56.testoutput.dir" value="${module.project56.basedir}/target/test-classes"/>
-  
-  <path id="project56.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-  
-  <path id="project56.module.production.classpath">
-    <path refid="${module.jdk.classpath.project56}"/>
-    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    <path refid="library.maven:_org.json:json:20140107.classpath"/>
-    <path refid="library.libraries.classpath"/>
-  </path>
-  
-  <path id="project56.runtime.production.module.classpath">
-    <pathelement location="${project56.output.dir}"/>
-    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    <path refid="library.maven:_org.json:json:20140107.classpath"/>
-    <path refid="library.libraries.classpath"/>
-  </path>
-  
-  <path id="project56.module.classpath">
-    <path refid="${module.jdk.classpath.project56}"/>
-    <pathelement location="${project56.output.dir}"/>
-    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    <path refid="library.maven:_org.json:json:20140107.classpath"/>
-    <path refid="library.libraries.classpath"/>
-  </path>
-  
-  <path id="project56.runtime.module.classpath">
-    <pathelement location="${project56.testoutput.dir}"/>
-    <pathelement location="${project56.output.dir}"/>
-    <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
-    <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
-    <path refid="library.maven:_org.json:json:20140107.classpath"/>
-    <path refid="library.libraries.classpath"/>
-  </path>
-  
-  
-  <patternset id="excluded.from.module.project56">
-    <patternset refid="ignored.files"/>
-    <exclude name="test/**"/>
-    <exclude name="test/com/**"/>
-    <exclude name="test/com/resist/**"/>
-    <exclude name="test/com/resist/websocket/**"/>
-    <exclude name="test/com/resist/searchhandler/**"/>
-    <exclude name="test/java/**"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.project56">
-    <patternset refid="excluded.from.module.project56"/>
-  </patternset>
-  
-  <path id="project56.module.sourcepath">
-    <dirset dir="${module.project56.basedir}">
-      <include name="src"/>
-    </dirset>
-  </path>
-  
-  
-  <target name="compile.module.project56" depends="compile.module.project56.production,compile.module.project56.tests" description="Compile module Project56"/>
-  
-  <target name="compile.module.project56.production" depends="register.custom.compilers" description="Compile module Project56; production classes">
-    <mkdir dir="${project56.output.dir}"/>
-    <javac2 destdir="${project56.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.project56}/javac">
-      <compilerarg line="${compiler.args.project56}"/>
-      <bootclasspath refid="project56.module.bootclasspath"/>
-      <classpath refid="project56.module.production.classpath"/>
-      <src refid="project56.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.project56"/>
-    </javac2>
-    
-    <copy todir="${project56.output.dir}">
-      <fileset dir="${module.project56.basedir}/src">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
-    </copy>
-  </target>
-  
-  <target name="compile.module.project56.tests" depends="register.custom.compilers,compile.module.project56.production" description="compile module Project56; test classes" unless="skip.tests"/>
-  
-  <target name="clean.module.project56" description="cleanup module">
-    <delete dir="${project56.output.dir}"/>
-    <delete dir="${project56.testoutput.dir}"/>
-  </target>
+    <dirname property="module.project56.basedir" file="${ant.file.module_project56}"/>
+
+    <property name="module.jdk.home.project56" value="${project.jdk.home}"/>
+    <property name="module.jdk.bin.project56" value="${project.jdk.bin}"/>
+    <property name="module.jdk.classpath.project56" value="${project.jdk.classpath}"/>
+
+    <property name="compiler.args.project56" value="-encoding UTF-8 -source 1.7 -target 1.7 ${compiler.args}"/>
+
+    <property name="project56.output.dir" value="${module.project56.basedir}/target/classes"/>
+    <property name="project56.testoutput.dir" value="${module.project56.basedir}/target/test-classes"/>
+
+    <path id="project56.module.bootclasspath">
+        <!-- Paths to be included in compilation bootclasspath -->
+    </path>
+
+    <path id="project56.module.production.classpath">
+        <path refid="${module.jdk.classpath.project56}"/>
+        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+        <path refid="library.maven:_org.json:json:20140107.classpath"/>
+        <path refid="library.libraries.classpath"/>
+    </path>
+
+    <path id="project56.runtime.production.module.classpath">
+        <pathelement location="${project56.output.dir}"/>
+        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+        <path refid="library.maven:_org.json:json:20140107.classpath"/>
+        <path refid="library.libraries.classpath"/>
+    </path>
+
+    <path id="project56.module.classpath">
+        <path refid="${module.jdk.classpath.project56}"/>
+        <pathelement location="${project56.output.dir}"/>
+        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+        <path refid="library.maven:_org.json:json:20140107.classpath"/>
+        <path refid="library.libraries.classpath"/>
+    </path>
+
+    <path id="project56.runtime.module.classpath">
+        <pathelement location="${project56.testoutput.dir}"/>
+        <pathelement location="${project56.output.dir}"/>
+        <pathelement location="${idea.home}/lib/hamcrest-core-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/hamcrest-library-1.3.jar"/>
+        <pathelement location="${idea.home}/lib/junit-4.11.jar"/>
+        <path refid="library.maven:_org.json:json:20140107.classpath"/>
+        <path refid="library.libraries.classpath"/>
+    </path>
+
+
+    <patternset id="excluded.from.module.project56">
+        <patternset refid="ignored.files"/>
+        <exclude name="test/**"/>
+        <exclude name="test/com/**"/>
+        <exclude name="test/com/resist/**"/>
+        <exclude name="test/com/resist/websocket/**"/>
+        <exclude name="test/com/resist/searchhandler/**"/>
+        <exclude name="test/java/**"/>
+    </patternset>
+
+    <patternset id="excluded.from.compilation.project56">
+        <patternset refid="excluded.from.module.project56"/>
+    </patternset>
+
+    <path id="project56.module.sourcepath">
+        <dirset dir="${module.project56.basedir}">
+            <include name="src"/>
+        </dirset>
+    </path>
+
+
+    <target name="compile.module.project56" depends="compile.module.project56.production,compile.module.project56.tests"
+            description="Compile module Project56"/>
+
+    <target name="compile.module.project56.production" depends="register.custom.compilers"
+            description="Compile module Project56; production classes">
+        <mkdir dir="${project56.output.dir}"/>
+        <javac2 destdir="${project56.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}"
+                memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.project56}/javac">
+            <compilerarg line="${compiler.args.project56}"/>
+            <bootclasspath refid="project56.module.bootclasspath"/>
+            <classpath refid="project56.module.production.classpath"/>
+            <src refid="project56.module.sourcepath"/>
+            <patternset refid="excluded.from.compilation.project56"/>
+        </javac2>
+
+        <copy todir="${project56.output.dir}">
+            <fileset dir="${module.project56.basedir}/src">
+                <patternset refid="compiler.resources"/>
+                <type type="file"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="compile.module.project56.tests"
+            depends="register.custom.compilers,compile.module.project56.production"
+            description="compile module Project56; test classes" unless="skip.tests"/>
+
+    <target name="clean.module.project56" description="cleanup module">
+        <delete dir="${project56.output.dir}"/>
+        <delete dir="${project56.testoutput.dir}"/>
+    </target>
 </project>

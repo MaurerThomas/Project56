@@ -1,17 +1,12 @@
 package com.resist.pcbuilder.admin.dashboards;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-
-import com.resist.pcbuilder.admin.*;
-import org.json.JSONObject;
-
-import com.resist.pcbuilder.DBConnection;
 import com.resist.pcbuilder.PcBuilder;
+import com.resist.pcbuilder.admin.AdminSession;
+import com.resist.pcbuilder.admin.Dashboard;
+import com.resist.pcbuilder.admin.FilterFunctions;
+import com.resist.pcbuilder.admin.OutputBuilder;
+import org.json.JSONObject;
 
 /**
  * Created by Armindo on 9-1-2015.
@@ -29,23 +24,24 @@ public class Filters implements Dashboard {
 
     @Override
     public JSONObject handleJSON(JSONObject input) {
-        if(input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
-            return new OutputBuilder().htmlTemplate("#main","dashboard_filters").getOutput();
-        } else if(input.has("action")) {
+        if (input.has("switchDashboard") && input.getString("switchDashboard").equals(IDENTIFIER)) {
+            return new OutputBuilder().htmlTemplate("#main", "dashboard_filters").getOutput();
+        } else if (input.has("action")) {
             return handleActions(input);
         }
         return null;
     }
+
     private JSONObject handleActions(JSONObject input) {
         String action = input.getString("action");
-        if(action.equals("init")) {
+        if (action.equals("init")) {
             return session.getPcBuilder().getSearchHandler().getInit();
         } else if (action.equals("updatefilter")) {
             return updateFilter(input);
         } else if (action.equals("deletefilter")) {
             System.out.println(action);
             return deleteFilter(input);
-        }else if (action.equals("createfilter")) {
+        } else if (action.equals("createfilter")) {
             System.out.println(action);
             return createFilter(input);
         }
@@ -65,6 +61,7 @@ public class Filters implements Dashboard {
     }
 
     private JSONObject deleteFilter(JSONObject input) {
+        System.out.println(input);
         String cat = input.getString("cat");
         String sub = input.getString("sub");
         boolean deletefilter = FilterFunctions.deleteFilter(session.getConnection(), cat, sub);
