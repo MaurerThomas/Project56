@@ -103,7 +103,7 @@ public abstract class PcPart {
 
 	protected void setName(String name) {
 		this.name = name;
-		setSpec("naam", name);
+		setSpec("name", name);
 	}
 
 	protected void setEan(String ean) {
