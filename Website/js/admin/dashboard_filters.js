@@ -3,7 +3,12 @@
 		$hoofdfilter = $('.hoofdfilter'),
 		$subfilter = $('.subfilter'),
 		$filtername = $('.filtername'),
+		$filternameupdatetext = $('.filternameupdatetext'),
+		$filternameaddtext = $('.filternameaddtext'),
 		$btn = $('btn'),
+		$btnadd = $('#btn_add'),
+		$btnupdate = $('#btn_update'),
+		$btndelete = $('#btn_delete'),
 		$case = "Behuizing",
 		$ram = "Geheugen",
 		$gpu = "Grafischekaart",
@@ -46,6 +51,8 @@
 				} else if($('.categorie :selected').val() == $ram) {
 					clearAll();
 					$hoofdfilter.show();
+					$btn.show();
+					$filtername.show();
 					$subfilter.hide();
 					initMemory($json.geheugen);
 				} else if($('.categorie :selected').val() == $gpu) {
@@ -59,6 +66,8 @@
 				} else if($('.categorie :selected').val() == $case) {
 					clearAll();
 					$hoofdfilter.show();
+					$btn.show();
+					$filtername.show();
 					$subfilter.hide();
 					initCases($json.behuizing);
 				} else if($('.categorie :selected').val() == $pickone) {
@@ -68,6 +77,7 @@
 			});
 		}
     }
+	
 	function clearAll() {
 		$hoofdfilter.empty();
 		$subfilter.empty();
@@ -78,7 +88,7 @@
 		$hoofdfilter.hide();
 		$subfilter.hide();
 		$filtername.hide();
-		$btn.show();
+		$btn.hide();
 	}
 	
 	function showAll() {
