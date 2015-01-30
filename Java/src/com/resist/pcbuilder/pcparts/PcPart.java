@@ -46,7 +46,7 @@ public abstract class PcPart {
 			setComponent((String) specs.get("component"));
 			setBrand((String) specs.get("merk"));
 			setName((String) specs.get("naam"));
-			setEun((String) specs.get("ean"));
+			setEan((String) specs.get("ean"));
 		}
 	}
 
@@ -106,7 +106,7 @@ public abstract class PcPart {
 		setSpec("naam", name);
 	}
 
-	protected void setEun(String ean) {
+	protected void setEan(String ean) {
 		this.ean = ean;
 		setSpec("ean", ean);
 	}
@@ -142,7 +142,7 @@ public abstract class PcPart {
 		return key.equals("component") ||
 				key.equals("merk") ||
 				key.equals("naam") ||
-				key.equals("eun") ||
+				key.equals("ean") ||
 				Case.isValidMatchKey(key) ||
 				GraphicsCard.isValidMatchKey(key) ||
 				HardDisk.isValidMatchKey(key) ||
