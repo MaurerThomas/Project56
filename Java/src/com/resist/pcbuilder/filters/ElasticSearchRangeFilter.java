@@ -19,7 +19,7 @@ public class ElasticSearchRangeFilter extends ElasticSearchFilter {
 		return QueryBuilders.rangeQuery(getKey()).from(range.get(0)).to(range.get(1));
 	}
 
-	public static boolean isValidFilter(String key, Object value) {
+	private static boolean isValidFilter(String key, Object value) {
 		if(PcPart.isValidRangeKey(key) && value instanceof List) {
 			List<?> l = (List<?>)value;
 			return l.size() == 2 && l.get(0) instanceof Integer;
@@ -27,6 +27,13 @@ public class ElasticSearchRangeFilter extends ElasticSearchFilter {
 		return false;
 	}
 
+	/**
+	 * Attempts to construct a filter using a key-value pair.
+	 * 
+	 * @param key The key to filter on
+	 * @param value The value to filter on
+	 * @return A filter if the key-value pair was valid or null
+	 */
 	public static ElasticSearchRangeFilter getInstance(String key, Object value) {
 		if(isValidFilter(key, value)) {
 			return new ElasticSearchRangeFilter(key, value);
