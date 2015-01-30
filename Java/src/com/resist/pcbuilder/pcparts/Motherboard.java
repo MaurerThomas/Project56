@@ -17,7 +17,7 @@ public class Motherboard extends PcPart {
 	public Motherboard(int euro, int cent, Date crawlDate, Map<String, Object> specs) {
 		super(euro, cent, crawlDate, specs);
         socket = (String) specs.get("Socket");
-        formFactor = (String) specs.get("Formaat");
+        formFactor = (String) specs.get("formFactor");
         setSpec("socket",socket);
         setSpec("formFactor",formFactor);
 	}
