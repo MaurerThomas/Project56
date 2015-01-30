@@ -132,6 +132,8 @@
 
     function initMemory($geheugen) {
         var $n, $types = $('.hoofdfilter');
+        $types.append('<option value="' + $pickone + '">' + $pickone + '</option>');
+
         for ($n = 0; $n < $geheugen.length; $n++) {
             $types.append('<option value="' + $geheugen[$n] + '">' + $geheugen[$n] + '</option>');
         }
@@ -165,14 +167,14 @@
     }
 	
 	$btnadd.click(function() {
-	    var cat = $categorieadd.val(),
-	    hoofd = $hoofdfilteradd.val(),
-	    sub = $subfilteradd.val(),
-	    newname = $filternameaddtext.val();
+	    var $cat = $categorieadd.val(),
+	    $hoofd = $hoofdfilteradd.val(),
+	    $sub = $subfilteradd.val(),
+	    $newname = $filternameaddtext.val();
 
 		if($filternameaddtext.length > 0) {
 			if (confirm('Weet u zeker dat u deze filter wilt toevoegen?')) {
-				$webSocket.send({action: 'addfilter', cat: $cat, hoofd: $hoofd, sub: $sub, newname: $newname});
+				$webSocket.send({action: 'createfilter', cat: $cat, hoofd: $hoofd, sub: $sub, newname: $newname});
 			}
 		}else {
             alert('Vul eerst een waarde in');
@@ -181,13 +183,18 @@
 	
 	$btnupdate.click(function() {
 	    var $cat = $categorieupdate.val(),
-	    hoofd = $hoofdfilterupdate.val(),
-	    sub = $subfilterupdate.val(),
-	    newname = $filternameupdatetext.val();
+	    $hoofd = $hoofdfilterupdate.val(),
+	    $sub = $subfilterupdate.val(),
+	    $newname = $filternameupdatetext.val();
 
 		if($filternameupdatetext.length > 0) {
 			if (confirm('Weet u zeker dat u deze filter wilt wijzigen?')) {
-				$webSocket.send({action: 'updatefilter', cat: $cat, hoofd: $hoofd, sub: $sub, newname: $newname});
+			    if($sub != null){
+			        $webSocket.send({action: 'updatefilter', cat: $cat, hoofd: $hoofd, sub: $sub, newname: $newname});
+			    }else {
+			        $sub = $hoofd;
+			        $webSocket.send({action: 'updatefilter', cat: $cat, hoofd: $hoofd, sub: $sub, newname: $newname});
+			    }
 			}
 		}else {
 		    alert('Vul eerst een waarde in');
@@ -195,12 +202,17 @@
 	});
 	
 	$btndelete.click(function() {
-	 var cat = $categoriedelete.val(),
-	 hoofd = $hoofdfilterdelete.val(),
-	 sub = $subfilterdelete.val();
+	 var $cat = $categoriedelete.val(),
+	 $hoofd = $hoofdfilterdelete.val(),
+	 $sub = $subfilterdelete.val();
 
 		if (confirm('Weet u zeker dat u deze filter wilt verwijderen?')) {
-			$webSocket.send({action: 'createfilter'}, cat: $cat, hoofd: $hoofd, sub: $sub);
+            if($sub != null){
+                $webSocket.send({action: 'deletefilter', cat: $cat, hoofd: $hoofd, sub: $sub});
+            }else {
+                $sub = $hoofd;
+                $webSocket.send({action: 'deletefilter', cat: $cat, hoofd: $hoofd, sub: $sub});
+            }
 		}
 	});
 })();
