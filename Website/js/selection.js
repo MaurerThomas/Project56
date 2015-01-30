@@ -113,7 +113,7 @@ var $componentSelection = (function() {
 				$incompatible.push('Processoren');
 			}
 		}if($selection.Moederborden !== undefined && $selection.Processoren !== undefined){
-		    if ($selection.Moederborden.socket.indexOf($selection.Processoren.socket) == -1){
+		    if ($selection.Moederborden.socket != $selection.Processoren.socket){
 		        $incompatible.push('Moederborden');
 		        $incompatible.push('Processoren');
 		    }
@@ -123,15 +123,21 @@ var $componentSelection = (function() {
          		$incompatible.push('Behuizingen');
          	}
         }if($selection.Koeling !== undefined && $selection.Behuizingen !== undefined){
-            if ($selection.Koeling['max. processorkoeler hoogte'] !=  $selection.Behuizingen['max. processorkoeler hoogte']){
+            if ($selection.Koeling['max. processorkoeler hoogte'] != $selection.Behuizingen['max. processorkoeler hoogte']){
                 $incompatible.push('Koeling');
                 $incompatible.push('Behuizingen');
             }
-
+        }if($selection.Voedingen !== undefined && $selection.Behuizingen !== undefined){
+           	if ($selection.Voedingen.formFactor != $selection.Behuizingen.formFactor){
+                $incompatible.push('Voedingen');
+                $incompatible.push('Behuizingen');
+            }
+        }
 		$('#pcbuilder-selection .row > div > div').removeClass('warning');
 		for($n=0;$n < $incompatible.length;$n++) {
 			$('#'+getComponentId($incompatible[$n])).addClass('warning');
 		}
+
 	}
 
 	function selectionPopUp() {
