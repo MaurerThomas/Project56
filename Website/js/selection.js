@@ -118,12 +118,12 @@ var $componentSelection = (function() {
 		        $incompatible.push('Processoren');
 		    }
 		}if($selection.Moederborden !== undefined && $selection.Behuizingen !== undefined){
-         	if ($selection.Moederborden.bouwvorm.indexOf($selection.Behuizingen.bouwvorm) == -1){
+         	if ($selection.Moederborden.formFactor != $selection.Behuizingen.formFactor){
          	    $incompatible.push('Moederborden');
          		$incompatible.push('Behuizingen');
          	}
         }if($selection.Koeling !== undefined && $selection.Behuizingen !== undefined){
-            if ($selection.Koeling.hoogte.indexOf($selection.Behuizingen.hoogte) == -1){
+            if ($selection.Koeling['max. processorkoeler hoogte'] !=  $selection.Behuizingen['max. processorkoeler hoogte']){
                 $incompatible.push('Koeling');
                 $incompatible.push('Behuizingen');
             }
