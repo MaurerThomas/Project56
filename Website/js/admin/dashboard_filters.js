@@ -1,8 +1,18 @@
 (function() {
-	var $categorie = $('.categorie');
+	var $categorie = $('.categorie'),
+		$case = "Behuizing",
+		$ram = "Geheugen",
+		$gpu = "Grafischekaart",
+		$hdd = "Hardeschijf",
+		$mobo = "Moederbord",
+		$cpu = "Processor",
+		$cpucooler = "Processorkoeler",
+		$psu = "Voeding";
+		
     $webSocket.send({
         action: 'init'
     });
+	
     $webSocket.receive = function($msg) {
         var $json = parseJSON($msg.data);
         if ($json !== null) {
@@ -33,24 +43,31 @@
                 $child.removeClass('hidden');
                 $child.val('none');
             }
+			console.log("setupDependantSelect uitgevoerd");
         });
-    }
+		setupSyncingSelect($child);
+	}
 
+	function setupSyncingSelect($select) {
+		$select.change(function() {
+			$select.val($(this).val());
+		});
+	}
+	
     function handleJSON($json) {
 		if ($json.processors !== undefined && $json.hardeschijven !== undefined && $json.processors !== undefined && $json.geheugen !== undefined && $json.behuizing !== undefined && $json.grafischekaarten !== undefined) {
-			
 			initFilterCategory();
 			
-			$($categorie).change(function() {
-				if($('.categorie :selected').val() == "Processor") {
+			$categorie.change(function() {
+				if($('.categorie :selected').val() == $cpu) {
 					initProcessors($json.processors);
-				} else if($('.categorie :selected').val() == "Geheugen") {
+				} else if($('.categorie :selected').val() == $ram) {
 					initMemory($json.geheugen);
-				} else if($('.categorie :selected').val() == "Grafischekaart") {
+				} else if($('.categorie :selected').val() == $gpu) {
 					initGPU($json.grafischekaarten);
-				} else if($('.categorie :selected').val() == "Hardeschijf"){
+				} else if($('.categorie :selected').val() == $hdd){
 					initHDD($json.hardeschijven);
-				} else if($('.categorie :selected').val() == "Behuizing") {
+				} else if($('.categorie :selected').val() == $case) {
 					initCases($json.behuizing);
 				} else {
 					
@@ -58,18 +75,8 @@
 			});
 		}
     }
-	
 
     function initFilterCategory() {
-        var $case = "Behuizing",
-            $ram = "Geheugen",
-            $gpu = "Grafischekaart",
-            $hdd = "Hardeschijf",
-            $mobo = "Moederbord",
-			$cpu = "Processor",
-            $cpucooler = "Processorkoeler",
-            $psu = "Voeding";
-			
         $categorie.append('<option value="Maak een keuze">Maak een keuze</option>');
         $categorie.append('<option value="' + $case + '">' + $case + '</option>');
         $categorie.append('<option value="' + $ram + '">' + $ram + '</option>');
